@@ -42,7 +42,7 @@ local function applyPrize(player: Player, data, prize): string
 		data.Strength += gain
 		return "+" .. Format.Short(gain) .. " силы"
 	elseif prize.Type == "Luck" then
-		data.LuckLevel = math.min(ShopConfig.Luck.MaxLevel, data.LuckLevel + prize.Amount)
+		data.LuckPercent = math.min(ShopConfig.Luck.MaxPercent, data.LuckPercent + prize.Amount)
 		return prize.Text
 	elseif prize.Type == "Aura" then
 		if AuraService.Grant(player, prize.AuraId) then

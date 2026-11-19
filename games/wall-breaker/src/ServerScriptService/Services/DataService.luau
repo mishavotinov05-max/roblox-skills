@@ -41,7 +41,9 @@ local function makeTemplate()
 		Wins = Settings.StartWins,
 		Strength = Settings.StartStrength,
 		Rebirths = 0,
-		LuckLevel = 0,
+		LuckPercent = 0, -- купленная удача в процентах
+		LuckBought = {}, -- { [offerId] = сколько раз куплено }
+		PendingX3Level = 0,
 		OwnedPickaxes = { [Settings.StartPickaxe] = true },
 		EquippedPickaxe = Settings.StartPickaxe,
 		Pets = {}, -- { {Uid = 1, Id = "dog"}, ... }
@@ -208,6 +210,11 @@ function DataService.Load(player: Player)
 		end
 	end
 	reconcile(data, makeTemplate())
+	-- перенос старой удачи (уровни → проценты)
+	if type(data.LuckLevel) == "number" and data.LuckLevel > 0 then
+		data.LuckPercent += data.LuckLevel * 4
+		data.LuckLevel = nil
+	end
 	profiles[player] = data
 	makeLeaderstats(player)
 	for _, cb in ipairs(loadedCallbacks) do

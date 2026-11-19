@@ -30,7 +30,7 @@ local Toasts = require(Controllers:WaitForChild("Toasts"))
 local Panels = {}
 local root: Frame
 local openName: string? = nil
-local shopTab = "Pickaxes"
+local shopTab = "Luck"
 local spinning = false
 
 local COLOR_BUY = Color3.fromRGB(61, 200, 110)
@@ -140,51 +140,30 @@ end
 -- ===== Магазин =====
 local function fillShop(p: Frame)
 	local data = State.Data
-	for _, tab in ipairs({ "Pickaxes", "Luck", "Donate" }) do
+	for _, tab in ipairs({ "Luck", "Donate" }) do
 		local tabs = p:FindFirstChild("Tabs")
 		local b = tabs and tabs:FindFirstChild(tab .. "Tab")
 		if b and b:IsA("TextButton") then
 			b.BackgroundColor3 = tab == shopTab and Color3.fromRGB(255, 196, 61) or Color3.fromRGB(90, 70, 160)
 		end
 	end
-	if shopTab == "Pickaxes" then
-		for i, cfg in ipairs(PickaxeConfig.Pickaxes) do
-			local owned = data.OwnedPickaxes[cfg.Id]
-			local equipped = data.EquippedPickaxe == cfg.Id
+	if shopTab == "Luck" then
+		local maxed = data.LuckPercent >= ShopConfig.Luck.MaxPercent
+		for i, offer in ipairs(ShopConfig.Luck.Offers) do
+			local cost = Formulas.LuckOfferCost(offer, data.LuckBought[offer.Id] or 0)
 			addCard(p, {
-				name = cfg.Name,
-				info = ("Сила ×%s · %s"):format(Format.Short(cfg.Power), owned and "куплена" or (Format.Short(cfg.Price) .. " побед")),
-				fallback = "⛏",
-				color = cfg.Color,
-				button = equipped and "Надета" or (owned and "Надеть" or "Купить"),
-				buttonColor = equipped and COLOR_DONE or (owned and COLOR_EQUIP or COLOR_BUY),
+				name = offer.Name,
+				info = ("+%d%% удачи · сейчас %s%%"):format(offer.Percent, Format.Short(Formulas.LuckPercent(data, State.HasPass("LuckX2")))),
+				fallback = offer.Emoji or "🍀",
+				image = i == 1 and IconConfig.Luck or nil,
+				button = maxed and "Максимум" or ("🏆 " .. Format.Short(cost)),
+				buttonColor = maxed and COLOR_DONE or (data.Wins >= cost and COLOR_BUY or COLOR_DONE),
 				onClick = function()
-					if not equipped then
-						act(owned and "EquipPickaxe" or "BuyPickaxe", cfg.Id)
-					end
+					act("BuyLuck", offer.Id)
 				end,
 				order = i,
-				highlight = equipped,
 			})
 		end
-	elseif shopTab == "Luck" then
-		local maxed = data.LuckLevel >= ShopConfig.Luck.MaxLevel
-		addCard(p, {
-			name = "Удача",
-			info = ("Уровень %d/%d · сейчас %s%% · +%d%% за уровень"):format(
-				data.LuckLevel,
-				ShopConfig.Luck.MaxLevel,
-				Format.Short(Formulas.LuckPercent(data, State.HasPass("LuckX2"))),
-				ShopConfig.Luck.PercentPerLevel
-			),
-			fallback = "🍀",
-			image = IconConfig.Luck,
-			button = maxed and "Максимум" or ("Улучшить за " .. Format.Short(Formulas.LuckCost(data.LuckLevel))),
-			buttonColor = maxed and COLOR_DONE or COLOR_BUY,
-			onClick = function()
-				act("BuyLuck")
-			end,
-		})
 	else
 		for i, key in ipairs(ShopConfig.GamePassOrder) do
 			local pass = ShopConfig.GamePasses[key]
@@ -205,6 +184,9 @@ local function fillShop(p: Frame)
 			})
 		end
 		for i, product in ipairs(ShopConfig.Products) do
+			if product.Hidden then
+				continue
+			end
 			addCard(p, {
 				name = product.Name,
 				info = "Можно покупать много раз",
@@ -355,6 +337,12 @@ local function buildWheel(p: Frame)
 		stroke.Parent = label
 		label.Parent = disc
 	end
+	local buy = p:FindFirstChild("BuySpinButton", true)
+	if buy and buy:IsA("GuiButton") then
+		buy.Activated:Connect(function()
+			act("BuyProduct", "spin")
+		end)
+	end
 	local spin = p:FindFirstChild("SpinButton", true)
 	if spin and spin:IsA("TextButton") then
 		spin.Activated:Connect(function()
@@ -397,6 +385,17 @@ local function fillWheel(p: Frame)
 		text ..= ("  ·  доп. вращений: %d"):format(data.Wheel.ExtraSpins)
 	end
 	setLabel(p, "Timer", text)
+	-- если бесплатное вращение ещё не готово — показываем кнопку покупки за Robux
+	local free = remaining <= 0 or data.Wheel.ExtraSpins > 0
+	local spin = p:FindFirstChild("SpinButton", true)
+	local buy = p:FindFirstChild("BuySpinButton", true)
+	if spin and spin:IsA("TextButton") then
+		spin.Text = free and "Крутить!" or Format.Time(remaining)
+		spin.BackgroundColor3 = free and Color3.fromRGB(255, 160, 40) or COLOR_DONE
+	end
+	if buy and buy:IsA("GuiObject") then
+		buy.Visible = not free
+	end
 end
 
 -- ===== Ежедневные награды =====
@@ -591,7 +590,7 @@ function Panels.Init()
 	local shop = panel("ShopPanel")
 	local tabs = shop and shop:FindFirstChild("Tabs")
 	if tabs then
-		for _, tab in ipairs({ "Pickaxes", "Luck", "Donate" }) do
+		for _, tab in ipairs({ "Luck", "Donate" }) do
 			local b = tabs:FindFirstChild(tab .. "Tab")
 			if b and b:IsA("GuiButton") then
 				b.Activated:Connect(function()

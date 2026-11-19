@@ -47,7 +47,10 @@ function SwingService.Init()
 		if TrainingService.TrySwing(player, data, pos) then
 			return
 		end
-		WallService.TrySwing(player, data, pos)
+		if WallService.TrySwing(player, data, pos) then
+			return
+		end
+		TrainingService.AirSwing(player, data)
 	end)
 
 	Players.PlayerRemoving:Connect(function(player)

@@ -138,19 +138,30 @@ function PickaxeService.Equip(player: Player, id: string)
 	return { ok = true }
 end
 
-function PickaxeService.BuyLuck(player: Player)
+function PickaxeService.BuyLuck(player: Player, offerId: string)
 	local data = DataService.Get(player)
-	if data.LuckLevel >= ShopConfig.Luck.MaxLevel then
+	local offer = nil
+	for _, o in ipairs(ShopConfig.Luck.Offers) do
+		if o.Id == offerId then
+			offer = o
+		end
+	end
+	if not offer then
+		return { ok = false }
+	end
+	if data.LuckPercent >= ShopConfig.Luck.MaxPercent then
 		return { ok = false, msg = "Удача уже максимальная" }
 	end
-	local cost = Formulas.LuckCost(data.LuckLevel)
+	local bought = data.LuckBought[offer.Id] or 0
+	local cost = Formulas.LuckOfferCost(offer, bought)
 	if data.Wins < cost then
 		return { ok = false, msg = ("Нужно %s побед"):format(Format.Short(cost)) }
 	end
 	data.Wins -= cost
-	data.LuckLevel += 1
+	data.LuckBought[offer.Id] = bought + 1
+	data.LuckPercent = math.min(ShopConfig.Luck.MaxPercent, data.LuckPercent + offer.Percent)
 	DataService.MarkDirty(player)
-	RequestService.Notify(player, "Удача повышена!", "success")
+	RequestService.Notify(player, ("%s: +%d%% удачи!"):format(offer.Name, offer.Percent), "success")
 	return { ok = true }
 end
 

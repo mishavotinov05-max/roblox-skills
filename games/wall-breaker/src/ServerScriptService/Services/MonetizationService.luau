@@ -12,6 +12,12 @@ local RequestService = require(script.Parent:WaitForChild("RequestService"))
 
 local MonetizationService = {}
 local owned: { [Player]: { [string]: boolean } } = {}
+local productHandlers = {}
+
+-- Другие сервисы могут обработать свой товар: fn(player, data, product) → true, если выдано
+function MonetizationService.RegisterProductHandler(key: string, fn)
+	productHandlers[key] = fn
+end
 
 function MonetizationService.HasPass(player: Player, key: string): boolean
 	return owned[player] ~= nil and owned[player][key] == true
@@ -96,11 +102,22 @@ function MonetizationService.Init()
 		if not product then
 			return Enum.ProductPurchaseDecision.NotProcessedYet
 		end
+		local handler = productHandlers[product.Key]
+		if handler then
+			local ok, granted = pcall(handler, player, data, product)
+			if not ok or not granted then
+				warn("[Monetization] товар не выдан:", product.Key, granted)
+				return Enum.ProductPurchaseDecision.NotProcessedYet
+			end
+		end
 		if product.Wins then
 			data.Wins += product.Wins
 		end
 		if product.Spins then
 			data.Wheel.ExtraSpins += product.Spins
+		end
+		if product.LuckPercent then
+			data.LuckPercent = math.min(ShopConfig.Luck.MaxPercent, data.LuckPercent + product.LuckPercent)
 		end
 		data.Purchases[purchaseId] = os.time()
 		trimPurchases(data.Purchases)

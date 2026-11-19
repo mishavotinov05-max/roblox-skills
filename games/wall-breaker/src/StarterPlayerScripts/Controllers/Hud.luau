@@ -65,10 +65,10 @@ local function applyIcons()
 	setIcon(find("TopRight.WheelButton"), "Base", "WheelBase")
 	setIcon(find("TopRight.WheelButton"), "Disc", "WheelDisc")
 	setIcon(find("TopRight.WheelButton"), "Top", "WheelTop")
-	setIcon(find("TopRight.SmallButtons.AchievementsButton"), "Icon", "Achievements")
-	setIcon(find("TopRight.SmallButtons.RewardsButton"), "Icon", "Rewards")
-	setIcon(find("TopRight.SmallButtons.QuestsButton"), "Icon", "Quests")
-	setIcon(find("TopRight.SmallButtons.SettingsButton"), "Icon", "Settings")
+	setIcon(find("TopRight.AchievementsButton"), "Icon", "Achievements")
+	setIcon(find("TopRight.RewardsButton"), "Icon", "Rewards")
+	setIcon(find("TopRight.QuestsButton"), "Icon", "Quests")
+	setIcon(find("TopRight.SettingsButton"), "Icon", "Settings")
 	setIcon(find("Stats.StrengthRow"), "Icon", "Strength")
 	setIcon(find("Stats.LuckRow"), "Icon", "Luck")
 	setIcon(find("Stats.WinsRow"), "Icon", "Wins")
@@ -155,7 +155,7 @@ local function animate(t: number)
 		end
 	end
 	-- маленькие кнопки справа сверху покачиваются
-	local small = find("TopRight.SmallButtons")
+	local small = find("TopRight")
 	if small then
 		for i, name in ipairs({ "AchievementsButton", "RewardsButton", "QuestsButton", "SettingsButton" }) do
 			local btn = small:FindFirstChild(name)
@@ -215,7 +215,7 @@ local function fitScale()
 	local scale = gui:FindFirstChild("Scale")
 	local camera = Workspace.CurrentCamera
 	if scale and scale:IsA("UIScale") and camera then
-		scale.Scale = math.clamp(camera.ViewportSize.Y / 760, 0.55, 1.2)
+		scale.Scale = math.clamp(camera.ViewportSize.Y / 760, 0.75, 1.15)
 	end
 end
 
@@ -227,10 +227,10 @@ function Hud.Init()
 	bindButton("LeftMenu.AurasButton", "AurasPanel")
 	bindButton("LeftMenu.RebirthButton", "RebirthPanel")
 	bindButton("TopRight.WheelButton", "WheelPanel")
-	bindButton("TopRight.SmallButtons.AchievementsButton", "AchievementsPanel")
-	bindButton("TopRight.SmallButtons.RewardsButton", "RewardsPanel")
-	bindButton("TopRight.SmallButtons.QuestsButton", "QuestsPanel")
-	bindButton("TopRight.SmallButtons.SettingsButton", "SettingsPanel")
+	bindButton("TopRight.AchievementsButton", "AchievementsPanel")
+	bindButton("TopRight.RewardsButton", "RewardsPanel")
+	bindButton("TopRight.QuestsButton", "QuestsPanel")
+	bindButton("TopRight.SettingsButton", "SettingsPanel")
 
 	State.Changed:Connect(function()
 		refreshStats()

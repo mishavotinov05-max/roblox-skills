@@ -72,12 +72,13 @@ function Formulas.RebirthCost(rebirths: number): number
 	return math.floor(RebirthConfig.BaseCost * RebirthConfig.CostGrowth ^ rebirths)
 end
 
-function Formulas.LuckCost(level: number): number
-	return math.floor(ShopConfig.Luck.BaseCost * ShopConfig.Luck.CostGrowth ^ level)
+-- Цена варианта удачи с учётом того, сколько раз он уже куплен
+function Formulas.LuckOfferCost(offer, timesBought: number): number
+	return math.floor(offer.Price * ShopConfig.Luck.CostGrowth ^ (timesBought or 0))
 end
 
 function Formulas.LuckPercent(data, hasLuckPass: boolean?): number
-	local p = (data.LuckLevel or 0) * ShopConfig.Luck.PercentPerLevel
+	local p = data.LuckPercent or 0
 	if hasLuckPass then
 		p = (p + 100) * 2 - 100 -- удача ×2: множитель шанса удваивается
 	end

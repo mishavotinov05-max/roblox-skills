@@ -4,7 +4,7 @@
 ]]
 local Controllers = script:WaitForChild("Controllers")
 
-local ORDER = { "State", "Toasts", "Panels", "Hud", "World", "Swing", "Pets" }
+local ORDER = { "State", "Toasts", "Panels", "Hud", "Popups", "World", "Swing", "Pets" }
 for _, name in ipairs(ORDER) do
 	local module = require(Controllers:WaitForChild(name))
 	if module.Init then

@@ -7,6 +7,7 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
 local Config = ReplicatedStorage:WaitForChild("Config")
 local PitConfig = require(Config:WaitForChild("PitConfig"))
+local Settings = require(Config:WaitForChild("GameSettings"))
 local Shared = ReplicatedStorage:WaitForChild("Shared")
 local Formulas = require(Shared:WaitForChild("Formulas"))
 local Remotes = require(Shared:WaitForChild("Remotes"))
@@ -46,6 +47,14 @@ function TrainingService.TrySwing(player: Player, data, pos: Vector3): boolean
 		end
 	end
 	return false
+end
+
+-- Удар по воздуху (не в яме и не по стене): немного силы
+function TrainingService.AirSwing(player: Player, data)
+	local gain = Formulas.StrengthPerSwing(data, Settings.AirSwingPower, MonetizationService.HasPass(player, "StrengthX2"))
+	data.Strength += gain
+	DataService.MarkDirty(player)
+	Remotes.Event("Effect"):FireClient(player, "Strength", gain)
 end
 
 function TrainingService.Init()

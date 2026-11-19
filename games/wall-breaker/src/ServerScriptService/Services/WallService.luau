@@ -1,17 +1,23 @@
 --[[
-	WallService — уровни: 10 слоёв стены, награда за прохождение, возврат в лобби.
+	WallService — уровни: 10 слоёв стены, автоудары, выбор награды.
 
-	Стены у каждого игрока свои: сервер хранит прогресс (сколько слоёв сломано),
-	а клиент скрывает сломанные слои только у себя.
-	Награда в нише выдаётся один раз за прохождение: после получения стены уровня
-	снова появляются, и чтобы получить награду ещё раз, их нужно сломать заново.
+	• Стены у каждого игрока свои: сервер хранит прогресс (сколько слоёв сломано),
+	  клиент скрывает сломанные слои только у себя.
+	• Пока игрок стоит в уровне перед стеной, стена бьётся сама (GameSettings.AutoBreakInterval).
+	  Если тапать — быстрее. Если силы хватает, слой ломается с одного удара.
+	• Когда стена уровня сломана — окно выбора:
+	    «+N побед и в лобби» (бесплатно) / «×3 и в лобби» (Robux, товар level_x3) / «Идти дальше».
+	  N = награда самого дальнего пройденного уровня (LevelConfig.WinsReward).
+	  После получения награды все стены снова целые — награда выдаётся один раз за забег.
 ]]
 local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local MarketplaceService = game:GetService("MarketplaceService")
 
 local Config = ReplicatedStorage:WaitForChild("Config")
 local LevelConfig = require(Config:WaitForChild("LevelConfig"))
 local Settings = require(Config:WaitForChild("GameSettings"))
+local ShopConfig = require(Config:WaitForChild("ShopConfig"))
 local Shared = ReplicatedStorage:WaitForChild("Shared")
 local Formulas = require(Shared:WaitForChild("Formulas"))
 local Format = require(Shared:WaitForChild("Format"))
@@ -30,10 +36,26 @@ local LAYERS = LevelConfig.LayersPerLevel
 
 local hp: { [Player]: { [number]: number } } = {} -- оставшаяся прочность текущего слоя
 local currentLevel: { [Player]: number? } = {}
-local padDebounce: { [Player]: number } = {}
 
 local function progressOf(data, levelId: number): number
 	return data.LevelProgress[tostring(levelId)] or 0
+end
+
+-- Самый дальний уровень, стена которого сломана в этом забеге
+function WallService.RunBest(data): number
+	local best = 0
+	for key, prog in pairs(data.LevelProgress) do
+		local id = tonumber(key)
+		if id and prog >= LAYERS and id > best then
+			best = id
+		end
+	end
+	return best
+end
+
+function WallService.RewardFor(levelId: number): number
+	local cfg = Catalog.Level(levelId)
+	return cfg and cfg.WinsReward or 0
 end
 
 local function layerHP(player: Player, data, levelId: number): number
@@ -54,56 +76,68 @@ local function sendLevelState(player: Player, levelId: number?)
 	if not data then
 		return
 	end
-	if not levelId then
-		Remotes.Event("LevelState"):FireClient(player, nil)
-		return
-	end
-	local cfg = Catalog.Level(levelId)
-	if not cfg then
+	local cfg = levelId and Catalog.Level(levelId)
+	if not levelId or not cfg then
 		Remotes.Event("LevelState"):FireClient(player, nil)
 		return
 	end
 	local prog = progressOf(data, levelId)
-	local maxHP = Formulas.LayerHP(levelId, math.min(prog + 1, LAYERS))
+	local best = WallService.RunBest(data)
 	Remotes.Event("LevelState"):FireClient(player, {
 		Level = levelId,
 		Name = cfg.Name,
 		Layer = prog,
 		Layers = LAYERS,
 		HP = prog >= LAYERS and 0 or layerHP(player, data, levelId),
-		MaxHP = maxHP,
+		MaxHP = Formulas.LayerHP(levelId, math.min(prog + 1, LAYERS)),
 		Recommended = Formulas.RecommendedStrength(levelId),
+		RunBest = best,
+		RunReward = WallService.RewardFor(best),
 	})
 end
 
-function WallService.TrySwing(player: Player, data, pos: Vector3): boolean
+local function playSlash(player: Player)
+	local character = player.Character
+	local tool = character and character:FindFirstChild("Pickaxe")
+	if tool and tool:IsA("Tool") then
+		local anim = Instance.new("StringValue")
+		anim.Name = "toolanim"
+		anim.Value = "Slash"
+		anim.Parent = tool
+		game:GetService("Debris"):AddItem(anim, 1)
+	end
+end
+
+-- Текущий слой, если игрок стоит перед ним
+local function targetLayer(data, pos: Vector3)
 	local level = MapService.LevelAt(pos)
-	if not level then
-		return false
+	if not level or not Catalog.Level(level.Id) then
+		return nil, nil
 	end
 	local prog = progressOf(data, level.Id)
-	if prog >= LAYERS or not Catalog.Level(level.Id) then
-		return true
+	if prog >= LAYERS then
+		return level, nil
 	end
 	local layer = level.Layers[prog + 1] :: BasePart?
 	if not layer then
-		return true
+		return level, nil
 	end
-	-- Игрок должен стоять перед текущим слоем
 	local rel = layer.CFrame:PointToObjectSpace(pos)
 	if math.abs(rel.Z) > layer.Size.Z / 2 + Settings.WallReach or math.abs(rel.X) > layer.Size.X / 2 + 4 then
-		return true
+		return level, nil
 	end
+	return level, layer
+end
 
+local function hit(player: Player, data, level)
 	local remaining = layerHP(player, data, level.Id) - Formulas.Damage(data)
 	if remaining > 0 then
 		hp[player][level.Id] = remaining
 		sendLevelState(player, level.Id)
-		return true
+		return
 	end
-
 	-- Слой сломан
-	prog += 1
+	local prog = progressOf(data, level.Id) + 1
 	data.LevelProgress[tostring(level.Id)] = prog
 	data.Stats.LayersBroken += 1
 	hp[player][level.Id] = nil
@@ -111,34 +145,28 @@ function WallService.TrySwing(player: Player, data, pos: Vector3): boolean
 	OreService.Roll(player, data)
 	if prog >= LAYERS then
 		data.BestLevel = math.max(data.BestLevel, level.Id)
-		RequestService.Notify(player, "Стена пройдена! Забери награду в нише справа →", "success")
+		local reward = WallService.RewardFor(WallService.RunBest(data))
+		Remotes.Event("Effect"):FireClient(player, "LevelComplete", {
+			Level = level.Id,
+			Name = Catalog.Level(level.Id).Name,
+			Reward = reward,
+			HasPass = MonetizationService.HasPass(player, "WinsX3"),
+			HasNext = Catalog.Level(level.Id + 1) ~= nil,
+			NextReward = WallService.RewardFor(level.Id + 1),
+		})
 	end
 	DataService.MarkDirty(player)
 	sendLevelState(player, level.Id)
-	return true
 end
 
-local function claimReward(player: Player, levelId: number)
-	local data = DataService.Get(player)
-	local cfg = Catalog.Level(levelId)
-	if not data or not cfg then
-		return
+-- Удар из SwingService. true — удар пришёлся по стене.
+function WallService.TrySwing(player: Player, data, pos: Vector3): boolean
+	local level, layer = targetLayer(data, pos)
+	if not level or not layer then
+		return false
 	end
-	if progressOf(data, levelId) < LAYERS then
-		return -- стена ещё не сломана — награды нет
-	end
-	local mult = MonetizationService.HasPass(player, "WinsX3") and 3 or 1
-	local wins = cfg.WinsReward * mult
-	data.Wins += wins
-	data.Stats.LevelsCleared += 1
-	data.LevelProgress[tostring(levelId)] = 0 -- награда за это прохождение получена
-	if hp[player] then
-		hp[player][levelId] = nil
-	end
-	DataService.MarkDirty(player)
-	Remotes.Event("Effect"):FireClient(player, "Reward", levelId, wins)
-	RequestService.Notify(player, ("+%s %s!"):format(Format.Short(wins), wins == 1 and "победа" or "победы"), "wins")
-	sendLevelState(player, levelId)
+	hit(player, data, level)
+	return true
 end
 
 local function teleportToLobby(player: Player)
@@ -148,18 +176,37 @@ local function teleportToLobby(player: Player)
 	end
 end
 
-local function playerFromHit(hit: BasePart): Player?
-	local model = hit:FindFirstAncestorOfClass("Model")
-	return model and Players:GetPlayerFromCharacter(model)
+-- Забрать награду за забег и вернуться в лобби
+function WallService.CashOut(player: Player, multiplier: number, levelOverride: number?): number
+	local data = DataService.Get(player)
+	if not data then
+		return 0
+	end
+	local best = levelOverride or WallService.RunBest(data)
+	if best <= 0 then
+		return 0
+	end
+	local wins = WallService.RewardFor(best) * multiplier
+	data.Wins += wins
+	data.Stats.LevelsCleared += best
+	data.LevelProgress = {}
+	data.PendingX3Level = 0
+	hp[player] = {}
+	DataService.MarkDirty(player)
+	teleportToLobby(player)
+	Remotes.Event("Effect"):FireClient(player, "Reward", best, wins)
+	RequestService.Notify(player, ("+%s побед!"):format(Format.Short(wins)), "wins")
+	task.delay(0.5, sendLevelState, player, nil)
+	return wins
 end
 
-local function debounce(player: Player): boolean
-	local now = os.clock()
-	if padDebounce[player] and now - padDebounce[player] < 1 then
-		return false
+local function productId(key: string): number
+	for _, p in ipairs(ShopConfig.Products) do
+		if p.Key == key then
+			return p.Id
+		end
 	end
-	padDebounce[player] = now
-	return true
+	return 0
 end
 
 function WallService.Init()
@@ -167,41 +214,74 @@ function WallService.Init()
 		local cfg = Catalog.Level(level.Id)
 		if cfg then
 			MapService.SetText(level.Sign, "Title", ("Уровень %d · %s"):format(level.Id, cfg.Name))
-			MapService.SetText(level.Sign, "Sub", "Рекомендуемая сила: " .. Format.Short(Formulas.RecommendedStrength(level.Id)))
-		end
-		if level.RewardPad then
-			local mult = "×3 с геймпассом"
-			MapService.SetText(level.RewardPad, "Reward", ("+%d %s"):format(cfg and cfg.WinsReward or 1, "победа"))
-			MapService.SetText(level.RewardPad, "Hint", mult)
-			level.RewardPad.Touched:Connect(function(hit)
-				local player = playerFromHit(hit)
-				if player and debounce(player) then
-					claimReward(player, level.Id)
-				end
-			end)
-		end
-		if level.LobbyPad then
-			level.LobbyPad.Touched:Connect(function(hit)
-				local player = playerFromHit(hit)
-				if player and debounce(player) then
-					teleportToLobby(player)
-				end
-			end)
+			MapService.SetText(level.Sign, "Sub", ("Сила: %s · награда %s побед"):format(Format.Short(Formulas.RecommendedStrength(level.Id)), Format.Short(cfg.WinsReward)))
 		end
 	end
 
-	-- Следим, на каком уровне стоит игрок, и обновляем панель уровня
+	RequestService.Register("CashOutLevel", function(player)
+		local data = DataService.Get(player)
+		if WallService.RunBest(data) <= 0 then
+			return { ok = false, msg = "Сначала сломай стену уровня" }
+		end
+		WallService.CashOut(player, MonetizationService.HasPass(player, "WinsX3") and 3 or 1)
+		return { ok = true }
+	end)
+
+	RequestService.Register("LevelRewardX3", function(player)
+		local data = DataService.Get(player)
+		local best = WallService.RunBest(data)
+		if best <= 0 then
+			return { ok = false, msg = "Сначала сломай стену уровня" }
+		end
+		local id = productId("level_x3")
+		if id == 0 then
+			return { ok = false, msg = "Покупка ещё не настроена (товар level_x3 в ShopConfig)" }
+		end
+		data.PendingX3Level = best
+		MarketplaceService:PromptProductPurchase(player, id)
+		return { ok = true }
+	end)
+
+	-- Оплата ×3: выдаём тройную награду за уровень, запомненный при нажатии кнопки
+	MonetizationService.RegisterProductHandler("level_x3", function(player, data)
+		local level = data.PendingX3Level
+		if not level or level <= 0 then
+			level = math.max(1, WallService.RunBest(data))
+		end
+		WallService.CashOut(player, 3, level)
+		return true
+	end)
+
+	RequestService.Register("GoToLobby", function(player)
+		teleportToLobby(player)
+		return { ok = true }
+	end)
+
+	-- Следим, где стоит игрок: панель уровня + автоудары по стене
 	task.spawn(function()
+		local acc = 0
 		while true do
-			task.wait(0.4)
+			task.wait(0.2)
+			acc += 0.2
+			local autoHit = acc >= Settings.AutoBreakInterval
+			if autoHit then
+				acc = 0
+			end
 			for _, player in ipairs(Players:GetPlayers()) do
+				local data = DataService.Get(player)
 				local character = player.Character
 				local root = character and character:FindFirstChild("HumanoidRootPart") :: BasePart?
-				local level = root and MapService.LevelAt(root.Position)
-				local id = level and level.Id or nil
-				if id ~= currentLevel[player] then
-					currentLevel[player] = id
-					sendLevelState(player, id)
+				if data and root then
+					local level, layer = targetLayer(data, root.Position)
+					local id = level and level.Id or nil
+					if id ~= currentLevel[player] then
+						currentLevel[player] = id
+						sendLevelState(player, id)
+					end
+					if autoHit and level and layer then
+						playSlash(player)
+						hit(player, data, level)
+					end
 				end
 			end
 		end
@@ -210,12 +290,6 @@ function WallService.Init()
 	Players.PlayerRemoving:Connect(function(player)
 		hp[player] = nil
 		currentLevel[player] = nil
-		padDebounce[player] = nil
-	end)
-
-	RequestService.Register("GoToLobby", function(player)
-		teleportToLobby(player)
-		return { ok = true }
 	end)
 end
 

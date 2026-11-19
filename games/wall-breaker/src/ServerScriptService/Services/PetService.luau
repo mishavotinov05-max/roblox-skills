@@ -10,6 +10,7 @@ local Settings = require(Config:WaitForChild("GameSettings"))
 local Shared = ReplicatedStorage:WaitForChild("Shared")
 local Catalog = require(Shared:WaitForChild("Catalog"))
 local Format = require(Shared:WaitForChild("Format"))
+local Remotes = require(Shared:WaitForChild("Remotes"))
 
 local Services = script.Parent
 local DataService = require(Services:WaitForChild("DataService"))
@@ -85,8 +86,8 @@ function PetService.OpenEgg(player: Player, eggId: string)
 	end
 	PetService.UpdateAttribute(player)
 	DataService.MarkDirty(player)
-	local def = Catalog.Pets[petId]
-	RequestService.Notify(player, ("Выпал питомец: %s (%s, +%s)"):format(def.Name, def.Rarity, tostring(def.Bonus)), "pet")
+	-- клиент показывает анимацию открытия, а после неё — сообщение
+	Remotes.Event("Effect"):FireClient(player, "Egg", egg.Id, petId)
 	return { ok = true, pet = petId }
 end
 
