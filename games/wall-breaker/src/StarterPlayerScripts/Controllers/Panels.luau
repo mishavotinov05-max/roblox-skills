@@ -291,13 +291,16 @@ end
 local function fillRebirth(p: Frame)
 	local data = State.Data
 	local cost = State.Snapshot.RebirthCost or Formulas.RebirthCost(data.Rebirths)
-	setLabel(p, "Info", ("Перерождений: %d\n\nЦена: %s побед\nНаграда: +%d%% силы навсегда (сейчас ×%s) и новые ямы\n\nСбросится: сила, кирки и стены.\nОстанутся: питомцы, ауры, удача и победы сверх цены."):format(
+	local needLevel = State.Snapshot.RebirthLevel or Formulas.RebirthLevel(data.Rebirths)
+	setLabel(p, "Info", ("Перерождений: %d\n\nНужен уровень: %d (сейчас %d)%s\nНаграда: +%d%% силы навсегда (сейчас ×%s) и новые ямы\n\nСбросится: сила, уровень, кирки и стены.\nОстанутся: питомцы, ауры, удача и победы."):format(
 		data.Rebirths,
-		Format.Short(cost),
+		needLevel,
+		data.PlayerLevel or 1,
+		cost > 0 and ("\nЦена: " .. Format.Short(cost) .. " побед") or "",
 		math.floor(RebirthConfig.StrengthBonusPerRebirth * 100),
 		tostring(Formulas.RebirthMultiplier(data))
 	))
-	setLabel(p, "RebirthButton", data.Wins >= cost and "Переродиться!" or ("Нужно " .. Format.Short(cost) .. " побед"))
+	setLabel(p, "RebirthButton", (data.PlayerLevel or 1) >= needLevel and "Переродиться!" or ("Нужен уровень " .. needLevel))
 end
 
 -- ===== Колесо =====

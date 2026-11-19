@@ -53,6 +53,20 @@ local function playSlash(player: Player)
 	end
 end
 
+-- Опыт за удар в яме → уровень игрока
+local function gainXp(player: Player, data, pitPower: number)
+	data.Xp += math.max(1, math.floor(pitPower * Settings.Xp.PerPitPower))
+	local leveled = false
+	while data.Xp >= Formulas.XpForLevel(data.PlayerLevel) do
+		data.Xp -= Formulas.XpForLevel(data.PlayerLevel)
+		data.PlayerLevel += 1
+		leveled = true
+	end
+	if leveled then
+		Remotes.Event("Effect"):FireClient(player, "LevelUp", data.PlayerLevel)
+	end
+end
+
 -- Удар в яме. true — игрок стоит в яме (даже если она закрыта)
 function TrainingService.TrySwing(player: Player, data, pos: Vector3): boolean
 	local pit = pitAt(pos)
@@ -72,6 +86,7 @@ function TrainingService.TrySwing(player: Player, data, pos: Vector3): boolean
 		return true
 	end
 	gainStrength(player, data, cfg.Power)
+	gainXp(player, data, cfg.Power)
 	data.Stats.Swings += 1
 	return true
 end
@@ -112,6 +127,7 @@ function TrainingService.Init()
 				if data and cfg and data.Rebirths >= cfg.RequiredRebirths then
 					playSlash(player)
 					gainStrength(player, data, cfg.Power)
+					gainXp(player, data, cfg.Power)
 					data.Stats.Swings += 1
 				end
 			end

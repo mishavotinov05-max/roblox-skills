@@ -20,12 +20,18 @@ local RebirthService = {}
 function RebirthService.Init()
 	RequestService.Register("Rebirth", function(player)
 		local data = DataService.Get(player)
+		local needLevel = Formulas.RebirthLevel(data.Rebirths)
+		if data.PlayerLevel < needLevel then
+			return { ok = false, msg = ("Нужен уровень %d (сейчас %d). Качайся в ямах!"):format(needLevel, data.PlayerLevel) }
+		end
 		local cost = Formulas.RebirthCost(data.Rebirths)
 		if data.Wins < cost then
 			return { ok = false, msg = ("Нужно %s побед"):format(Format.Short(cost)) }
 		end
 		data.Wins -= cost
 		data.Rebirths += 1
+		data.PlayerLevel = 1
+		data.Xp = 0
 		data.Stats.Rebirths += 1
 		data.Strength = 0
 		data.OwnedPickaxes = { [Settings.StartPickaxe] = true }
@@ -40,6 +46,7 @@ function RebirthService.Init()
 
 	DataService.AddStateHook(function(_, state, data)
 		state.RebirthCost = Formulas.RebirthCost(data.Rebirths)
+		state.RebirthLevel = Formulas.RebirthLevel(data.Rebirths)
 	end)
 end
 

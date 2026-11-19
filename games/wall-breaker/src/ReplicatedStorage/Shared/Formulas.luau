@@ -1,6 +1,7 @@
 -- Formulas — все игровые формулы в одном месте (используются и сервером, и интерфейсом)
 local Config = script.Parent.Parent:WaitForChild("Config")
 local LevelConfig = require(Config:WaitForChild("LevelConfig"))
+local Settings = require(Config:WaitForChild("GameSettings"))
 local RebirthConfig = require(Config:WaitForChild("RebirthConfig"))
 local ShopConfig = require(Config:WaitForChild("ShopConfig"))
 local Catalog = require(script.Parent:WaitForChild("Catalog"))
@@ -47,7 +48,7 @@ end
 
 -- Сила за один удар в яме
 function Formulas.StrengthPerSwing(data, pitPower: number, hasStrengthPass: boolean?): number
-	return math.max(1, math.floor(pitPower * Formulas.TotalMultiplier(data, hasStrengthPass) + 0.5))
+	return math.max(1, math.floor(pitPower * Settings.StrengthMultiplier * Formulas.TotalMultiplier(data, hasStrengthPass) + 0.5))
 end
 
 -- Урон по стене за удар = текущая сила (минимум 1)
@@ -68,8 +69,18 @@ function Formulas.RecommendedStrength(levelId: number): number
 	return level and math.ceil(level.BaseHP / LevelConfig.TargetHitsPerLayer) or 0
 end
 
-function Formulas.RebirthCost(rebirths: number): number
-	return math.floor(RebirthConfig.BaseCost * RebirthConfig.CostGrowth ^ rebirths)
+function Formulas.RebirthCost(_rebirths: number): number
+	return RebirthConfig.WinsCost or 0
+end
+
+-- Какой уровень игрока нужен для следующего перерождения
+function Formulas.RebirthLevel(rebirths: number): number
+	return RebirthConfig.LevelBase + rebirths * RebirthConfig.LevelStep
+end
+
+-- Сколько опыта нужно, чтобы с уровня level перейти на следующий
+function Formulas.XpForLevel(level: number): number
+	return math.floor(Settings.Xp.Base * level ^ Settings.Xp.Growth)
 end
 
 -- Цена варианта удачи с учётом того, сколько раз он уже куплен

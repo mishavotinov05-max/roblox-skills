@@ -435,15 +435,14 @@ def build_levels():
         f.add(wall)
         f.add(part("Zone", (46, 26, LVL_LEN), (10, 12, z0 - LVL_LEN / 2), (255, 255, 255), "SmoothPlastic", transparency=1,
                    collide=False, query=False, touch=False, cast_shadow=False))
-        for pad_name, dz, col, big, small in (("RewardPad", 6.5, GOLD, f"+{REWARDS[i]} 🏆", "забрать и в лобби"),
-                                              ("X3Pad", -6.5, (166, 91, 255), f"×3 = {REWARDS[i] * 3} 🏆", "за Robux и в лобби")):
+        word = "победа" if REWARDS[i] == 1 else "побед"
+        for pad_name, dz, col, big in (("RewardPad", 6.5, GOLD, f"+{REWARDS[i]} {word}"),
+                                       ("X3Pad", -6.5, (166, 91, 255), f"x3 = {REWARDS[i] * 3} побед")):
             f.add(part(pad_name, (9, 0.6, 9), (22, 0.3, niche_z + dz), col, "Neon", children=[
-                billboard("PadGui", (230, 90), (0, 5, 0), [
+                billboard("PadGui", (220, 54), (0, 4.5, 0), [
                     frame("Bg", ((1, 0), (1, 0)), ((0, 0), (0, 0)), bg=(26, 16, 51), bgt=0.25, children=[
                         ui_corner(0, 16), ui_stroke(3, col),
-                        label("Reward", big, ((1, -10), (0.6, 0)), ((0, 5), (0, 2)), color=(255, 225, 77), stroke=3),
-                        label("Hint", small, ((1, -10), (0.36, 0)), ((0, 5), (0.6, 0)), stroke=2)])])]))
-        f.add(sign_part("NicheSign", (14, 3.6, 0.5), (30.6, 9, niche_z), rot(0, 90, 0), "Награда за забег", "встань на площадку"))
+                        label("Reward", big, ((1, -12), (1, -10)), ((0, 6), (0, 5)), color=(255, 225, 77), stroke=3)])])]))
         f.add(part("MerchantSpot", (1, 1, 1), (-8, 5, z0 - 80), (255, 255, 255), "SmoothPlastic", r=rot(0, 90, 0), transparency=1,
                    collide=False, query=False, touch=False, cast_shadow=False))
         levels.add(f)
@@ -568,12 +567,25 @@ def build_gui():
     hud.add(left)
 
     # Показатели — в самом левом нижнем углу
-    stats = frame("Stats", ((0, 190), (0, 84)), ((0, 6), (1, -8)), anchor=(0, 1))
+    stats = frame("Stats", ((0, 200), (0, 112)), ((0, 6), (1, -8)), anchor=(0, 1))
     stats.add(ui_list(padding=3, valign=2))
     stats.add(stat_row("StrengthRow", "⛏", "Сила: 0", 1))
     stats.add(stat_row("LuckRow", "🍀", "Удача: 0%", 2))
     stats.add(stat_row("WinsRow", "🏆", "Победы: 0", 3))
+    stats.add(stat_row("RebirthRow", "🔄", "Перерождения: 0", 4))
     hud.add(stats)
+
+    # Уровень игрока (качается в ямах) — полоса внизу по центру
+    xp = frame("XpBar", ((0, 340), (0, 30)), ((0.5, 0), (1, -10)), anchor=(0.5, 1))
+    xp.add(label("Level", "Уровень 1", ((0, 110), (1, 0)), ((0, 0), (0, 0)), xalign=0, color=(255, 225, 77), stroke=2.5))
+    xbar = frame("Bar", ((1, -116), (0, 22)), ((0, 116), (0, 4)), bg=DARK, bgt=0.3)
+    xbar.add(ui_corner(0, 10), ui_stroke(2.5, DARK))
+    xfill = frame("Fill", ((0, 0), (1, 0)), ((0, 0), (0, 0)), bg=(94, 231, 255), bgt=0)
+    xfill.add(ui_corner(0, 10))
+    xbar.add(xfill)
+    xbar.add(label("Text", "0 / 10", ((1, 0), (1, -4)), ((0, 0), (0, 2)), stroke=2, z=3))
+    xp.add(xbar)
+    hud.add(xp)
 
     # Правый верхний угол: колесо + 4 квадратные кнопки одного размера
     top = frame("TopRight", ((0, 310), (0, 60)), ((1, -6), (0, 4)), anchor=(1, 0))

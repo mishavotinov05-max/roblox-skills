@@ -95,9 +95,19 @@ local function refreshStats()
 	if not data then
 		return
 	end
-	setText("Stats.StrengthRow.Value", "Сила: " .. Format.Comma(data.Strength))
+	local infinite = Players.LocalPlayer:GetAttribute("Infinite") == true
+	setText("Stats.StrengthRow.Value", "Сила: " .. (infinite and "∞" or Format.Comma(data.Strength)))
 	setText("Stats.LuckRow.Value", ("Удача: %s%%"):format(Format.Short(Formulas.LuckPercent(data, State.HasPass("LuckX2")))))
-	setText("Stats.WinsRow.Value", "Победы: " .. Format.Comma(data.Wins))
+	setText("Stats.WinsRow.Value", "Победы: " .. (infinite and "∞" or Format.Comma(data.Wins)))
+	setText("Stats.RebirthRow.Value", "Перерождения: " .. tostring(data.Rebirths))
+	-- полоса уровня игрока
+	local need = Formulas.XpForLevel(data.PlayerLevel or 1)
+	setText("XpBar.Level", "Уровень " .. tostring(data.PlayerLevel or 1))
+	setText("XpBar.Bar.Text", ("%s / %s"):format(Format.Short(data.Xp or 0), Format.Short(need)))
+	local fill = find("XpBar.Bar.Fill")
+	if fill and fill:IsA("GuiObject") then
+		fill.Size = UDim2.new(math.clamp((data.Xp or 0) / need, 0, 1), 0, 1, 0)
+	end
 end
 
 -- Анимации иконок (покачивание, прыжки, пульсация, вращение)

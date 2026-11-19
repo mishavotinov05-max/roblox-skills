@@ -232,8 +232,7 @@ function WallService.Init()
 		local cfg = Catalog.Level(level.Id)
 		local reward = cfg and cfg.WinsReward or 0
 		if level.RewardPad then
-			MapService.SetText(level.RewardPad, "Reward", ("+%s 🏆"):format(Format.Short(reward)))
-			MapService.SetText(level.RewardPad, "Hint", "забрать и в лобби")
+			MapService.SetText(level.RewardPad, "Reward", ("+%s %s"):format(Format.Short(reward), reward == 1 and "победа" or "побед"))
 			level.RewardPad.Touched:Connect(function(hit)
 				local player = playerFromHit(hit)
 				local data = player and DataService.Get(player)
@@ -248,8 +247,7 @@ function WallService.Init()
 			end)
 		end
 		if level.X3Pad then
-			MapService.SetText(level.X3Pad, "Reward", ("×3 = %s 🏆"):format(Format.Short(reward * 3)))
-			MapService.SetText(level.X3Pad, "Hint", "за Robux и в лобби")
+			MapService.SetText(level.X3Pad, "Reward", ("x3 = %s побед"):format(Format.Short(reward * 3)))
 			level.X3Pad.Touched:Connect(function(hit)
 				local player = playerFromHit(hit)
 				local data = player and DataService.Get(player)

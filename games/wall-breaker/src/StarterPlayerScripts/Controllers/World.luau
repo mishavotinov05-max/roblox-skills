@@ -136,6 +136,8 @@ function World.Init()
 			Toasts.Popup("+" .. Format.Short(a) .. " силы")
 		elseif kind == "Break" then
 			breakEffect(a, b)
+		elseif kind == "LevelUp" then
+			Toasts.Show("Новый уровень: " .. tostring(a) .. "!", "success")
 		elseif kind == "Reward" then
 			Toasts.Popup("+" .. Format.Short(b) .. " 🏆", Color3.fromRGB(255, 225, 77))
 		end
