@@ -237,6 +237,8 @@ function sign({ w, h, title, sub, icon, bg = '#4b2a9e', border = '#ffe14d', titl
   const m = new THREE.Mesh(new THREE.PlaneGeometry(w, h), new THREE.MeshStandardMaterial({ map: tex, roughness: .7, emissive: 0xffffff, emissiveMap: tex, emissiveIntensity: .35 }));
   const back = new THREE.Mesh(new THREE.BoxGeometry(w + .4, h + .4, .5), std(0x2a1a4a));
   back.position.z = -.3; m.add(back); back.castShadow = true;
+  // двусторонняя табличка: надпись видна и сзади
+  const m2 = new THREE.Mesh(m.geometry, m.material); m2.rotation.y = Math.PI; m2.position.z = -.6; m.add(m2);
   return m;
 }
 function sprite(draw, w, h, sw, sh) {
@@ -323,7 +325,7 @@ function pet() {
 
 // ---------- сцена ----------
 let scene, camera, ortho, renderer, sun, portalMat;
-const HW = 64, XL = -104, HD = 52, WALLH = 24, LVL_LEN = 72, LVL0 = -56;
+const HW = 64, XL = -84, HD = 64, WALLH = 24, LVL_LEN = 72, LVL0 = -HD - 4;
 const layers = []; // [level][layer] -> mesh
 const levelSigns = [];
 let player, petObj, debris = [];
@@ -334,7 +336,8 @@ function buildHub() {
   const shape = new THREE.Shape(); shape.moveTo(XL, -HD); shape.lineTo(HW, -HD); shape.lineTo(HW, HD); shape.lineTo(XL, HD); shape.closePath();
   // Зона ям: 2 колонки × 4 ряда = 8 мест. Ямы открываются по числу перерождений (PitConfig).
   // Зона ям: 3 колонки × 4 ряда = 12 мест, между ними дорожки шириной ~10 стадов.
-  const PIT_COLS = [-36, -62, -88], PIT_ROWS = [-39, -13, 13, 39];
+  // 2 ряда ям вдоль зала, лицом друг к другу; между рядами широкая дорожка (x = -51)
+  const PIT_COLS = [-36, -66], PIT_ROWS = [-55, -33, -11, 11, 33, 55], WALK_X = -51;
   // [название, подпись, текстура стенок, цвет кристаллов/обода, цвет таблички, светится?, открыта?]
   const PIT_DEF = [
     ['Землянка', 'открыта · +1 сила', TX.dirt, 0xb07a45, '#6b4426', false, true],
@@ -345,7 +348,7 @@ function buildHub() {
     ['Алмазная', '🔒 40 перерождений', TX.levels[8].map, 0x5ee7ff, '#137f99', true]];
   const PITS = [];
   PIT_COLS.forEach((x, c) => PIT_ROWS.forEach((z, r) => {
-    const d = PIT_DEF[c * 4 + r];
+    const d = PIT_DEF[c * 6 + r];
     PITS.push(d ? { x, z, name: d[0], sub: d[1], tex: d[2], col: d[3], bg: d[4], shiny: d[5], open: !!d[6] } : { x, z, name: 'Новая яма', sub: 'свободное место', tex: TX.darkFloor, col: 0x3a3f55, bg: '#2f3448', empty: true });
   }));
   const PR = 6.5;
@@ -381,7 +384,7 @@ function buildHub() {
 
   // фонари на стенах
   for (const z of [-26, 0, 26]) lantern(XL + .9, 11, z, z === 0);
-  for (const x of [-30, -80]) { lantern(x, 11, HD - .9, x === -80); lantern(x, 11, -HD + .9); }
+  for (const x of [-30, -70]) { lantern(x, 11, HD - .9, x === -80); lantern(x, 11, -HD + .9); }
   for (const z of [-42, 42]) lantern(HW - .9, 11, z, z === 42);
   for (const x of [-26, 26]) lantern(x, 11, HD - .9, x === 26);
 
@@ -441,8 +444,8 @@ function buildHub() {
   box(.5, .1, 2 * HD - 10, glow(0xc66bff, 1.2), -20.5, .06, 0, scene, false);
   // дорожки между ямами
   const pathMat = (w, d) => texMat(TX.floor, w / 8, d / 8, { color: 0xffe2a8 });
-  for (const x of [-23, -49, -75, -98]) box(x === -98 ? 8 : 6, .12, 2 * HD - 2, pathMat(6, 2 * HD), x === -98 ? -99 : x, .06, 0, scene, false);
-  for (const z of [-26, 0, 26]) box(-20 - XL - 2, .12, 6, pathMat(-20 - XL, 6), (XL - 20) / 2, .07, z, scene, false);
+  box(13, .12, 2 * HD - 2, pathMat(13, 2 * HD), WALK_X, .06, 0, scene, false); // главная дорожка между рядами
+  for (const z of [-44, -22, 0, 22, 44]) box(-20 - XL - 2, .12, 5, pathMat(-20 - XL, 5), (XL - 20) / 2, .07, z, scene, false); // поперечные проходы
   PITS.forEach((p, i) => {
     const g = new THREE.Group(); g.position.set(p.x, 0, p.z); scene.add(g);
     const wall = new THREE.Mesh(new THREE.CylinderGeometry(PR, PR, 6, 40, 1, true), texMat(p.empty ? TX.stoneBrick : p.tex, 10, 1.5, { side: THREE.BackSide })); wall.position.y = -3; wall.receiveShadow = true; g.add(wall);
@@ -454,7 +457,7 @@ function buildHub() {
     ring.rotation.x = -Math.PI / 2; ring.position.y = .09; ring.receiveShadow = true; g.add(ring);
     const rim = new THREE.Mesh(new THREE.TorusGeometry(PR, .35, 8, 48), p.empty ? std(0x555a70) : glow(col, p.shiny ? 1.8 : .7)); rim.rotation.x = Math.PI / 2; rim.position.y = .1; g.add(rim);
     // направление к центру зала: табличка смотрит туда, вход в забор — тоже
-    const dx = -p.x, dz = -p.z * .5, phi = Math.atan2(dz, dx);
+    const phi = p.x > WALK_X ? Math.PI : 0; // смотрим на дорожку между рядами
     // забор из столбиков и перекладин, проход со стороны центра
     const N = 18, FR = PR + 1.3, posts = [];
     for (let k = 0; k < N; k++) { const a = k / N * Math.PI * 2; let da = Math.abs(((a - phi) + Math.PI * 3) % (Math.PI * 2) - Math.PI); posts.push(da > .5 ? a : null); }
@@ -602,8 +605,8 @@ function setScene(t, still) {
 
   // --- позиция игрока ---
   let px = 0, pz = 30, walk = 0, swing = null, faceY = Math.PI;
-  if (t < 6) { px = -2; pz = 26; walk = 0; }
-  else if (t < 10.4) { const k = (t - 6) / 4.4; pz = lerp(26, -50, k); px = 0; walk = t * 9; }
+  if (t < 6) { px = -2; pz = 30; walk = 0; }
+  else if (t < 10.4) { const k = (t - 6) / 4.4; pz = lerp(30, -HD + 2, k); px = 0; walk = t * 9; }
   else {
     // уровень 1
     for (let k = 0; k < 10; k++) if (t >= breakTimes[k]) layerDone = k + 1;
@@ -646,8 +649,8 @@ function setScene(t, still) {
   // --- камера ---
   let cp, ct;
   if (t < 6.2) {
-    cp = catmull([[0, [-20, 175, 92]], [3, [36, 104, 96]], [6.2, [-22, 30, 48]]], t);
-    ct = catmull([[0, [-20, 0, -10]], [3, [-12, 0, -6]], [6.2, [0, 4, -8]]], t);
+    cp = catmull([[0, [-10, 150, 104]], [3, [40, 116, 110]], [6.2, [-22, 30, 54]]], t);
+    ct = catmull([[0, [-10, 0, -12]], [3, [-12, 0, -6]], [6.2, [0, 4, -8]]], t);
   } else if (t < 10.4) {
     const k = clamp((t - 6.2) / 1.2); const base = new THREE.Vector3(9, 11, pz + 20), tgt = new THREE.Vector3(0, 6, pz - 14);
     cp = new THREE.Vector3(-22, 30, 48).lerp(base, ease(k)); ct = new THREE.Vector3(0, 4, -8).lerp(tgt, ease(k));
@@ -712,12 +715,12 @@ function setSun(focus, span = 70) {
 
 // ---------- кадры-скриншоты ----------
 const STILLS = {
-  hub: { t: 2, cam: [-20, 175, 92], tgt: [-20, 0, -10] },
-  hub_front: { t: 2, cam: [0, 26, 48], tgt: [0, 5, -30] },
+  hub: { t: 2, cam: [-10, 150, 104], tgt: [-10, 0, -8] },
+  hub_front: { t: 2, cam: [0, 26, 60], tgt: [0, 5, -40] },
   shop: { t: 2, cam: [14, 20, 34], tgt: [54, 4, -2] },
-  pits: { t: 2, cam: [14, 56, 38], tgt: [-62, -2, -6] },
-  eggs: { t: 2, cam: [8, 15, 10], tgt: [0, 5, 40] },
-  trader: { t: 2, cam: [26, 14, -20], tgt: [54, 5, -42] },
+  pits: { t: 2, cam: [8, 58, 62], tgt: [-52, -2, -8] },
+  eggs: { t: 2, cam: [12, 15, 36], tgt: [0, 5, 56] },
+  trader: { t: 2, cam: [26, 14, -32], tgt: [54, 5, -54] },
   level: { t: 14.2 },
   reward: { t: 19.6 },
   levels: { t: 25 },
@@ -731,8 +734,8 @@ window.renderAt = (t, still = null, hudT = null) => {
     setSun(new THREE.Vector3(0, 0, -20), 90);
     renderer.render(scene, ortho); applyHud(s);
     // подписи зон
-    const L = [[0, 26, -46, 'Вход в уровни', 'центральная ось'], [0, 6, 40, 'Яйца питомцев', 'напротив входа'], [52, 12, 0, 'Магазин кирок', '3 ряда-ступени'],
-      [-62, 2, 0, 'Ямы прокачки силы', '12 мест · дорожки между ними'], [52, 10, -44, 'Торговец рудами', 'угол'], [0, 1, 4, 'Свободный проход', ''], [-4, 4, -82, 'Уровень 1 · Сено', '10 слоёв'], [30, 2, -108, 'Ниша награды', '+1 / +3 победы'], [0, 4, -130, '→ Уровень 2', '']];
+    const L = [[0, 26, -58, 'Вход в уровни', 'центральная ось'], [0, 6, 52, 'Яйца питомцев', 'напротив входа'], [52, 12, 0, 'Магазин кирок', '3 ряда-ступени'],
+      [-51, 2, 0, 'Ямы: 2 ряда напротив', 'дорожка посередине'], [52, 10, -56, 'Торговец рудами', 'угол'], [0, 1, 4, 'Свободный проход', ''], [-4, 4, -94, 'Уровень 1 · Сено', '10 слоёв'], [30, 2, -120, 'Ниша награды', '+1 / +3 победы'], [0, 4, -142, '→ Уровень 2', '']];
     $('labels').innerHTML = L.map(([x, y, z, a, b]) => { const v = new THREE.Vector3(x, y, z).project(ortho); return `<div class="lbl" style="left:${(v.x + 1) / 2 * W}px;top:${(1 - v.y) / 2 * H}px">${a}${b ? `<small>${b}</small>` : ''}</div>`; }).join('');
     return;
   }
@@ -761,8 +764,8 @@ async function init() {
   scene.background = canvasTex(4, 256, (g) => { const gr = g.createLinearGradient(0, 0, 0, 256); gr.addColorStop(0, '#5aa8ff'); gr.addColorStop(.6, '#a9d8ff'); gr.addColorStop(1, '#e8f6ff'); g.fillStyle = gr; g.fillRect(0, 0, 4, 256); }, false);
   scene.fog = new THREE.Fog(0xcfeaff, 300, 1100);
   camera = new THREE.PerspectiveCamera(55, W / H, .5, 2000);
-  const oh = 92; ortho = new THREE.OrthographicCamera(-oh * W / H, oh * W / H, oh, -oh, 1, 600);
-  ortho.position.set(-20, 300, -60); ortho.up.set(-1, 0, 0); ortho.lookAt(-20, 0, -60);
+  const oh = 84; ortho = new THREE.OrthographicCamera(-oh * W / H, oh * W / H, oh, -oh, 1, 600);
+  ortho.position.set(-10, 300, -70); ortho.up.set(-1, 0, 0); ortho.lookAt(-10, 0, -70);
   scene.add(new THREE.HemisphereLight(0xdff0ff, 0x6a4a9a, 1.25));
   sun = new THREE.DirectionalLight(0xfff1d6, 2.1); sun.castShadow = true; sun.shadow.mapSize.set(2048, 2048); sun.shadow.bias = -.0005; sun.shadow.camera.near = 1; sun.shadow.camera.far = 400; scene.add(sun, sun.target);
   buildTextures(); buildHub(); buildLevels();
