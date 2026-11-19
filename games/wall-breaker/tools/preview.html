@@ -335,13 +335,18 @@ function buildHub() {
   // Зона ям: 2 колонки × 4 ряда = 8 мест. Ямы открываются по числу перерождений (PitConfig).
   // Зона ям: 3 колонки × 4 ряда = 12 мест, между ними дорожки шириной ~10 стадов.
   const PIT_COLS = [-36, -62, -88], PIT_ROWS = [-39, -13, 13, 39];
+  // [название, подпись, текстура стенок, цвет кристаллов/обода, цвет таблички, светится?, открыта?]
   const PIT_DEF = [
-    ['Землянка', 'открыта · +1 сила', TX.dirt, 'open'], ['Угольная', '🔒 2 перерождения', TX.levels[2].map], ['Каменная', '🔒 5 перерождений', TX.stoneBrick],
-    ['Железная', '🔒 10 перерождений', TX.levels[5].map], ['Золотая', '🔒 20 перерождений', TX.levels[6].map], ['Алмазная', '🔒 40 перерождений', TX.levels[8].map]];
+    ['Землянка', 'открыта · +1 сила', TX.dirt, 0xb07a45, '#6b4426', false, true],
+    ['Угольная', '🔒 2 перерождения', TX.levels[2].map, 0x50545f, '#2a2c33', false],
+    ['Каменная', '🔒 5 перерождений', TX.stoneBrick, 0xc3c9d4, '#5d6475', false],
+    ['Железная', '🔒 10 перерождений', TX.levels[5].map, 0xf3e6d8, '#7d8699', true],
+    ['Золотая', '🔒 20 перерождений', TX.levels[6].map, 0xffc72e, '#a87400', true],
+    ['Алмазная', '🔒 40 перерождений', TX.levels[8].map, 0x5ee7ff, '#137f99', true]];
   const PITS = [];
   PIT_COLS.forEach((x, c) => PIT_ROWS.forEach((z, r) => {
     const d = PIT_DEF[c * 4 + r];
-    PITS.push(d ? { x, z, name: d[0], sub: d[1], tex: d[2], open: d[3] === 'open' } : { x, z, name: 'Новая яма', sub: 'свободное место', tex: TX.darkFloor, empty: true });
+    PITS.push(d ? { x, z, name: d[0], sub: d[1], tex: d[2], col: d[3], bg: d[4], shiny: d[5], open: !!d[6] } : { x, z, name: 'Новая яма', sub: 'свободное место', tex: TX.darkFloor, col: 0x3a3f55, bg: '#2f3448', empty: true });
   }));
   const PR = 6.5;
   for (const p of PITS) { const hole = new THREE.Path(); hole.absarc(p.x, -p.z, PR, 0, Math.PI * 2, true); shape.holes.push(hole); }
@@ -385,14 +390,8 @@ function buildHub() {
   tbox(4.5, 23, 5, TX.stoneBrick, 4, -11, 11.5, 0, ent); tbox(4.5, 23, 5, TX.stoneBrick, 4, 11, 11.5, 0, ent);
   tbox(27, 4.5, 5.4, TX.stoneBrick, 4, 0, 21.5, 0, ent);
   box(28, 1, 6, std(0x5f636d), 0, .5, 0, ent);
-  portalMat = new THREE.ShaderMaterial({ uniforms: { t: { value: 0 } }, transparent: false,
-    vertexShader: 'varying vec2 vUv; void main(){ vUv=uv; gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.); }',
-    fragmentShader: `uniform float t; varying vec2 vUv;
-      void main(){ vec2 p=vUv-vec2(.5,.42); p.x*=1.1; float r=length(p); float a=atan(p.y,p.x);
-        float sw=sin(a*5.+r*28.-t*4.)*.5+.5; vec3 c=mix(vec3(.29,.11,.66),vec3(.75,.3,1.),sw*smoothstep(.75,.0,r));
-        c=mix(c,vec3(1.,.75,1.),smoothstep(.22,.0,r)); gl_FragColor=vec4(c*1.25,1.); }` });
-  const portal = new THREE.Mesh(new THREE.PlaneGeometry(17.5, 19), portalMat); portal.position.set(0, 9.6, -.5); ent.add(portal);
-  const pl = new THREE.PointLight(0xc66bff, 120, 40, 1.4); pl.position.set(0, 9, 6); ent.add(pl);
+  // портала нет: через арку сразу виден коридор и первая стена уровня 1
+  const pl = new THREE.PointLight(0xffb060, 80, 40, 1.4); pl.position.set(0, 9, 4); ent.add(pl);
   crystalCluster(-11, 23.5, 1, 0xc66bff, ent); crystalCluster(11, 23.5, 1, 0xc66bff, ent);
   crystal(-13.6, 6, 2.6, 0xc66bff, .9, ent); crystal(13.6, 6, 2.6, 0xc66bff, .9, ent);
   const es = sign({ w: 18, h: 6, title: 'УРОВНИ', sub: '10 стен · проходи по порядку', icon: 'btn_levels' }); es.position.set(0, 27.5, 2.9); ent.add(es);
@@ -446,11 +445,14 @@ function buildHub() {
   for (const z of [-26, 0, 26]) box(-20 - XL - 2, .12, 6, pathMat(-20 - XL, 6), (XL - 20) / 2, .07, z, scene, false);
   PITS.forEach((p, i) => {
     const g = new THREE.Group(); g.position.set(p.x, 0, p.z); scene.add(g);
-    const wall = new THREE.Mesh(new THREE.CylinderGeometry(PR, PR, 6, 40, 1, true), texMat(TX.stoneBrick, 6, 1.5, { side: THREE.BackSide })); wall.position.y = -3; wall.receiveShadow = true; g.add(wall);
+    const wall = new THREE.Mesh(new THREE.CylinderGeometry(PR, PR, 6, 40, 1, true), texMat(p.empty ? TX.stoneBrick : p.tex, 10, 1.5, { side: THREE.BackSide })); wall.position.y = -3; wall.receiveShadow = true; g.add(wall);
     const bottom = new THREE.Mesh(new THREE.CircleGeometry(PR, 40), texMat(p.tex, 3, 3)); bottom.rotation.x = -Math.PI / 2; bottom.position.y = -5.9; bottom.receiveShadow = true; g.add(bottom);
-    const col = p.open ? 0xc66bff : p.empty ? 0x3a3f55 : 0x6a6f86;
-    if (!p.empty) for (let k = 0; k < 7; k++) { const a = k / 7 * Math.PI * 2; crystal(Math.cos(a) * (PR - .9), -5.2, Math.sin(a) * (PR - .9), col, .7, g); }
-    const rim = new THREE.Mesh(new THREE.TorusGeometry(PR, .35, 8, 48), glow(p.open ? 0xc66bff : 0x777c94, p.open ? 1.6 : .3)); rim.rotation.x = Math.PI / 2; rim.position.y = .1; g.add(rim);
+    const col = p.col;
+    if (!p.empty) for (let k = 0; k < 7; k++) { const a = k / 7 * Math.PI * 2; const c = crystal(Math.cos(a) * (PR - .9), -5.2, Math.sin(a) * (PR - .9), col, .7, g); if (!p.shiny) { c.material = std(col, { roughness: .4 }); } }
+    // цветное кольцо-бортик вокруг ямы в цвет материала
+    const ring = new THREE.Mesh(new THREE.RingGeometry(PR, PR + 1.1, 48), p.empty ? std(0x4a4f66) : texMat(p.tex, 2, 2, { emissive: p.shiny ? col : 0, emissiveIntensity: .25 }));
+    ring.rotation.x = -Math.PI / 2; ring.position.y = .09; ring.receiveShadow = true; g.add(ring);
+    const rim = new THREE.Mesh(new THREE.TorusGeometry(PR, .35, 8, 48), p.empty ? std(0x555a70) : glow(col, p.shiny ? 1.8 : .7)); rim.rotation.x = Math.PI / 2; rim.position.y = .1; g.add(rim);
     // направление к центру зала: табличка смотрит туда, вход в забор — тоже
     const dx = -p.x, dz = -p.z * .5, phi = Math.atan2(dz, dx);
     // забор из столбиков и перекладин, проход со стороны центра
@@ -465,10 +467,10 @@ function buildHub() {
     // табличка позади ямы (с дальней от центра стороны), развёрнута к центру
     const sg = new THREE.Group(); g.add(sg);
     sg.position.set(-Math.cos(phi) * (PR + 2.2), 0, -Math.sin(phi) * (PR + 2.2)); sg.rotation.y = Math.atan2(Math.cos(phi), Math.sin(phi));
-    const s = sign({ w: 10, h: 3.6, title: p.name, sub: p.sub, icon: p.open ? 'stat_strength' : p.empty ? null : 'btn_lock', bg: p.open ? '#7a3cff' : p.empty ? '#2f3448' : '#4a4f66' });
+    const s = sign({ w: 10, h: 3.6, title: p.name, sub: p.sub, icon: p.open ? 'stat_strength' : p.empty ? null : 'btn_lock', bg: p.bg });
     s.position.set(0, 6.8, 0); sg.add(s);
     box(.5, 5, .5, std(0x6b3f1d), -2.5, 2.5, -.6, sg); box(.5, 5, .5, std(0x6b3f1d), 2.5, 2.5, -.6, sg);
-    if (!p.open && !p.empty) { const f = new THREE.Mesh(new THREE.CylinderGeometry(PR + .6, PR + .6, 5, 40, 1, true), new THREE.MeshBasicMaterial({ color: 0xa65bff, transparent: true, opacity: .16, side: THREE.DoubleSide, depthWrite: false })); f.position.y = 2.5; g.add(f); }
+    if (!p.open && !p.empty) { const f = new THREE.Mesh(new THREE.CylinderGeometry(PR + .6, PR + .6, 5, 40, 1, true), new THREE.MeshBasicMaterial({ color: p.col, transparent: true, opacity: .14, side: THREE.DoubleSide, depthWrite: false })); f.position.y = 2.5; g.add(f); }
   });
 
   // ===== Яйца (юг, напротив входа в уровни) =====
@@ -549,7 +551,6 @@ function buildLevels() {
     const back = sign({ w: 8, h: 3, title: 'В лобби', icon: 'btn_lobby', bg: '#1f9e4a' }); back.position.set(24.9, 9.5, nicheZ); back.rotation.y = -Math.PI / 2; g.add(back);
     crystalCluster(24, 0, nicheZ + 6, 0x5ee7ff, g); crystalCluster(24, 0, nicheZ - 6, 0x5ee7ff, g);
     // проход дальше (после 10-й стены) — светящаяся арка
-    if (L < 9) { const a = new THREE.Mesh(new THREE.TorusGeometry(9, .35, 8, 32, Math.PI), glow(0xffe14d, 1.4)); a.position.set(0, 0, z0 - len + .5); g.add(a); }
   }
   // внешние террасы вдоль линии уровней
   const r = rng(5);
@@ -590,7 +591,6 @@ function toast(text, icon, y, alpha, scale = 1) {
 }
 
 function setScene(t, still) {
-  portalMat.uniforms.t.value = t;
   // яйца крутятся
   scene.traverse((o) => { if (o.userData && o.userData.spin != null) { o.rotation.y = t * .8 + o.userData.spin; o.position.y = 5.2 + Math.sin(t * 2 + o.userData.spin) * .35; } });
   trophyObjs.forEach((o, i) => { o.tro.position.y = o.baseY + Math.sin(t * 2.5 + i) * .3; });
@@ -662,7 +662,7 @@ function setScene(t, still) {
   levelSigns.forEach((s) => s.visible = t > 22);
   if (t > 25.4) { title = true; hudOn = false; }
 
-  if (t > 10.0 && t < 10.9) fade = 1 - Math.abs(t - 10.45) / .45;
+
   return { t, wins, strength, layerDone, toasts, showLvl, fade, title, hudOn, focus: t < 10.4 ? new THREE.Vector3(0, 0, 0) : new THREE.Vector3(px, 0, pz - 10) };
 }
 
