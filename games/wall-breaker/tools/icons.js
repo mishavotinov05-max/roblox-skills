@@ -301,62 +301,184 @@ function donate() {
           <path d="M196 46 V78 M180 62 H212" stroke="${OL}" stroke-width="9" stroke-linecap="round"/>`;
 }
 
-// ---------- Список иконок ----------
-// group: hud — кнопки с фоном-плиткой; item — предметы без фона
+// ---------- Стиль v2 (как на референсе): объёмные плитки с цветной рамкой ----------
 
-const T = {
-  shop: ['#ff7aa8', '#e8336d'], pets: ['#c79bff', '#7a3cff'], auras: ['#ff9f43', '#ff3d3d'],
-  rebirth: ['#5ee7ff', '#1f7bff'], wheel: ['#ffe46b', '#ff9e1f'], daily: ['#ff9de0', '#d63cff'],
-  settings: ['#b8c4dc', '#5f6c8a'], levels: ['#9d8cff', '#4b3bd6'], lobby: ['#7cf0a8', '#1fae5b'],
-  cart: ['#ffd27a', '#e07b1f'], trade: ['#7ef0ce', '#1fae8f'], close: ['#ff7a7a', '#d62828'],
-  inventory: ['#ffcf8a', '#d67b2a'], quests: ['#9be8ff', '#2c95e0'], lock: ['#bfc6d8', '#6b7590'],
-  robux: ['#9ff2b8', '#22a85a'],
+function tile2(rimA, rimB, inA, inB) {
+  const r = grad(rimA, rimB), i = grad(inA, inB);
+  return {
+    defs: r.def + i.def,
+    body: `<rect x="8" y="8" width="240" height="240" rx="58" fill="url(#${r.id})" stroke="${OL}" stroke-width="8"/>
+      <rect x="62" y="13" width="132" height="10" rx="5" fill="#fff" opacity=".4"/>
+      <rect x="26" y="26" width="204" height="204" rx="42" fill="url(#${i.id})" stroke="${OL}" stroke-opacity=".35" stroke-width="5"/>
+      <path d="M30 70 Q30 30 70 30 H186 Q226 30 226 70 V88 Q128 66 30 98Z" fill="#fff" opacity=".2"/>
+      <ellipse cx="128" cy="214" rx="80" ry="10" fill="#000" opacity=".18"/>`,
+  };
+}
+const TILE = {
+  shop: ['#ffc15e', '#ff4b2b', '#ff7a52', '#c4213b'],
+  pets: ['#8fdcff', '#1d6fe0', '#45aaff', '#1846b0'],
+  auras: ['#e1a2ff', '#7a2cff', '#6f34dc', '#2a0d6e'],
+  rebirth: ['#ffffff', '#c3cde2', '#ffffff', '#e0e7f4'],
+  green: ['#a6f7c0', '#1fae5b', '#41d17a', '#14803f'],
+  red: ['#ffa3a3', '#d62828', '#ff5e5e', '#a31515'],
+  gray: ['#e2e7f2', '#6b7590', '#aab4cc', '#5d6782'],
+  violet: ['#c5b8ff', '#4b3bd6', '#7a68ff', '#3424a8'],
+  teal: ['#a8fbe6', '#139f80', '#3fdcb5', '#0f7a62'],
+  orange: ['#ffe0a3', '#e07b1f', '#ffb04d', '#b35a0f'],
 };
-
-function withTile(name, sym, scale = 0.78) {
-  const t = tile(...T[name]);
-  return `<defs>${t.defs}</defs>${t.body}<g transform="translate(128 128) scale(${scale}) translate(-128 -128)">${sym}</g>`;
+function withTile2(set, sym, scale = 0.8) {
+  const t = tile2(...TILE[set]);
+  return `<defs>${t.defs}</defs>${t.body}<g transform="translate(128 124) scale(${scale}) translate(-128 -128)">${sym}</g>`;
 }
 
+function shop2() {
+  const red = grad('#ff6b6b', '#d0182c'), wht = grad('#ffffff', '#dfe3f0'), wall = grad('#ffffff', '#cfe0ff'), blue = grad('#6fd0ff', '#1d6fe0');
+  let stripes = '';
+  for (let i = 0; i < 5; i++) {
+    const x = 34 + i * 37.6;
+    stripes += `<path d="M${x} 74 h37.6 v40 a18.8 18.8 0 0 1 -37.6 0Z" fill="url(#${i % 2 ? wht.id : red.id})" stroke="${OL}" stroke-width="7"/>`;
+  }
+  return `<defs>${red.def}${wht.def}${wall.def}${blue.def}</defs>
+    <rect x="50" y="104" width="156" height="112" rx="10" fill="url(#${wall.id})" stroke="${OL}" stroke-width="${SW}"/>
+    <rect x="68" y="134" width="50" height="40" rx="8" fill="url(#${blue.id})" stroke="${OL}" stroke-width="7"/>
+    <path d="M74 140 h18 l-14 20" fill="none" stroke="#fff" stroke-width="5" opacity=".7"/>
+    <rect x="134" y="130" width="54" height="86" rx="8" fill="url(#${blue.id})" stroke="${OL}" stroke-width="7"/>
+    <rect x="143" y="140" width="36" height="30" rx="5" fill="#bfe8ff" opacity=".8"/>
+    <path d="M28 80 L56 40 H200 L228 80Z" fill="url(#${red.id})" stroke="${OL}" stroke-width="8" stroke-linejoin="round"/>
+    <path d="M60 50 H196" stroke="#fff" stroke-width="6" stroke-linecap="round" opacity=".5"/>
+    ${stripes}`;
+}
+
+function paw2() {
+  const g = grad('#ffffff', '#b8dcff');
+  const pad = (attrs) => `<path d="M128 132 C 92 132 62 168 66 196 C 70 222 100 214 128 210 C 156 214 186 222 190 196 C 194 168 164 132 128 132Z" ${attrs}/>
+    <ellipse cx="70" cy="112" rx="22" ry="28" transform="rotate(-25 70 112)" ${attrs}/>
+    <ellipse cx="106" cy="74" rx="22" ry="29" transform="rotate(-8 106 74)" ${attrs}/>
+    <ellipse cx="150" cy="74" rx="22" ry="29" transform="rotate(8 150 74)" ${attrs}/>
+    <ellipse cx="186" cy="112" rx="22" ry="28" transform="rotate(25 186 112)" ${attrs}/>`;
+  return `<defs>${g.def}</defs>${pad(`fill="url(#${g.id})" stroke="${OL}" stroke-width="${SW}"`)}
+    ${shine(100, 66, 6, 11, -8)}${shine(144, 66, 6, 11, 8)}${shine(110, 160, 16, 8, -10)}`;
+}
+
+function flame2() {
+  const o = grad('#f6c4ff', '#8a2cff'), i = grad('#ffffff', '#e8a8ff');
+  return `<defs>${o.def}${i.def}</defs>
+    <path d="M128 230 C 70 230 44 188 52 146 C 58 114 82 98 88 66 C 108 84 112 102 110 116 C 120 90 134 58 128 24 C 174 50 206 104 206 152 C 206 198 176 230 128 230Z"
+      fill="url(#${o.id})" stroke="${OL}" stroke-width="${SW}" stroke-linejoin="round"/>
+    <path d="M128 216 C 98 216 86 194 92 172 C 96 158 108 150 112 134 C 122 146 124 156 122 166 C 134 152 142 138 140 118 C 162 136 170 158 168 178 C 166 202 150 216 128 216Z"
+      fill="url(#${i.id})" stroke="${OL}" stroke-width="6" stroke-linejoin="round"/>
+    ${shine(84, 150, 8, 18, 20)}`;
+}
+
+function rebirth2() {
+  const arc = (d) => `<path d="${d}" fill="none" stroke="${OL}" stroke-width="44" stroke-linecap="round"/>
+                      <path d="${d}" fill="none" stroke="#e8202a" stroke-width="28" stroke-linecap="round"/>
+                      <path d="${d}" fill="none" stroke="#ff7a7a" stroke-width="8" stroke-linecap="round" transform="translate(0 -6)" opacity=".8"/>`;
+  return `${arc('M60 120 A 70 70 0 0 1 172 72')}${arc('M196 136 A 70 70 0 0 1 84 184')}
+    <path d="M146 40 L216 56 L184 118Z" fill="#e8202a" stroke="${OL}" stroke-width="9" stroke-linejoin="round"/>
+    <path d="M110 216 L40 200 L72 138Z" fill="#e8202a" stroke="${OL}" stroke-width="9" stroke-linejoin="round"/>`;
+}
+
+function cart2() {
+  const b = grad('#6fd0ff', '#1d56c8'), w = grad('#ff7a5a', '#a8281c');
+  return `<defs>${b.def}${w.def}</defs>
+    <path d="M30 70 H226 L204 176 H52Z" fill="url(#${b.id})" stroke="${OL}" stroke-width="${SW}" stroke-linejoin="round"/>
+    <path d="M30 70 H226 L218 104 H38Z" fill="#0f2f7a" stroke="${OL}" stroke-width="8" stroke-linejoin="round"/>
+    <rect x="24" y="58" width="208" height="22" rx="8" fill="#9fe0ff" stroke="${OL}" stroke-width="8"/>
+    <path d="M70 128 H186" stroke="#fff" stroke-width="6" stroke-linecap="round" opacity=".45"/>
+    <rect x="44" y="172" width="168" height="14" rx="5" fill="#8a4b2a" stroke="${OL}" stroke-width="7"/>
+    <circle cx="82" cy="198" r="26" fill="url(#${w.id})" stroke="${OL}" stroke-width="${SW}"/><circle cx="82" cy="198" r="9" fill="#ffd9a8" stroke="${OL}" stroke-width="5"/>
+    <circle cx="174" cy="198" r="26" fill="url(#${w.id})" stroke="${OL}" stroke-width="${SW}"/><circle cx="174" cy="198" r="9" fill="#ffd9a8" stroke="${OL}" stroke-width="5"/>`;
+}
+
+function gift2() {
+  const r = grad('#ff6b6b', '#c4142a'), y = grad('#fff27a', '#ffae00');
+  return `<defs>${r.def}${y.def}</defs>
+    <rect x="46" y="114" width="164" height="108" rx="12" fill="url(#${r.id})" stroke="${OL}" stroke-width="${SW}"/>
+    <rect x="34" y="82" width="188" height="42" rx="12" fill="url(#${r.id})" stroke="${OL}" stroke-width="${SW}"/>
+    <rect x="110" y="82" width="36" height="140" fill="url(#${y.id})" stroke="${OL}" stroke-width="8"/>
+    <path d="M128 82 C 96 32 54 42 66 72 C 74 88 110 86 128 82Z" fill="url(#${y.id})" stroke="${OL}" stroke-width="8" stroke-linejoin="round"/>
+    <path d="M128 82 C 160 32 202 42 190 72 C 182 88 146 86 128 82Z" fill="url(#${y.id})" stroke="${OL}" stroke-width="8" stroke-linejoin="round"/>
+    ${shine(70, 140, 8, 16, 0)}${shine(60, 96, 10, 5, 0)}`;
+}
+
+function calendar2() {
+  const r = grad('#ff6b6b', '#c4142a'), p = grad('#ffffff', '#dfe5f2');
+  let grid = '';
+  for (let y = 0; y < 3; y++) for (let x = 0; x < 4; x++) grid += `<rect x="${58 + x * 36}" y="${118 + y * 30}" width="24" height="18" rx="4" fill="#c9d1e3"/>`;
+  return `<defs>${r.def}${p.def}</defs>
+    <rect x="38" y="52" width="180" height="176" rx="18" fill="url(#${p.id})" stroke="${OL}" stroke-width="${SW}"/>
+    <path d="M38 70 Q38 52 56 52 H200 Q218 52 218 70 V100 H38Z" fill="url(#${r.id})" stroke="${OL}" stroke-width="${SW}" stroke-linejoin="round"/>
+    <rect x="72" y="30" width="18" height="44" rx="9" fill="#dfe5f2" stroke="${OL}" stroke-width="8"/>
+    <rect x="166" y="30" width="18" height="44" rx="9" fill="#dfe5f2" stroke="${OL}" stroke-width="8"/>
+    ${grid}
+    <path d="M86 168 L118 198 L180 126" fill="none" stroke="${OL}" stroke-width="34" stroke-linecap="round" stroke-linejoin="round"/>
+    <path d="M86 168 L118 198 L180 126" fill="none" stroke="#e8202a" stroke-width="18" stroke-linecap="round" stroke-linejoin="round"/>`;
+}
+
+function gear2() {
+  const g = grad('#ffffff', '#8d9bb8');
+  const cx = 128, cy = 128, n = 8, ro = 104, ri = 80;
+  let d = '';
+  for (let k = 0; k < n; k++) {
+    const a = (k / n) * Math.PI * 2;
+    for (const [da, r] of [[-0.26, ri], [-0.15, ro], [0.15, ro], [0.26, ri]]) {
+      d += `${d ? 'L' : 'M'}${(cx + r * Math.cos(a + da)).toFixed(1)} ${(cy + r * Math.sin(a + da)).toFixed(1)} `;
+    }
+  }
+  return `<defs>${g.def}</defs><path d="${d}Z" fill="url(#${g.id})" stroke="${OL}" stroke-width="${SW}" stroke-linejoin="round"/>
+    <circle cx="${cx}" cy="${cy}" r="38" fill="#3b4663" stroke="${OL}" stroke-width="${SW}"/>
+    <circle cx="${cx}" cy="${cy}" r="58" fill="none" stroke="#fff" stroke-width="5" opacity=".4"/>
+    ${shine(92, 70, 16, 8, -35)}`;
+}
+
+function wheel2() {
+  return `<circle cx="128" cy="128" r="122" fill="#7a2cff" stroke="${OL}" stroke-width="8"/>
+          <circle cx="128" cy="128" r="110" fill="#b26bff"/>
+          <g transform="translate(0 -8)">${wheel()}</g>`;
+}
+
+// ---------- Список иконок ----------
+// hud  — плитки 2×2 слева (подпись делается TextLabel в игре, чтобы её можно было менять)
+// bar  — нижний ряд кнопок без фона
+// tile — прочие кнопки-плитки
 export const ICONS = [
-  // --- Кнопки HUD (2×2 слева и верхние справа) ---
-  { group: 'hud', name: 'btn_shop', label: 'Магазин', svg: () => withTile('shop', shop()) },
-  { group: 'hud', name: 'btn_pets', label: 'Питомцы', svg: () => withTile('pets', paw()) },
-  { group: 'hud', name: 'btn_auras', label: 'Ауры', svg: () => withTile('auras', flame()) },
-  { group: 'hud', name: 'btn_rebirth', label: 'Перерождение', svg: () => withTile('rebirth', rebirth()) },
-  { group: 'hud', name: 'btn_wheel', label: 'Колесо удачи', svg: () => withTile('wheel', wheel(), 0.82) },
-  { group: 'hud', name: 'btn_daily', label: 'Ежедн. награды', svg: () => withTile('daily', gift()) },
-  { group: 'hud', name: 'btn_settings', label: 'Настройки', svg: () => withTile('settings', gear()) },
-  { group: 'hud', name: 'btn_inventory', label: 'Инвентарь', svg: () => withTile('inventory', inventory()) },
-  { group: 'hud', name: 'btn_quests', label: 'Задания', svg: () => withTile('quests', quest()) },
-  { group: 'hud', name: 'btn_levels', label: 'Уровни', svg: () => withTile('levels', crossedPickaxes(), 0.72) },
-  { group: 'hud', name: 'btn_lobby', label: 'В лобби', svg: () => withTile('lobby', house()) },
-  { group: 'hud', name: 'btn_back', label: 'Назад', svg: () => withTile('lobby', backArrow()) },
-  { group: 'hud', name: 'btn_cart', label: 'Вагонетка', svg: () => withTile('cart', minecart()) },
-  { group: 'hud', name: 'btn_trade', label: 'Торговец', svg: () => withTile('trade', merchant()) },
-  { group: 'hud', name: 'btn_close', label: 'Закрыть', svg: () => withTile('close', close(), 0.7) },
-  { group: 'hud', name: 'btn_lock', label: 'Закрыто', svg: () => withTile('lock', lock()) },
-  { group: 'hud', name: 'btn_donate', label: 'Донат', svg: () => withTile('robux', donate()) },
+  { group: 'hud', name: 'btn_shop', label: 'Магазин', svg: () => withTile2('shop', shop2(), .84) },
+  { group: 'hud', name: 'btn_pets', label: 'Питомцы', svg: () => withTile2('pets', paw2()) },
+  { group: 'hud', name: 'btn_auras', label: 'Ауры', svg: () => withTile2('auras', flame2()) },
+  { group: 'hud', name: 'btn_rebirth', label: 'Перерождение', svg: () => withTile2('rebirth', rebirth2()) },
+  { group: 'hud', name: 'btn_wheel', label: 'Колесо Фортуны', svg: () => wheel2() },
 
-  // --- Статы (без фона, прозрачные) ---
-  { group: 'stat', name: 'stat_wins', label: 'Победы', svg: () => trophy() },
-  { group: 'stat', name: 'stat_strength', label: 'Сила', svg: () => bicep() },
+  { group: 'bar', name: 'bar_carts', label: 'Вагонетки', svg: () => cart2() },
+  { group: 'bar', name: 'bar_achievements', label: 'Достижения', svg: () => trophy() },
+  { group: 'bar', name: 'bar_rewards', label: 'Награды', svg: () => gift2() },
+  { group: 'bar', name: 'bar_daily', label: 'Ежедневные задания', svg: () => calendar2() },
+  { group: 'bar', name: 'bar_settings', label: 'Настройки', svg: () => gear2() },
+
+  { group: 'tile', name: 'btn_inventory', label: 'Инвентарь', svg: () => withTile2('orange', inventory()) },
+  { group: 'tile', name: 'btn_levels', label: 'Уровни', svg: () => withTile2('violet', crossedPickaxes(), .74) },
+  { group: 'tile', name: 'btn_lobby', label: 'В лобби', svg: () => withTile2('green', house()) },
+  { group: 'tile', name: 'btn_back', label: 'Назад', svg: () => withTile2('green', backArrow()) },
+  { group: 'tile', name: 'btn_trade', label: 'Торговец', svg: () => withTile2('teal', merchant()) },
+  { group: 'tile', name: 'btn_close', label: 'Закрыть', svg: () => withTile2('red', close(), .7) },
+  { group: 'tile', name: 'btn_lock', label: 'Закрыто', svg: () => withTile2('gray', lock()) },
+  { group: 'tile', name: 'btn_donate', label: 'Донат', svg: () => withTile2('green', donate()) },
+
+  { group: 'stat', name: 'stat_strength', label: 'Сила', svg: () => pickaxe('#fff27a', '#ffae00', '#8a5428') },
   { group: 'stat', name: 'stat_luck', label: 'Удача', svg: () => clover() },
+  { group: 'stat', name: 'stat_wins', label: 'Победы', svg: () => trophy() },
 
-  // --- Геймпассы ---
   { group: 'pass', name: 'pass_wins_x3', label: '×3 Победы', svg: () => `<g transform="translate(0 -16)">${trophy()}</g>${textBadge('x3', '#ffe14d', 76, 236)}` },
   { group: 'pass', name: 'pass_strength_x2', label: '×2 Сила', svg: () => `<g transform="translate(0 -16)">${bicep()}</g>${textBadge('x2', '#ff8a3d', 76, 236)}` },
   { group: 'pass', name: 'pass_luck_x2', label: '×2 Удача', svg: () => `<g transform="translate(0 -16)">${clover()}</g>${textBadge('x2', '#3ddc84', 76, 236)}` },
   { group: 'pass', name: 'pass_auto_click', label: 'Автоклик', svg: () => `<g transform="translate(0 -12) scale(.9) translate(14 0)">${pickaxe('#8af3ff', '#2f9bff')}</g>${textBadge('AUTO', '#5ee7ff', 54, 232)}` },
 
-  // --- Руды ---
   { group: 'ore', name: 'ore_coal', label: 'Уголь', svg: () => oreRock('#8d93a3', '#565b6b', '#3a3d48', '#111218') },
   { group: 'ore', name: 'ore_iron', label: 'Железо', svg: () => oreRock('#9aa1b2', '#5d6475', '#ffe2c8', '#d29a72') },
   { group: 'ore', name: 'ore_gold', label: 'Золото', svg: () => oreRock('#9aa1b2', '#5d6475', '#fff27a', '#ffae00') },
   { group: 'ore', name: 'ore_emerald', label: 'Изумруд', svg: () => gem('#8affb8', '#22c76a', '#11843f') },
   { group: 'ore', name: 'ore_ruby', label: 'Рубин', svg: () => gem('#ff9aa8', '#ef2b4a', '#a3122a') },
 
-  // --- Яйца ---
   { group: 'egg', name: 'egg_common', label: 'Обычное', svg: () => egg('#f2f8ff', '#a9c8ff', '#5aa9ff') },
   { group: 'egg', name: 'egg_rare', label: 'Редкое', svg: () => egg('#fff27a', '#ff9e1f', '#ff6a00') },
   { group: 'egg', name: 'egg_epic', label: 'Эпическое', svg: () => egg('#f0a6ff', '#9a3cff', '#5d1fcc', sparkles('#ffd6ff')) },

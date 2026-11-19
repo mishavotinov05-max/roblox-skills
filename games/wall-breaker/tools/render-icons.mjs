@@ -32,7 +32,7 @@ for (const ic of ICONS) {
 }
 
 // Лист-превью всех иконок
-const groups = [['hud', 'Кнопки интерфейса'], ['stat', 'Показатели'], ['pass', 'Геймпассы (донат)'], ['pick', 'Кирки'], ['ore', 'Руды'], ['egg', 'Яйца']];
+const groups = [['hud', 'Главные кнопки (слева 2×2) и колесо'], ['bar', 'Нижний ряд кнопок'], ['tile', 'Прочие кнопки'], ['stat', 'Показатели'], ['pass', 'Геймпассы (донат)'], ['pick', 'Кирки'], ['ore', 'Руды'], ['egg', 'Яйца']];
 const sheet = groups.map(([g, title]) => `<h2>${title}</h2><div class="row">` + ICONS.filter((i) => i.group === g).map((ic) =>
   `<figure><svg viewBox="0 0 256 256" width="128" height="128">${ic.svg()}</svg><figcaption>${ic.label}</figcaption></figure>`).join('') + '</div>').join('');
 await page.setViewportSize({ width: 1400, height: 800 });

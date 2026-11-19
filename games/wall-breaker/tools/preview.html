@@ -14,23 +14,26 @@
   #hud, #labels, #fade, #title { position: absolute; inset: 0; pointer-events: none; }
   .stroke { color: #fff; text-shadow: -2px -2px 0 #1a1033, 2px -2px 0 #1a1033, -2px 2px 0 #1a1033, 2px 2px 0 #1a1033, 0 3px 0 #1a1033, 0 4px 6px rgba(0,0,0,.4); }
   /* 2×2 кнопки слева */
-  #grid { position: absolute; left: 18px; top: 150px; display: grid; grid-template-columns: 74px 74px; gap: 6px 8px; }
-  .btn { display: flex; flex-direction: column; align-items: center; }
-  .btn img { width: 66px; height: 66px; filter: drop-shadow(0 3px 0 rgba(0,0,0,.35)); }
-  .btn span { font-size: 11px; margin-top: -2px; }
-  /* показатели — прозрачный фон */
-  #stats { position: absolute; left: 20px; top: 318px; display: flex; flex-direction: column; gap: 4px; }
-  .stat { display: flex; align-items: center; gap: 6px; font-size: 24px; }
-  .stat img { width: 38px; height: 38px; }
-  /* верхний правый угол */
-  #topright { position: absolute; right: 16px; top: 12px; display: flex; gap: 10px; align-items: flex-start; }
-  #topright .btn img { width: 56px; height: 56px; }
-  #topright .wheel img { width: 78px; height: 78px; }
-  #topright .wheel span { font-size: 12px; }
-  #topright .wheel img { animation: none; }
-  /* нижняя полоса силы */
-  #bottom { position: absolute; left: 50%; bottom: 18px; transform: translateX(-50%); display: flex; align-items: center; gap: 8px; font-size: 26px; }
-  #bottom img { width: 44px; height: 44px; }
+  /* 2×2 главные кнопки слева: подпись наложена на низ плитки */
+  #grid { position: absolute; left: 22px; top: 96px; display: grid; grid-template-columns: 104px 104px; gap: 14px 10px; }
+  .tile { position: relative; width: 104px; height: 104px; }
+  .tile img { width: 104px; height: 104px; filter: drop-shadow(0 4px 0 rgba(0,0,0,.35)); }
+  .tile span { position: absolute; left: 50%; bottom: -4px; transform: translateX(-50%); font-size: 17px; white-space: nowrap; }
+  .tile span.sm { font-size: 13px; bottom: -1px; }
+  /* показатели — без фона */
+  #stats { position: absolute; left: 22px; top: 352px; display: flex; flex-direction: column; gap: 6px; }
+  .stat { display: flex; align-items: center; gap: 10px; font-size: 27px; }
+  .stat img { width: 50px; height: 50px; }
+  /* колесо фортуны справа сверху */
+  #wheel { position: absolute; right: 18px; top: 12px; display: flex; align-items: center; }
+  #wheel .pill { background: linear-gradient(#8a3cff, #4b1ca8); border: 4px solid #1a1033; border-left: none; border-radius: 0 18px 18px 0; padding: 6px 18px 6px 24px; margin-left: -18px; font-size: 21px; line-height: 1.1; text-align: center; box-shadow: inset 0 3px 0 rgba(255,255,255,.25); }
+  #wheel img { width: 96px; height: 96px; position: relative; z-index: 1; }
+  #wheel .badge { position: absolute; left: 70px; top: -2px; width: 28px; height: 28px; border-radius: 50%; background: #ff2b3a; border: 3px solid #fff; color: #fff; font-size: 18px; text-align: center; line-height: 27px; z-index: 2; }
+  /* нижний ряд кнопок */
+  #bar { position: absolute; left: 50%; bottom: 10px; transform: translateX(-50%); display: flex; gap: 16px; align-items: flex-end; }
+  .bb { display: flex; flex-direction: column; align-items: center; width: 92px; }
+  .bb img { width: 70px; height: 70px; filter: drop-shadow(0 4px 0 rgba(0,0,0,.35)); }
+  .bb span { font-size: 14px; text-align: center; line-height: 1.05; margin-top: -4px; }
   #jump { position: absolute; right: 40px; bottom: 40px; width: 84px; height: 84px; border-radius: 50%; background: rgba(30,20,60,.35); border: 3px solid rgba(255,255,255,.55); }
   #jump::after { content: ''; position: absolute; left: 27px; top: 22px; border: 15px solid transparent; border-bottom: 22px solid rgba(255,255,255,.85); }
   /* панель уровня */
@@ -56,22 +59,24 @@
 <body>
 <div id="hud">
   <div id="grid">
-    <div class="btn stroke"><img src="http://wb.local/icons/btn_shop.png"><span>Магазин</span></div>
-    <div class="btn stroke"><img src="http://wb.local/icons/btn_pets.png"><span>Питомцы</span></div>
-    <div class="btn stroke"><img src="http://wb.local/icons/btn_auras.png"><span>Ауры</span></div>
-    <div class="btn stroke"><img src="http://wb.local/icons/btn_rebirth.png"><span>Перерождение</span></div>
+    <div class="tile stroke"><img src="http://wb.local/icons/btn_shop.png"><span>Магазин</span></div>
+    <div class="tile stroke"><img src="http://wb.local/icons/btn_pets.png"><span>Питомцы</span></div>
+    <div class="tile stroke"><img src="http://wb.local/icons/btn_auras.png"><span>Ауры</span></div>
+    <div class="tile stroke"><img src="http://wb.local/icons/btn_rebirth.png"><span class="sm">Перерождение</span></div>
   </div>
   <div id="stats">
-    <div class="stat stroke"><img src="http://wb.local/icons/stat_wins.png"><span id="sWins">7</span></div>
-    <div class="stat stroke"><img src="http://wb.local/icons/stat_strength.png"><span id="sStr">3.19K</span></div>
-    <div class="stat stroke"><img src="http://wb.local/icons/stat_luck.png"><span id="sLuck">0</span></div>
+    <div class="stat stroke"><img src="http://wb.local/icons/stat_strength.png"><span>Сила: <span id="sStr">3,190</span></span></div>
+    <div class="stat stroke"><img src="http://wb.local/icons/stat_luck.png"><span>Удача: <span id="sLuck">12%</span></span></div>
+    <div class="stat stroke"><img src="http://wb.local/icons/stat_wins.png"><span>Победы: <span id="sWins">7</span></span></div>
   </div>
-  <div id="topright">
-    <div class="btn stroke"><img src="http://wb.local/icons/btn_daily.png"><span>Награды</span></div>
-    <div class="btn stroke"><img src="http://wb.local/icons/btn_settings.png"><span>Настройки</span></div>
-    <div class="btn stroke wheel"><img id="wheelImg" src="http://wb.local/icons/btn_wheel.png"><span>Колесо удачи</span></div>
+  <div id="wheel" class="stroke"><img src="http://wb.local/icons/btn_wheel.png"><div class="badge">!</div><div class="pill">Колесо<br>Фортуны</div></div>
+  <div id="bar" class="stroke">
+    <div class="bb"><img src="http://wb.local/icons/bar_carts.png"><span>Вагонетки</span></div>
+    <div class="bb"><img src="http://wb.local/icons/bar_achievements.png"><span>Достижения</span></div>
+    <div class="bb"><img src="http://wb.local/icons/bar_rewards.png"><span>Награды</span></div>
+    <div class="bb"><img src="http://wb.local/icons/bar_daily.png"><span>Ежедневные задания</span></div>
+    <div class="bb"><img src="http://wb.local/icons/bar_settings.png"><span>Настройки</span></div>
   </div>
-  <div id="bottom" class="stroke"><img src="http://wb.local/icons/stat_strength.png"><span>Сила: <span id="sStr2">3.19K</span></span></div>
   <div id="jump"></div>
   <div id="lvl" class="stroke">
     <div class="name" id="lvlName">Уровень 1 · Сено</div>
@@ -313,7 +318,7 @@ function pet() {
 
 // ---------- сцена ----------
 let scene, camera, ortho, renderer, sun, portalMat;
-const HW = 40, HD = 50, WALLH = 24, LVL_LEN = 72, LVL0 = -56;
+const HW = 64, HD = 52, WALLH = 24, LVL_LEN = 72, LVL0 = -56;
 const layers = []; // [level][layer] -> mesh
 const levelSigns = [];
 let player, petObj, debris = [];
@@ -322,16 +327,23 @@ const trophyObjs = [];
 function buildHub() {
   // пол с отверстиями под ямы
   const shape = new THREE.Shape(); shape.moveTo(-HW, -HD); shape.lineTo(HW, -HD); shape.lineTo(HW, HD); shape.lineTo(-HW, HD); shape.closePath();
-  const PITS = [{ z: -20, name: 'Землянка', sub: '+1 сила за удар', tex: TX.dirt, open: true },
-    { z: 2, name: 'Угольная яма', sub: '🔒 2 перерождения', tex: TX.levels[2].map, open: false },
-    { z: 24, name: 'Каменная яма', sub: '🔒 5 перерождений', tex: TX.stoneBrick, open: false }];
-  const PX = -25, PR = 6.5;
-  for (const p of PITS) { const hole = new THREE.Path(); hole.absarc(PX, -p.z, PR, 0, Math.PI * 2, true); shape.holes.push(hole); }
+  // Зона ям: 2 колонки × 4 ряда = 8 мест. Ямы открываются по числу перерождений (PitConfig).
+  const PITS = [
+    { x: -30, z: -36, name: 'Землянка', sub: 'открыта · +1 сила', tex: TX.dirt, open: true },
+    { x: -30, z: -12, name: 'Угольная', sub: '🔒 2 перерождения', tex: TX.levels[2].map },
+    { x: -30, z: 12, name: 'Каменная', sub: '🔒 5 перерождений', tex: TX.stoneBrick },
+    { x: -30, z: 36, name: 'Железная', sub: '🔒 10 перерождений', tex: TX.levels[5].map },
+    { x: -52, z: -36, name: 'Золотая', sub: '🔒 20 перерождений', tex: TX.levels[6].map },
+    { x: -52, z: -12, name: 'Алмазная', sub: '🔒 40 перерождений', tex: TX.levels[8].map },
+    { x: -52, z: 12, name: 'Новая яма', sub: 'свободное место', tex: TX.darkFloor, empty: true },
+    { x: -52, z: 36, name: 'Новая яма', sub: 'свободное место', tex: TX.darkFloor, empty: true }];
+  const PR = 6.5;
+  for (const p of PITS) { const hole = new THREE.Path(); hole.absarc(p.x, -p.z, PR, 0, Math.PI * 2, true); shape.holes.push(hole); }
   const fg = new THREE.ExtrudeGeometry(shape, { depth: 1, bevelEnabled: false });
   fg.rotateX(-Math.PI / 2); fg.translate(0, -1, 0);
   const floor = new THREE.Mesh(fg, [texMat(TX.floor, 1 / 8, 1 / 8), std(0x6a5bb2)]); floor.receiveShadow = true; scene.add(floor);
   // светящиеся линии центрального прохода
-  for (const x of [-7, 7]) box(.5, .1, 88, glow(0xc06bff, 1.4), x, .06, -5, scene, false);
+  for (const x of [-7, 7]) box(.5, .1, 2 * HD - 14, glow(0xc06bff, 1.4), x, .06, -5, scene, false);
 
   // стены
   const t = 4;
@@ -354,11 +366,11 @@ function buildHub() {
     grassBlock(w, h, d, x, h / 2, z);
   }
   const gnd = (x0, x1, z0, z1) => { const m = new THREE.Mesh(new THREE.PlaneGeometry(x1 - x0, z1 - z0), texMat(TX.grass, (x1 - x0) / 4, (z1 - z0) / 4)); m.rotation.x = -Math.PI / 2; m.position.set((x0 + x1) / 2, -1.02, (z0 + z1) / 2); m.receiveShadow = true; scene.add(m); };
-  gnd(-600, -44, -1300, 300); gnd(44, 600, -1300, 300); gnd(-44, 44, 54, 300); gnd(-44, 44, -1300, -54);
+  const GX = HW + 4, GZ = HD + 4; gnd(-600, -GX, -1300, 300); gnd(GX, 600, -1300, 300); gnd(-GX, GX, GZ, 300); gnd(-GX, GX, -1300, -GZ);
 
   // фонари на стенах
   for (const z of [-36, -12, 12, 36]) lantern(-HW + .9, 11, z, z === -12 || z === 36);
-  for (const z of [-36, 36]) lantern(HW - .9, 11, z, z === 36);
+  for (const z of [-42, 42]) lantern(HW - .9, 11, z, z === 42);
   for (const x of [-26, 26]) lantern(x, 11, HD - .9, x === 26);
 
   // ===== Вход в уровни (центральная ось, север) =====
@@ -379,35 +391,62 @@ function buildHub() {
   const es = sign({ w: 18, h: 6, title: 'УРОВНИ', sub: '10 стен · проходи по порядку', icon: 'btn_levels' }); es.position.set(0, 27.5, 2.9); ent.add(es);
   lantern(-15.2, 12, 3, false, ent); lantern(15.2, 12, 3, false, ent);
 
-  // ===== Магазин кирок (правая стена, 3 ряда) =====
-  const shop = new THREE.Group(); shop.position.set(HW - 1, 0, 0); shop.rotation.y = -Math.PI / 2; scene.add(shop);
-  tbox(40, 20, 1.2, TX.wood, 4, 0, 11, 0, shop);
-  const ss = sign({ w: 18, h: 4.6, title: 'Магазин кирок', icon: 'btn_levels' }); ss.position.set(0, 23.5, .9); shop.add(ss);
-  [3.4, 9.6, 15.8].forEach((y, row) => {
-    box(38, .6, 2.2, std(0x6b3f1d), 0, y, 1.4, shop);
-    box(38, .18, .25, glow([0xff5fd2, 0x5ee7ff, 0xffe14d][row], 2.2), 0, y - .4, 2.55, shop, false);
-    for (let i = 0; i < 4; i++) {
+  // ===== Магазин кирок (правая сторона): 3 ряда-ступени =====
+  // Ряд 1 на полу, ряд 2 на ступеньку выше, ряд 3 ещё выше. У каждой кирки — площадка покупки с ценой в победах.
+  const SHOP_Z = 30, ROW_D = 8, STEP = 3;
+  const rowX = [HW - 3 * ROW_D, HW - 2 * ROW_D, HW - ROW_D]; // передний край каждого ряда
+  const rowCol = [0xffe14d, 0x5ee7ff, 0xff5fd2];
+  const padTex = {};
+  // основания ступеней
+  const topMat = (w, d) => texMat(TX.floor, w / 8, d / 8);
+  const stoneSide = (w, h) => texMat(TX.stoneBrick, w / 4, h / 4);
+  const step = (x0, x1, h) => { const w = x1 - x0, d = 2 * SHOP_Z; box(w, h, d, [stoneSide(d, h), stoneSide(d, h), topMat(w, d), topMat(w, d), stoneSide(w, h), stoneSide(w, h)], (x0 + x1) / 2, h / 2, 0); };
+  box(ROW_D, .4, 2 * SHOP_Z, [stoneSide(60, .4), stoneSide(60, .4), topMat(ROW_D, 60), topMat(ROW_D, 60), stoneSide(8, .4), stoneSide(8, .4)], rowX[0] + ROW_D / 2, .2, 0);
+  step(rowX[1], HW, STEP); step(rowX[2], HW, STEP * 2);
+  // лестницы посередине
+  box(3, STEP / 2, 5, stoneSide(3, 1.5), rowX[1] - 1.5, STEP / 4, 0); box(3, STEP * 1.5, 5, stoneSide(3, 4.5), rowX[2] - 1.5, STEP * 1.5 / 2, 0);
+  // светящиеся края ступеней
+  rowX.forEach((x, r) => box(.35, .35, 2 * SHOP_Z, glow(rowCol[r], 2.2), x + .2, r * STEP + .45, 0, scene, false));
+  // задняя стенка и вывеска
+  tbox(1.2, 18, 2 * SHOP_Z + 4, TX.wood, 4, HW - .6, STEP * 2 + 9, 0);
+  const ss = sign({ w: 22, h: 5, title: 'Магазин кирок', sub: '3 ряда · подойди и купи', icon: 'stat_strength' }); ss.position.set(HW - 1.4, 21.5, 0); ss.rotation.y = -Math.PI / 2; scene.add(ss);
+  const SLOT_Z = [-22, -9, 9, 22];
+  rowX.forEach((x0, row) => {
+    const y = row * STEP + (row === 0 ? .4 : 0);
+    SLOT_Z.forEach((z, i) => {
       const idx = row * 4 + i; const [c1, c2, hd, gl] = PICKS[idx];
-      const p = pick3D(c1, c2, hd || 0xa86a3c, gl || null); p.position.set(-14.5 + i * 9.7, y + 3.4, 1.5); p.rotation.z = -.5; p.scale.setScalar(.95); shop.add(p);
-      const tag = priceTag(PICK_PRICES[idx]); tag.position.set(-14.5 + i * 9.7, y + .9, 2.8); shop.add(tag);
-    }
+      // подставка у задней части ряда
+      const ped = tbox(2.6, 2.2, 2.6, TX.stoneBrick, 4, x0 + ROW_D - 2, y + 1.1, z);
+      box(2.8, .25, 2.8, glow(rowCol[row], 1.6), x0 + ROW_D - 2, y + 2.25, z, scene, false);
+      const pk = pick3D(c1, c2, hd || 0xa86a3c, gl || null); pk.position.set(x0 + ROW_D - 2, y + 5.3, z); pk.rotation.y = -Math.PI / 2; pk.scale.setScalar(1.1); scene.add(pk);
+      pk.userData.spinPick = idx;
+      // площадка покупки перед подставкой: цена в победах на полу
+      const tex = textTex(256, 256, (g, w, h) => { roundRect(g, 8, 8, w - 16, h - 16, 40); g.fillStyle = '#2a1757'; g.fill(); g.lineWidth = 14; g.strokeStyle = '#' + rowCol[row].toString(16).padStart(6, '0'); g.stroke();
+        g.drawImage(images.stat_wins, w / 2 - 50, 30, 100, 100); strokeText(g, PICK_PRICES[idx], w / 2, 178, 64, '#ffe14d'); });
+      const pad = new THREE.Mesh(new THREE.BoxGeometry(4, .3, 4), [std(0x2a1757), std(0x2a1757), new THREE.MeshStandardMaterial({ map: tex, emissive: 0xffffff, emissiveMap: tex, emissiveIntensity: .45 }), std(0x2a1757), std(0x2a1757), std(0x2a1757)]);
+      pad.position.set(x0 + 2.6, y + .16, z); pad.rotation.y = -Math.PI / 2; pad.receiveShadow = true; scene.add(pad);
+    });
   });
-  crystalCluster(-21.5, 0, 2, 0x5ee7ff, shop); crystalCluster(21.5, 0, 2, 0xff5fd2, shop);
+  crystalCluster(rowX[0] + 2, 0, -SHOP_Z - 2, 0x5ee7ff); crystalCluster(rowX[0] + 2, 0, SHOP_Z + 2, 0xff5fd2);
 
-  // ===== Ямы прокачки (левая сторона, напротив магазина) =====
+  // ===== Ямы прокачки (левая зона, напротив магазина) =====
+  const zoneSign = sign({ w: 24, h: 5.4, title: 'Ямы прокачки силы', sub: 'бей киркой — получай силу', icon: 'stat_strength' });
+  zoneSign.position.set(-HW + .6, 17.5, 0); zoneSign.rotation.y = Math.PI / 2; scene.add(zoneSign);
+  box(.5, .1, 2 * HD - 10, glow(0xc66bff, 1.2), -20.5, .06, 0, scene, false);
   PITS.forEach((p, i) => {
-    const g = new THREE.Group(); g.position.set(PX, 0, p.z); scene.add(g);
+    const g = new THREE.Group(); g.position.set(p.x, 0, p.z); scene.add(g);
     const wall = new THREE.Mesh(new THREE.CylinderGeometry(PR, PR, 6, 40, 1, true), texMat(TX.stoneBrick, 6, 1.5, { side: THREE.BackSide })); wall.position.y = -3; wall.receiveShadow = true; g.add(wall);
     const bottom = new THREE.Mesh(new THREE.CircleGeometry(PR, 40), texMat(p.tex, 3, 3)); bottom.rotation.x = -Math.PI / 2; bottom.position.y = -5.9; bottom.receiveShadow = true; g.add(bottom);
-    for (let k = 0; k < 7; k++) { const a = k / 7 * Math.PI * 2; crystal(Math.cos(a) * (PR - .9), -5.2, Math.sin(a) * (PR - .9), p.open ? 0xc66bff : 0x6a6f86, .7, g); }
+    const col = p.open ? 0xc66bff : p.empty ? 0x3a3f55 : 0x6a6f86;
+    if (!p.empty) for (let k = 0; k < 7; k++) { const a = k / 7 * Math.PI * 2; crystal(Math.cos(a) * (PR - .9), -5.2, Math.sin(a) * (PR - .9), col, .7, g); }
     const rim = new THREE.Mesh(new THREE.TorusGeometry(PR, .35, 8, 48), glow(p.open ? 0xc66bff : 0x777c94, p.open ? 1.6 : .3)); rim.rotation.x = Math.PI / 2; rim.position.y = .1; g.add(rim);
-    // забор (с проходом со стороны центра)
+    // забор (проход со стороны центрального прохода)
     for (let k = 0; k < 18; k++) { const a = k / 18 * Math.PI * 2; if (Math.cos(a) > .9) continue; box(.6, 3.2, .6, std(0x9a6235), Math.cos(a) * (PR + 1.3), 1.6, Math.sin(a) * (PR + 1.3), g); }
     for (const y of [1.3, 2.7]) { const rail = new THREE.Mesh(new THREE.TorusGeometry(PR + 1.3, .2, 6, 48, Math.PI * 2 - .9), std(0xb57a45)); rail.rotation.x = Math.PI / 2; rail.rotation.z = .45; rail.position.y = y; rail.castShadow = true; g.add(rail); }
-    const s = sign({ w: 10, h: 3.6, title: p.name, sub: p.sub, icon: p.open ? 'stat_strength' : 'btn_lock', bg: p.open ? '#7a3cff' : '#4a4f66' });
-    s.position.set(-PR - 1, 5.8, 0); s.rotation.y = Math.PI / 2; g.add(s);
-    box(.5, 5, .5, std(0x6b3f1d), -PR - 1.6, 2.5, -2.5, g); box(.5, 5, .5, std(0x6b3f1d), -PR - 1.6, 2.5, 2.5, g);
-    if (!p.open) { const f = new THREE.Mesh(new THREE.CylinderGeometry(PR + .6, PR + .6, 5, 40, 1, true), new THREE.MeshBasicMaterial({ color: 0xa65bff, transparent: true, opacity: .16, side: THREE.DoubleSide, depthWrite: false })); f.position.y = 2.5; g.add(f); }
+    const s = sign({ w: 10, h: 3.6, title: p.name, sub: p.sub, icon: p.open ? 'stat_strength' : p.empty ? null : 'btn_lock', bg: p.open ? '#7a3cff' : p.empty ? '#2f3448' : '#4a4f66' });
+    s.position.set(-PR - 1.4, 6.6, 0); s.rotation.y = Math.PI / 2; g.add(s);
+    box(.5, 5, .5, std(0x6b3f1d), -PR - 1.9, 2.5, -2.5, g); box(.5, 5, .5, std(0x6b3f1d), -PR - 1.9, 2.5, 2.5, g);
+    if (!p.open && !p.empty) { const f = new THREE.Mesh(new THREE.CylinderGeometry(PR + .6, PR + .6, 5, 40, 1, true), new THREE.MeshBasicMaterial({ color: 0xa65bff, transparent: true, opacity: .16, side: THREE.DoubleSide, depthWrite: false })); f.position.y = 2.5; g.add(f); }
   });
 
   // ===== Яйца (юг, напротив входа в уровни) =====
@@ -425,7 +464,7 @@ function buildHub() {
   crystalCluster(-21, 0, 3, 0xc66bff, eggs); crystalCluster(21, 0, 3, 0x5ee7ff, eggs);
 
   // ===== Торговец рудами (угол) =====
-  const tr = new THREE.Group(); tr.position.set(HW - 9, 0, -HD + 10); tr.rotation.y = -Math.PI / 4.5; scene.add(tr);
+  const tr = new THREE.Group(); tr.position.set(HW - 10, 0, -HD + 10); tr.rotation.y = -Math.PI / 4.5; scene.add(tr);
   tbox(10, 3, 3, TX.wood, 4, 0, 1.5, 0, tr);
   for (const [x, z] of [[-4.6, -1.2], [4.6, -1.2], [-4.6, -5], [4.6, -5]]) box(.6, 9, .6, std(0x6b3f1d), x, 4.5, z, tr);
   for (let i = 0; i < 6; i++) { const s = box(1.8, .5, 6, std(i % 2 ? 0xffffff : 0xff4d6d), -4.5 + i * 1.8, 9.4, -2.6, tr); s.rotation.x = -.25; }
@@ -533,6 +572,7 @@ function setScene(t, still) {
   // яйца крутятся
   scene.traverse((o) => { if (o.userData && o.userData.spin != null) { o.rotation.y = t * .8 + o.userData.spin; o.position.y = 5.2 + Math.sin(t * 2 + o.userData.spin) * .35; } });
   trophyObjs.forEach((o, i) => { o.tro.position.y = o.baseY + Math.sin(t * 2.5 + i) * .3; });
+  scene.children.forEach((o) => { if (o.userData.spinPick != null) o.rotation.y = -Math.PI / 2 + Math.sin(t * 1.5 + o.userData.spinPick) * .35; });
   petObj.rotation.y = 0;
 
   let wins = 7, strength = 3190, layerDone = 0, toasts = '', showLvl = false, fade = 0, title = false, hudOn = true;
@@ -584,11 +624,11 @@ function setScene(t, still) {
   // --- камера ---
   let cp, ct;
   if (t < 6.2) {
-    cp = catmull([[0, [-34, 72, 66]], [3, [12, 58, 52]], [6.2, [-20, 30, 46]]], t);
+    cp = catmull([[0, [-62, 96, 92]], [3, [30, 84, 80]], [6.2, [-22, 30, 48]]], t);
     ct = catmull([[0, [4, 0, 2]], [3, [2, 0, -6]], [6.2, [0, 4, -8]]], t);
   } else if (t < 10.4) {
     const k = clamp((t - 6.2) / 1.2); const base = new THREE.Vector3(9, 11, pz + 20), tgt = new THREE.Vector3(0, 6, pz - 14);
-    cp = new THREE.Vector3(-20, 30, 46).lerp(base, ease(k)); ct = new THREE.Vector3(0, 4, -8).lerp(tgt, ease(k));
+    cp = new THREE.Vector3(-22, 30, 48).lerp(base, ease(k)); ct = new THREE.Vector3(0, 4, -8).lerp(tgt, ease(k));
   } else if (t < 17.6) {
     cp = new THREE.Vector3(9.5, 10, pz + 15); ct = new THREE.Vector3(-1, 6, pz - 10);
   } else if (t < 21.5) {
@@ -606,7 +646,7 @@ function setScene(t, still) {
 
 function applyHud(s) {
   hud.style.display = s.hudOn ? 'block' : 'none';
-  $('sWins').textContent = s.wins; $('sStr').textContent = fmt(s.strength); $('sStr2').textContent = fmt(s.strength);
+  $('sWins').textContent = s.wins.toLocaleString('en-US'); $('sStr').textContent = Math.floor(s.strength).toLocaleString('en-US');
   $('lvl').style.display = s.showLvl ? 'block' : 'none';
   $('lvlFill').style.width = s.layerDone * 10 + '%'; $('lvlBar').textContent = s.layerDone >= 10 ? 'Стена пройдена!' : `Слой ${s.layerDone} / 10`;
   $('toasts').innerHTML = s.toasts || '';
@@ -621,12 +661,12 @@ function setSun(focus, span = 70) {
 
 // ---------- кадры-скриншоты ----------
 const STILLS = {
-  hub: { t: 2, cam: [-34, 72, 66], tgt: [4, 0, 2] },
-  hub_front: { t: 2, cam: [0, 22, 45], tgt: [0, 5, -30] },
-  shop: { t: 2, cam: [6, 13, 6], tgt: [40, 11, 0] },
-  pits: { t: 2, cam: [6, 22, 2], tgt: [-27, -1, 2] },
+  hub: { t: 2, cam: [-62, 96, 92], tgt: [4, 0, 2] },
+  hub_front: { t: 2, cam: [0, 26, 48], tgt: [0, 5, -30] },
+  shop: { t: 2, cam: [14, 20, 34], tgt: [54, 4, -2] },
+  pits: { t: 2, cam: [4, 42, 44], tgt: [-40, -2, 0] },
   eggs: { t: 2, cam: [8, 15, 10], tgt: [0, 5, 40] },
-  trader: { t: 2, cam: [6, 12, -22], tgt: [31, 5, -42] },
+  trader: { t: 2, cam: [26, 14, -20], tgt: [54, 5, -42] },
   level: { t: 14.2 },
   reward: { t: 19.6 },
   levels: { t: 25 },
@@ -640,8 +680,8 @@ window.renderAt = (t, still = null) => {
     setSun(new THREE.Vector3(0, 0, -20), 90);
     renderer.render(scene, ortho); applyHud(s);
     // подписи зон
-    const L = [[0, 26, -44, 'Вход в уровни', 'центральная ось'], [0, 6, 36, 'Яйца питомцев', 'напротив входа'], [30, 12, 0, 'Магазин кирок', '3 ряда · правая стена'],
-      [-12, 2, -20, 'Ямы прокачки силы', 'напротив магазина'], [24, 10, -36, 'Торговец рудами', 'угол'], [0, 1, 6, 'Свободный проход', ''], [-4, 4, -80, 'Уровень 1 · Сено', '10 слоёв стены'], [30, 2, -106, 'Ниша награды', '+1 / +3 победы · в лобби'], [0, 4, -126, '→ Уровень 2', '']];
+    const L = [[0, 26, -46, 'Вход в уровни', 'центральная ось'], [0, 6, 40, 'Яйца питомцев', 'напротив входа'], [52, 12, 0, 'Магазин кирок', '3 ряда-ступени'],
+      [-41, 2, 0, 'Ямы прокачки силы', '8 мест'], [52, 10, -44, 'Торговец рудами', 'угол'], [0, 1, 4, 'Свободный проход', ''], [-4, 4, -82, 'Уровень 1 · Сено', '10 слоёв'], [30, 2, -108, 'Ниша награды', '+1 / +3 победы'], [0, 4, -130, '→ Уровень 2', '']];
     $('labels').innerHTML = L.map(([x, y, z, a, b]) => { const v = new THREE.Vector3(x, y, z).project(ortho); return `<div class="lbl" style="left:${(v.x + 1) / 2 * W}px;top:${(1 - v.y) / 2 * H}px">${a}${b ? `<small>${b}</small>` : ''}</div>`; }).join('');
     return;
   }
@@ -669,8 +709,8 @@ async function init() {
   scene.background = canvasTex(4, 256, (g) => { const gr = g.createLinearGradient(0, 0, 0, 256); gr.addColorStop(0, '#5aa8ff'); gr.addColorStop(.6, '#a9d8ff'); gr.addColorStop(1, '#e8f6ff'); g.fillStyle = gr; g.fillRect(0, 0, 4, 256); }, false);
   scene.fog = new THREE.Fog(0xcfeaff, 300, 1100);
   camera = new THREE.PerspectiveCamera(55, W / H, .5, 2000);
-  const oh = 54; ortho = new THREE.OrthographicCamera(-oh * W / H, oh * W / H, oh, -oh, 1, 600);
-  ortho.position.set(-4, 300, -38); ortho.up.set(-1, 0, 0); ortho.lookAt(-4, 0, -38);
+  const oh = 74; ortho = new THREE.OrthographicCamera(-oh * W / H, oh * W / H, oh, -oh, 1, 600);
+  ortho.position.set(0, 300, -64); ortho.up.set(-1, 0, 0); ortho.lookAt(0, 0, -64);
   scene.add(new THREE.HemisphereLight(0xdff0ff, 0x6a4a9a, 1.25));
   sun = new THREE.DirectionalLight(0xfff1d6, 2.1); sun.castShadow = true; sun.shadow.mapSize.set(2048, 2048); sun.shadow.bias = -.0005; sun.shadow.camera.near = 1; sun.shadow.camera.far = 400; scene.add(sun, sun.target);
   buildTextures(); buildHub(); buildLevels();
