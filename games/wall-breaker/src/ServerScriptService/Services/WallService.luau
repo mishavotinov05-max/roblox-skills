@@ -5,8 +5,10 @@
 	  клиент скрывает сломанные слои только у себя.
 	• Пока игрок стоит в уровне перед стеной, стена бьётся сама (GameSettings.AutoBreakInterval).
 	  Если тапать — быстрее. Если силы хватает, слой ломается с одного удара.
-	• Когда стена уровня сломана — окно выбора:
-	    «+N побед и в лобби» (бесплатно) / «×3 и в лобби» (Robux, товар level_x3) / «Идти дальше».
+	• После стены — промежуток с нишей справа. В нише 2 площадки:
+	    RewardPad — «+N побед и в лобби» (бесплатно),
+	    X3Pad     — «×3 и в лобби» (Robux, товар level_x3 в ShopConfig).
+	  Или иди дальше — на следующем уровне награда больше.
 	  N = награда самого дальнего пройденного уровня (LevelConfig.WinsReward).
 	  После получения награды все стены снова целые — награда выдаётся один раз за забег.
 ]]
@@ -145,15 +147,6 @@ local function hit(player: Player, data, level)
 	OreService.Roll(player, data)
 	if prog >= LAYERS then
 		data.BestLevel = math.max(data.BestLevel, level.Id)
-		local reward = WallService.RewardFor(WallService.RunBest(data))
-		Remotes.Event("Effect"):FireClient(player, "LevelComplete", {
-			Level = level.Id,
-			Name = Catalog.Level(level.Id).Name,
-			Reward = reward,
-			HasPass = MonetizationService.HasPass(player, "WinsX3"),
-			HasNext = Catalog.Level(level.Id + 1) ~= nil,
-			NextReward = WallService.RewardFor(level.Id + 1),
-		})
 	end
 	DataService.MarkDirty(player)
 	sendLevelState(player, level.Id)
@@ -215,6 +208,71 @@ function WallService.Init()
 		if cfg then
 			MapService.SetText(level.Sign, "Title", ("Уровень %d · %s"):format(level.Id, cfg.Name))
 			MapService.SetText(level.Sign, "Sub", ("Сила: %s · награда %s побед"):format(Format.Short(Formulas.RecommendedStrength(level.Id)), Format.Short(cfg.WinsReward)))
+		end
+	end
+
+	-- Площадки в нише
+	local padDebounce: { [Player]: number } = {}
+	local function playerFromHit(hit: BasePart): Player?
+		local model = hit:FindFirstAncestorOfClass("Model")
+		return model and Players:GetPlayerFromCharacter(model)
+	end
+	local function canUse(player: Player, cooldown: number): boolean
+		local now = os.clock()
+		if padDebounce[player] and now - padDebounce[player] < cooldown then
+			return false
+		end
+		padDebounce[player] = now
+		return true
+	end
+	Players.PlayerRemoving:Connect(function(p)
+		padDebounce[p] = nil
+	end)
+	for _, level in ipairs(MapService.Levels()) do
+		local cfg = Catalog.Level(level.Id)
+		local reward = cfg and cfg.WinsReward or 0
+		if level.RewardPad then
+			MapService.SetText(level.RewardPad, "Reward", ("+%s 🏆"):format(Format.Short(reward)))
+			MapService.SetText(level.RewardPad, "Hint", "забрать и в лобби")
+			level.RewardPad.Touched:Connect(function(hit)
+				local player = playerFromHit(hit)
+				local data = player and DataService.Get(player)
+				if not player or not data or not canUse(player, 1.5) then
+					return
+				end
+				if WallService.RunBest(data) <= 0 then
+					RequestService.Notify(player, "Сначала сломай стену уровня", "error")
+					return
+				end
+				WallService.CashOut(player, MonetizationService.HasPass(player, "WinsX3") and 3 or 1)
+			end)
+		end
+		if level.X3Pad then
+			MapService.SetText(level.X3Pad, "Reward", ("×3 = %s 🏆"):format(Format.Short(reward * 3)))
+			MapService.SetText(level.X3Pad, "Hint", "за Robux и в лобби")
+			level.X3Pad.Touched:Connect(function(hit)
+				local player = playerFromHit(hit)
+				local data = player and DataService.Get(player)
+				if not player or not data or not canUse(player, 4) then
+					return
+				end
+				local best = WallService.RunBest(data)
+				if best <= 0 then
+					RequestService.Notify(player, "Сначала сломай стену уровня", "error")
+					return
+				end
+				if MonetizationService.HasPass(player, "WinsX3") then
+					WallService.CashOut(player, 3)
+					return
+				end
+				local id = productId("level_x3")
+				if id == 0 then
+					RequestService.Notify(player, "Покупка ещё не настроена (товар level_x3 в ShopConfig)", "error")
+					return
+				end
+				data.PendingX3Level = best
+				MarketplaceService:PromptProductPurchase(player, id)
+			end)
 		end
 	end
 

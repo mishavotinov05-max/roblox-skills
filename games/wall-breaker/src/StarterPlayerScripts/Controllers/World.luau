@@ -122,6 +122,13 @@ local function breakEffect(levelId: number, layerIndex: number)
 end
 
 function World.Init()
+	-- пиксельные текстуры карты (если ID указаны в TextureConfig)
+	local ok, err = pcall(function()
+		require(Shared:WaitForChild("TextureApplier")).Apply()
+	end)
+	if not ok then
+		warn("[Textures]", err)
+	end
 	scan()
 	State.Changed:Connect(refresh)
 	Remotes.Event("Effect").OnClientEvent:Connect(function(kind, a, b)

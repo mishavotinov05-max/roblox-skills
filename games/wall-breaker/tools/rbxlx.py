@@ -270,7 +270,7 @@ def ui_grid(cell, pad=(10, 10)):
 
 
 def scrolling(name, size, pos, children=None):
-    return Inst("ScrollingFrame", name, gui_base(name, size, pos) + [
+    return Inst("ScrollingFrame", name, gui_base(name, size, pos, clip=True) + [
         P("udim2", "CanvasSize", ((0, 0), (0, 0))), P("token", "AutomaticCanvasSize", 2),
         P("int", "ScrollBarThickness", 8), P("token", "ScrollingDirection", 2)], children)
 

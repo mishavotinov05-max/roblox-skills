@@ -32,6 +32,8 @@ local root: Frame
 local openName: string? = nil
 local shopTab = "Luck"
 local spinning = false
+local traderMult = 1
+local traderSelected: { [string]: boolean } = {}
 
 local COLOR_BUY = Color3.fromRGB(61, 200, 110)
 local COLOR_EQUIP = Color3.fromRGB(63, 140, 255)
@@ -508,7 +510,49 @@ local function fillSettings(p: Frame)
 	})
 end
 
+-- ===== Торговец рудами =====
+local function fillTrader(p: Frame)
+	local data = State.Data
+	local OreConfig = require(Config:WaitForChild("OreConfig"))
+	local total, selectedTotal, any = 0, 0, false
+	for i, ore in ipairs(OreConfig.Ores) do
+		local n = data.Ores[ore.Id] or 0
+		if n > 0 then
+			any = true
+			local price = ore.Price * traderMult
+			total += price * n
+			local selected = traderSelected[ore.Id] == true
+			if selected then
+				selectedTotal += price * n
+			end
+			addCard(p, {
+				name = ("%s ×%d"):format(ore.Name, n),
+				info = ("%s 🏆 за штуку · всего %s 🏆"):format(Format.Short(price), Format.Short(price * n)),
+				fallback = "⬤",
+				color = ore.Color,
+				button = selected and "✓ Выбрано" or "Выбрать",
+				buttonColor = selected and COLOR_BUY or COLOR_DONE,
+				onClick = function()
+					traderSelected[ore.Id] = not selected or nil
+					Panels.Refresh()
+				end,
+				order = i,
+				highlight = selected,
+			})
+		end
+	end
+	if not any then
+		addCard(p, { name = "Нет руд", info = "Ломай стены — руды выпадают из слоёв", fallback = "⛏" })
+	end
+	setLabel(p, "Total", ("Выбрано: %s 🏆  ·  Всё: %s 🏆%s"):format(
+		Format.Short(selectedTotal),
+		Format.Short(total),
+		traderMult > 1 and ("  (цены ×" .. tostring(traderMult) .. ")") or ""
+	))
+end
+
 local FILLERS = {
+	TraderPanel = fillTrader,
 	ShopPanel = fillShop,
 	PetsPanel = fillPets,
 	AurasPanel = fillAuras,
@@ -615,6 +659,53 @@ function Panels.Init()
 			act("Rebirth")
 		end)
 	end
+	-- Торговец: выделить все / продать выбранное / продать все
+	local trader = panel("TraderPanel")
+	if trader then
+		local function bindT(name: string, fn)
+			local b = trader:FindFirstChild(name, true)
+			if b and b:IsA("GuiButton") then
+				b.Activated:Connect(fn)
+			end
+		end
+		bindT("SelectAllButton", function()
+			local OreConfig = require(Config:WaitForChild("OreConfig"))
+			local all = true
+			for _, ore in ipairs(OreConfig.Ores) do
+				if (State.Data.Ores[ore.Id] or 0) > 0 and not traderSelected[ore.Id] then
+					all = false
+				end
+			end
+			for _, ore in ipairs(OreConfig.Ores) do
+				traderSelected[ore.Id] = (not all) or nil
+			end
+			Panels.Refresh()
+		end)
+		bindT("SellSelectedButton", function()
+			local ids = {}
+			for id in pairs(traderSelected) do
+				table.insert(ids, id)
+			end
+			if #ids == 0 then
+				Toasts.Show("Сначала выбери руды", "error")
+				return
+			end
+			act("SellOres", ids)
+			traderSelected = {}
+		end)
+		bindT("SellAllButton", function()
+			act("SellOres", nil)
+			traderSelected = {}
+		end)
+	end
+	game:GetService("ReplicatedStorage"):WaitForChild("Remotes"):WaitForChild("Effect").OnClientEvent:Connect(function(kind, a)
+		if kind == "OpenTrader" then
+			traderMult = a or 1
+			traderSelected = {}
+			Panels.Open("TraderPanel")
+		end
+	end)
+
 	local rewards = panel("RewardsPanel")
 	local claim = rewards and rewards:FindFirstChild("ClaimButton", true)
 	if claim and claim:IsA("GuiButton") then

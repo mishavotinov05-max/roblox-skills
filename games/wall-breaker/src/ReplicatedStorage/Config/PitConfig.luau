@@ -6,18 +6,19 @@
 
 	RequiredRebirths — сколько перерождений нужно, чтобы яма открылась.
 	Power            — сколько силы даёт один удар в этой яме (до множителей).
+	                   Удар по воздуху даёт GameSettings.AirSwingPower (1), поэтому в яме всегда ×2 и больше.
+	В открытой яме кирка бьёт сама (GameSettings.PitAutoInterval), клики добавляют удары.
 
-	На карте 12 мест. Ямы без строки в этом списке показываются как «Свободное место».
-	Чтобы открыть новую яму — допишите строку (она займёт следующий свободный Pit_XX).
+	На карте 6 мест (Pit_01…Pit_06). Чтобы добавить яму — допишите строку и скопируйте модель Pit_06 → Pit_07.
 ]]
 
 return {
 	Pits = {
-		{ Name = "Землянка", RequiredRebirths = 0, Power = 1 },
-		{ Name = "Угольная", RequiredRebirths = 2, Power = 3 },
-		{ Name = "Каменная", RequiredRebirths = 5, Power = 8 },
-		{ Name = "Железная", RequiredRebirths = 10, Power = 20 },
-		{ Name = "Золотая", RequiredRebirths = 20, Power = 50 },
-		{ Name = "Алмазная", RequiredRebirths = 40, Power = 120 },
+		{ Name = "Землянка", RequiredRebirths = 0, Power = 2 },
+		{ Name = "Угольная", RequiredRebirths = 2, Power = 6 },
+		{ Name = "Каменная", RequiredRebirths = 5, Power = 16 },
+		{ Name = "Железная", RequiredRebirths = 10, Power = 40 },
+		{ Name = "Золотая", RequiredRebirths = 20, Power = 100 },
+		{ Name = "Алмазная", RequiredRebirths = 40, Power = 240 },
 	},
 }

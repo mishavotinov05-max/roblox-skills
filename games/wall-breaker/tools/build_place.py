@@ -17,7 +17,7 @@ OUT = os.path.join(ROOT, "WallBreaker.rbxlx")
 # ---------- Размеры лобби ----------
 HW, XL, HD = 64, -58, 64       # восточная стена x=HW, западная x=XL, север/юг z=∓HD
 WALLH, T = 24, 4
-LVL_LEN, LVL_COUNT = 72, 10
+LVL_LEN, LVL_COUNT = 96, 10
 LVL0 = -HD - T                  # начало первого уровня (сразу за северной стеной)
 
 DARK = (26, 16, 51)
@@ -399,27 +399,28 @@ def build_levels():
         for x in (-10.5, 10.5):
             st.add(part(f"Line{'L' if x < 0 else 'R'}", (0.4, 0.1, LVL_LEN), (x, 0.05, z0 - LVL_LEN / 2), (255, 158, 31), "Neon",
                         collide=False, cast_shadow=False))
-        niche_z, niche_l = z0 - 50, 16
+        niche_z, niche_l = z0 - 60, 26
         seg1 = niche_z + niche_l / 2 - z0          # отрицательная длина до ниши
         seg2 = LVL_LEN + seg1 - niche_l
         st.add(wall_box("WallLeft", 3, 18, LVL_LEN, -13.5, z0 - LVL_LEN / 2))
         st.add(wall_box("WallRightA", 3, 18, -seg1, 13.5, z0 + seg1 / 2))
         st.add(wall_box("WallRightB", 3, 18, seg2, 13.5, niche_z - niche_l / 2 - seg2 / 2))
-        st.add(wall_box("NicheSideA", 10, 18, 3, 20, niche_z + niche_l / 2 + 1.5))
-        st.add(wall_box("NicheSideB", 10, 18, 3, 20, niche_z - niche_l / 2 - 1.5))
-        st.add(wall_box("NicheBack", 3, 18, niche_l + 6, 26.5, niche_z))
-        st.add(part("NicheFloor", (12, 1, niche_l), (19, -0.5, niche_z), (90, 79, 134), "Slate"))
+        st.add(wall_box("NicheSideA", 16, 18, 3, 23, niche_z + niche_l / 2 + 1.5))
+        st.add(wall_box("NicheSideB", 16, 18, 3, 23, niche_z - niche_l / 2 - 1.5))
+        st.add(wall_box("NicheBack", 3, 18, niche_l + 6, 32.5, niche_z))
+        st.add(part("NicheFloor", (20, 1, niche_l), (22, -0.5, niche_z), (90, 79, 134), "Slate"))
         for nm, x, w, zc, l in [("GrassLeft", -13.5, 3.4, z0 - LVL_LEN / 2, LVL_LEN), ("GrassRightA", 13.5, 3.4, z0 + seg1 / 2, -seg1),
-                                ("GrassRightB", 13.5, 3.4, niche_z - niche_l / 2 - seg2 / 2, seg2), ("GrassNiche", 26.5, 3.4, niche_z, niche_l + 6),
-                                ("GrassNicheA", 20, 10, niche_z + niche_l / 2 + 1.5, 3.4), ("GrassNicheB", 20, 10, niche_z - niche_l / 2 - 1.5, 3.4)]:
+                                ("GrassRightB", 13.5, 3.4, niche_z - niche_l / 2 - seg2 / 2, seg2), ("GrassNiche", 32.5, 3.4, niche_z, niche_l + 6),
+                                ("GrassNicheA", 23, 16, niche_z + niche_l / 2 + 1.5, 3.4), ("GrassNicheB", 23, 16, niche_z - niche_l / 2 - 1.5, 3.4)]:
             st.add(grass_cap(nm, w, l, x, zc, 18))
-        for k, zz in enumerate((z0 - 4, z0 - 36, z0 - 66)):
+        for k, zz in enumerate((z0 - 4, z0 - 36, z0 - 90)):
             st.add(part(f"BeamPostL{k}", (1.2, 16, 1.2), (-11.4, 8, zz), WOOD, "Wood"))
             st.add(part(f"BeamPostR{k}", (1.2, 16, 1.2), (11.4, 8, zz), WOOD, "Wood"))
             st.add(part(f"Beam{k}", (24, 1.4, 1.4), (0, 16, zz), (141, 90, 48), "Wood"))
         st.add(lantern("Lantern1", (-11.6, 10, z0 - 20)))
         st.add(lantern("Lantern2", (11.6, 10, z0 - 40), light=False))
         st.add(lantern("Lantern3", (-11.6, 10, z0 - 58), light=False))
+        st.add(lantern("Lantern4", (11.6, 10, z0 - 82)))
         if lid == LVL_COUNT:
             st.add(wall_box("EndWall", 30, 18, 3, 0, z0 - LVL_LEN - 1.5))
         f.add(st)
@@ -432,9 +433,18 @@ def build_levels():
         for k in range(10):
             wall.add(part(f"Layer_{k + 1:02d}", (24, 18, 2), (0, 9, z0 - 12 - k * 2.3), color, mat))
         f.add(wall)
-        f.add(part("Zone", (40, 26, LVL_LEN), (8, 12, z0 - LVL_LEN / 2), (255, 255, 255), "SmoothPlastic", transparency=1,
+        f.add(part("Zone", (46, 26, LVL_LEN), (10, 12, z0 - LVL_LEN / 2), (255, 255, 255), "SmoothPlastic", transparency=1,
                    collide=False, query=False, touch=False, cast_shadow=False))
-        f.add(part("MerchantSpot", (1, 1, 1), (19, 5, niche_z), (255, 255, 255), "SmoothPlastic", r=rot(0, -90, 0), transparency=1,
+        for pad_name, dz, col, big, small in (("RewardPad", 6.5, GOLD, f"+{REWARDS[i]} 🏆", "забрать и в лобби"),
+                                              ("X3Pad", -6.5, (166, 91, 255), f"×3 = {REWARDS[i] * 3} 🏆", "за Robux и в лобби")):
+            f.add(part(pad_name, (9, 0.6, 9), (22, 0.3, niche_z + dz), col, "Neon", children=[
+                billboard("PadGui", (230, 90), (0, 5, 0), [
+                    frame("Bg", ((1, 0), (1, 0)), ((0, 0), (0, 0)), bg=(26, 16, 51), bgt=0.25, children=[
+                        ui_corner(0, 16), ui_stroke(3, col),
+                        label("Reward", big, ((1, -10), (0.6, 0)), ((0, 5), (0, 2)), color=(255, 225, 77), stroke=3),
+                        label("Hint", small, ((1, -10), (0.36, 0)), ((0, 5), (0.6, 0)), stroke=2)])])]))
+        f.add(sign_part("NicheSign", (14, 3.6, 0.5), (30.6, 9, niche_z), rot(0, 90, 0), "Награда за забег", "встань на площадку"))
+        f.add(part("MerchantSpot", (1, 1, 1), (-8, 5, z0 - 80), (255, 255, 255), "SmoothPlastic", r=rot(0, 90, 0), transparency=1,
                    collide=False, query=False, touch=False, cast_shadow=False))
         levels.add(f)
     return levels
@@ -488,11 +498,13 @@ def left_button(name, text, emoji, color, order, label_size=13):
     return b
 
 
-def small_button(name, text, emoji, order):
-    b = image_button(name, ((0, 54), (0, 62)), ((0, 0), (0, 0)), bgt=1, order=order)
-    b.add(image("Icon", "", ((0, 42), (0, 42)), ((0.5, 0), (0, 0)), anchor=(0.5, 0), visible=False, z=2))
-    b.add(label("Fallback", emoji, ((0, 36), (0, 36)), ((0.5, 0), (0, 3)), anchor=(0.5, 0), stroke=0, z=2))
-    b.add(label("Label", text, ((1.3, 0), (0, 14)), ((0.5, 0), (1, 0)), anchor=(0.5, 1), z=3, stroke=1.5))
+def small_button(name, text, emoji, order, color=(70, 48, 140)):
+    """Квадратная кнопка справа сверху: значок и подпись внутри квадрата."""
+    b = image_button(name, ((0, 56), (0, 56)), ((0, 0), (0, 0)), bg=color, bgt=0, order=order)
+    b.add(ui_corner(0, 12), ui_stroke(3, DARK))
+    b.add(image("Icon", "", ((0, 32), (0, 32)), ((0.5, 0), (0, 4)), anchor=(0.5, 0), visible=False, z=2))
+    b.add(label("Fallback", emoji, ((0, 28), (0, 28)), ((0.5, 0), (0, 5)), anchor=(0.5, 0), stroke=0, z=2))
+    b.add(label("Label", text, ((1, -4), (0, 13)), ((0.5, 0), (1, -3)), anchor=(0.5, 1), z=3, stroke=1.5))
     return b
 
 
@@ -555,32 +567,32 @@ def build_gui():
     left.add(left_button("RebirthButton", "Перерождение", "🔄", (240, 244, 250), 4, label_size=10))
     hud.add(left)
 
-    stats = frame("Stats", ((0, 190), (0, 84)), ((0, 4), (0, 214)))
-    stats.add(ui_list(padding=3))
+    # Показатели — в самом левом нижнем углу
+    stats = frame("Stats", ((0, 190), (0, 84)), ((0, 6), (1, -8)), anchor=(0, 1))
+    stats.add(ui_list(padding=3, valign=2))
     stats.add(stat_row("StrengthRow", "⛏", "Сила: 0", 1))
     stats.add(stat_row("LuckRow", "🍀", "Удача: 0%", 2))
     stats.add(stat_row("WinsRow", "🏆", "Победы: 0", 3))
     hud.add(stats)
 
-    # Правый верхний угол: колесо + 4 кнопки одного размера
-    top = frame("TopRight", ((0, 300), (0, 66)), ((1, -6), (0, 4)), anchor=(1, 0))
-    top.add(ui_list(horizontal=True, padding=2, halign=2, valign=1))
-    wheel = image_button("WheelButton", ((0, 54), (0, 62)), ((0, 0), (0, 0)), bgt=1, order=0)
+    # Правый верхний угол: колесо + 4 квадратные кнопки одного размера
+    top = frame("TopRight", ((0, 310), (0, 60)), ((1, -6), (0, 4)), anchor=(1, 0))
+    top.add(ui_list(horizontal=True, padding=4, halign=2, valign=1))
+    wheel = image_button("WheelButton", ((0, 56), (0, 56)), ((0, 0), (0, 0)), bg=(122, 60, 255), bgt=0, order=0)
+    wheel.add(ui_corner(0, 12), ui_stroke(3, DARK))
     for nm, z in (("Base", 3), ("Disc", 4), ("Top", 5)):
-        wheel.add(image(nm, "", ((0, 42), (0, 42)), ((0.5, 0), (0, 0)), anchor=(0.5, 0), visible=False, z=z))
-    fb = label("Fallback", "🎡", ((0, 40), (0, 40)), ((0.5, 0), (0, 1)), anchor=(0.5, 0), bg=(122, 60, 255), bgt=0, stroke=0, z=3)
-    fb.add(ui_corner(1, 0), ui_stroke(2, DARK, mode=1))
-    wheel.add(fb)
-    badge = frame("Badge", ((0, 16), (0, 16)), ((1, -2), (0, -2)), anchor=(1, 0), bg=(255, 43, 58), bgt=0, z=6)
+        wheel.add(image(nm, "", ((0, 34), (0, 34)), ((0.5, 0), (0, 3)), anchor=(0.5, 0), visible=False, z=z))
+    wheel.add(label("Fallback", "🎡", ((0, 30), (0, 30)), ((0.5, 0), (0, 4)), anchor=(0.5, 0), stroke=0, z=3))
+    badge = frame("Badge", ((0, 16), (0, 16)), ((1, 4), (0, -4)), anchor=(1, 0), bg=(255, 43, 58), bgt=0, z=6)
     badge.add(ui_corner(1, 0), ui_stroke(2, (255, 255, 255)), ui_scale("UIScale"),
               label("Text", "!", ((1, 0), (1, 0)), ((0, 0), (0, 0)), stroke=0, z=7))
     wheel.add(badge)
-    wheel.add(label("Label", "Колесо", ((1.3, 0), (0, 14)), ((0.5, 0), (1, 0)), anchor=(0.5, 1), z=3, stroke=1.5))
+    wheel.add(label("Label", "Колесо", ((1, -4), (0, 13)), ((0.5, 0), (1, -3)), anchor=(0.5, 1), z=3, stroke=1.5))
     top.add(wheel)
-    top.add(small_button("AchievementsButton", "Достижения", "🏆", 1))
-    top.add(small_button("RewardsButton", "Награды", "🎁", 2))
-    top.add(small_button("QuestsButton", "Задания", "📅", 3))
-    top.add(small_button("SettingsButton", "Настройки", "⚙️", 4))
+    top.add(small_button("AchievementsButton", "Достижения", "🏆", 1, (255, 160, 30)))
+    top.add(small_button("RewardsButton", "Награды", "🎁", 2, (255, 77, 109)))
+    top.add(small_button("QuestsButton", "Задания", "📅", 3, (63, 140, 255)))
+    top.add(small_button("SettingsButton", "Настройки", "⚙️", 4, (110, 120, 145)))
     hud.add(top)
 
     lvl = frame("LevelPanel", ((0, 480), (0, 92)), ((0.5, 0), (0, 4)), anchor=(0.5, 0), visible=False)
@@ -593,21 +605,7 @@ def build_gui():
     bar.add(fill)
     bar.add(label("BarText", "Слой 1 / 10", ((1, 0), (1, -4)), ((0, 0), (0, 2)), stroke=2, z=3))
     lvl.add(bar)
-    lvl.add(text_button("CashOutButton", "Забрать награду и в лобби", ((0, 280), (0, 32)), ((0.5, 0), (0, 92)), (61, 200, 110),
-                        anchor=(0.5, 0), visible=False))
     hud.add(lvl)
-
-    # Окно выбора награды после стены
-    choice = frame("LevelChoice", ((0, 480), (0, 310)), ((0.5, 0), (0.5, 0)), anchor=(0.5, 0.5), bg=(43, 26, 94), bgt=0, visible=False, z=30)
-    choice.add(ui_corner(0, 22), ui_stroke(5, (255, 225, 77)), ui_scale())
-    choice.add(label("Title", "Уровень пройден!", ((1, -30), (0, 40)), ((0, 15), (0, 12)), color=(255, 225, 77), stroke=3, z=31))
-    choice.add(label("Info", "Награда: 1 победа", ((1, -40), (0, 56)), ((0, 20), (0, 56)), font=FONT_BOLD, stroke=2, z=31))
-    choice.add(text_button("FreeButton", "+1 🏆 и в лобби", ((1, -60), (0, 50)), ((0.5, 0), (0, 124)), (61, 200, 110), anchor=(0.5, 0), z=31))
-    choice.add(text_button("X3Button", "×3 = 3 🏆 и в лобби (Robux)", ((1, -60), (0, 50)), ((0.5, 0), (0, 184)), (166, 91, 255),
-                           anchor=(0.5, 0), z=31))
-    choice.add(text_button("ContinueButton", "Идти дальше →", ((0, 240), (0, 40)), ((0.5, 0), (0, 250)), (63, 140, 255),
-                           anchor=(0.5, 0), z=31))
-    hud.add(choice)
 
     # Анимация открытия яйца
     egg_open = frame("EggOpen", ((1, 0), (1, 0)), ((0, 0), (0, 0)), bg=(0, 0, 0), bgt=0.35, visible=False, z=40)
@@ -652,6 +650,11 @@ def build_gui():
         label("Info", "Надето 0/3", ((1, -230), (0, 34)), ((0, 18), (0, 60)), xalign=0, font=FONT_BOLD, stroke=2),
         text_button("EquipBestButton", "Надеть лучших", ((0, 190), (0, 38)), ((1, -16), (0, 58)), (63, 140, 255), anchor=(1, 0))]))
     panels.add(panel("AurasPanel", "Ауры", "grid"))
+    panels.add(panel("TraderPanel", "Торговец рудами", "row", content_bottom=110, children=[
+        label("Total", "Выбрано: 0 🏆", ((1, -40), (0, 26)), ((0, 20), (1, -100)), color=(255, 225, 77), stroke=2),
+        text_button("SelectAllButton", "Выделить все", ((0, 190), (0, 46)), ((0, 16), (1, -14)), (63, 140, 255), anchor=(0, 1)),
+        text_button("SellSelectedButton", "Продать выбранное", ((0, 220), (0, 46)), ((0.5, 0), (1, -14)), (61, 200, 110), anchor=(0.5, 1)),
+        text_button("SellAllButton", "Продать все", ((0, 190), (0, 46)), ((1, -16), (1, -14)), (255, 160, 40), anchor=(1, 1))]))
     # Перерождение
     panels.add(panel("RebirthPanel", "Перерождение", None, children=[
         label("Info", "Перерождений: 0", ((1, -40), (1, -160)), ((0, 20), (0, 66)), xalign=0, font=FONT_BOLD, stroke=2, scaled=True),
@@ -736,7 +739,15 @@ def build():
     ])
     starter_gui = Inst("StarterGui", "StarterGui", [], [build_gui()])
     lighting = Inst("Lighting", "Lighting", [P("float", "ClockTime", 14.5), P("float", "Brightness", 2.5),
-                                             P("bool", "GlobalShadows", True)])
+                                             P("bool", "GlobalShadows", True), P("color3", "Ambient", (95, 90, 120)),
+                                             P("color3", "OutdoorAmbient", (150, 145, 175))], [
+        Inst("Atmosphere", "Atmosphere", [P("float", "Density", 0.28), P("float", "Offset", 0.2), P("color3", "Color", (205, 225, 255)),
+                                          P("color3", "Decay", (140, 120, 200)), P("float", "Glare", 0.2), P("float", "Haze", 0.8)]),
+        Inst("BloomEffect", "Bloom", [P("float", "Intensity", 0.6), P("float", "Size", 24), P("float", "Threshold", 1.4)]),
+        Inst("ColorCorrectionEffect", "ColorCorrection", [P("float", "Saturation", 0.18), P("float", "Contrast", 0.08),
+                                                          P("float", "Brightness", 0.02)]),
+        Inst("SunRaysEffect", "SunRays", [P("float", "Intensity", 0.06), P("float", "Spread", 0.7)]),
+    ])
     write_place(OUT, [workspace, lighting, replicated, server, storage, starter_player, starter_gui])
     print("Готово:", OUT, f"({os.path.getsize(OUT) // 1024} КБ)")
 

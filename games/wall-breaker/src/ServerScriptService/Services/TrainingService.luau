@@ -1,8 +1,11 @@
 --[[
-	TrainingService — ямы прокачки силы.
-	Игрок спрыгивает в яму (внутрь детали TrainZone) и бьёт киркой — получает силу.
-	Закрытые ямы накрыты барьером LockBarrier (клиент убирает его, когда яма открыта).
+	TrainingService — ямы прокачки силы и удары по воздуху.
+	• Игрок спрыгивает в яму (внутрь детали TrainZone): кирка бьёт сама (GameSettings.PitAutoInterval),
+	  а каждый клик добавляет ещё удар. В яме сила за удар минимум в 2 раза больше, чем по воздуху.
+	• Удар по воздуху (не в яме и не по стене) даёт GameSettings.AirSwingPower силы (минимум 1).
+	• Закрытые ямы накрыты барьером LockBarrier (клиент убирает его, когда яма открыта).
 ]]
+local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
 local Config = ReplicatedStorage:WaitForChild("Config")
@@ -22,39 +25,60 @@ local TrainingService = {}
 local pits = {}
 local lastLockNotice: { [Player]: number } = {}
 
--- Возвращает true, если удар был в яме (даже если она закрыта)
-function TrainingService.TrySwing(player: Player, data, pos: Vector3): boolean
+local function pitAt(pos: Vector3)
 	for _, pit in ipairs(pits) do
 		if pit.Zone and MapService.PointInPart(pit.Zone, pos) then
-			local cfg = PitConfig.Pits[pit.Index]
-			if not cfg then
-				return true
-			end
-			if data.Rebirths < cfg.RequiredRebirths then
-				local now = os.clock()
-				if not lastLockNotice[player] or now - lastLockNotice[player] > 3 then
-					lastLockNotice[player] = now
-					RequestService.Notify(player, ("Яма «%s» откроется после %d перерождений"):format(cfg.Name, cfg.RequiredRebirths), "error")
-				end
-				return true
-			end
-			local gain = Formulas.StrengthPerSwing(data, cfg.Power, MonetizationService.HasPass(player, "StrengthX2"))
-			data.Strength += gain
-			data.Stats.Swings += 1
-			DataService.MarkDirty(player)
-			Remotes.Event("Effect"):FireClient(player, "Strength", gain)
-			return true
+			return pit
 		end
 	end
-	return false
+	return nil
 end
 
--- Удар по воздуху (не в яме и не по стене): немного силы
-function TrainingService.AirSwing(player: Player, data)
-	local gain = Formulas.StrengthPerSwing(data, Settings.AirSwingPower, MonetizationService.HasPass(player, "StrengthX2"))
+local function gainStrength(player: Player, data, power: number)
+	local gain = Formulas.StrengthPerSwing(data, power, MonetizationService.HasPass(player, "StrengthX2"))
 	data.Strength += gain
 	DataService.MarkDirty(player)
 	Remotes.Event("Effect"):FireClient(player, "Strength", gain)
+end
+
+local function playSlash(player: Player)
+	local character = player.Character
+	local tool = character and character:FindFirstChild("Pickaxe")
+	if tool and tool:IsA("Tool") then
+		local anim = Instance.new("StringValue")
+		anim.Name = "toolanim"
+		anim.Value = "Slash"
+		anim.Parent = tool
+		game:GetService("Debris"):AddItem(anim, 1)
+	end
+end
+
+-- Удар в яме. true — игрок стоит в яме (даже если она закрыта)
+function TrainingService.TrySwing(player: Player, data, pos: Vector3): boolean
+	local pit = pitAt(pos)
+	if not pit then
+		return false
+	end
+	local cfg = PitConfig.Pits[pit.Index]
+	if not cfg then
+		return true
+	end
+	if data.Rebirths < cfg.RequiredRebirths then
+		local now = os.clock()
+		if not lastLockNotice[player] or now - lastLockNotice[player] > 3 then
+			lastLockNotice[player] = now
+			RequestService.Notify(player, ("Яма «%s» откроется после %d перерождений"):format(cfg.Name, cfg.RequiredRebirths), "error")
+		end
+		return true
+	end
+	gainStrength(player, data, cfg.Power)
+	data.Stats.Swings += 1
+	return true
+end
+
+-- Удар по воздуху (не в яме и не по стене)
+function TrainingService.AirSwing(player: Player, data)
+	gainStrength(player, data, Settings.AirSwingPower)
 end
 
 function TrainingService.Init()
@@ -74,7 +98,27 @@ function TrainingService.Init()
 			MapService.SetText(pit.Sign, "Sub", "свободное место")
 		end
 	end
-	game:GetService("Players").PlayerRemoving:Connect(function(p)
+
+	-- Автоудары в открытой яме
+	task.spawn(function()
+		while true do
+			task.wait(Settings.PitAutoInterval)
+			for _, player in ipairs(Players:GetPlayers()) do
+				local data = DataService.Get(player)
+				local character = player.Character
+				local root = character and character:FindFirstChild("HumanoidRootPart") :: BasePart?
+				local pit = root and pitAt(root.Position)
+				local cfg = pit and PitConfig.Pits[pit.Index]
+				if data and cfg and data.Rebirths >= cfg.RequiredRebirths then
+					playSlash(player)
+					gainStrength(player, data, cfg.Power)
+					data.Stats.Swings += 1
+				end
+			end
+		end
+	end)
+
+	Players.PlayerRemoving:Connect(function(p)
 		lastLockNotice[p] = nil
 	end)
 end

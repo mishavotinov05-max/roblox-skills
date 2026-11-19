@@ -47,7 +47,7 @@ end
 
 -- Сила за один удар в яме
 function Formulas.StrengthPerSwing(data, pitPower: number, hasStrengthPass: boolean?): number
-	return pitPower * Formulas.TotalMultiplier(data, hasStrengthPass)
+	return math.max(1, math.floor(pitPower * Formulas.TotalMultiplier(data, hasStrengthPass) + 0.5))
 end
 
 -- Урон по стене за удар = текущая сила (минимум 1)

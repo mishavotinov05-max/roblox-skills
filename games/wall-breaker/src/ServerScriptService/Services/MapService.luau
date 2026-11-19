@@ -66,7 +66,7 @@ function MapService.Levels()
 			Layers = layers,
 			Sign = folder:FindFirstChild("Sign"),
 			RewardPad = folder:FindFirstChild("RewardPad"),
-			LobbyPad = folder:FindFirstChild("LobbyPad"),
+			X3Pad = folder:FindFirstChild("X3Pad"),
 			MerchantSpot = folder:FindFirstChild("MerchantSpot"),
 		})
 	end
