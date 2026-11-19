@@ -35,10 +35,11 @@
   #wheel .wl img { position: absolute; left: 0; top: 0; width: 96px; height: 96px; }
   #wheel .badge { position: absolute; left: 70px; top: -2px; width: 28px; height: 28px; border-radius: 50%; background: #ff2b3a; border: 3px solid #fff; color: #fff; font-size: 18px; text-align: center; line-height: 27px; z-index: 2; }
   /* нижний ряд кнопок */
-  #bar { position: absolute; left: 50%; bottom: 10px; transform: translateX(-50%); display: flex; gap: 16px; align-items: flex-end; }
-  .bb { display: flex; flex-direction: column; align-items: center; width: 92px; }
-  .bb img { width: 70px; height: 70px; filter: drop-shadow(0 4px 0 rgba(0,0,0,.35)); }
-  .bb span { font-size: 14px; text-align: center; line-height: 1.05; margin-top: -4px; }
+  /* кнопки в правом верхнем углу, под колесом фортуны */
+  #bar { position: absolute; right: 14px; top: 118px; display: flex; gap: 4px; align-items: flex-start; }
+  .bb { display: flex; flex-direction: column; align-items: center; width: 74px; }
+  .bb img { width: 58px; height: 58px; filter: drop-shadow(0 4px 0 rgba(0,0,0,.35)); }
+  .bb span { font-size: 11px; text-align: center; line-height: 1.05; margin-top: -4px; }
   #jump { position: absolute; right: 40px; bottom: 40px; width: 84px; height: 84px; border-radius: 50%; background: rgba(30,20,60,.35); border: 3px solid rgba(255,255,255,.55); }
   #jump::after { content: ''; position: absolute; left: 27px; top: 22px; border: 15px solid transparent; border-bottom: 22px solid rgba(255,255,255,.85); }
   /* панель уровня */
@@ -76,7 +77,6 @@
   </div>
   <div id="wheel" class="stroke"><div class="wl"><img src="http://wb.local/icons/layer_wheel_base.png"><img id="wdisc" src="http://wb.local/icons/layer_wheel_disc.png"><img src="http://wb.local/icons/layer_wheel_top.png"></div><div class="badge" id="wbadge">!</div><div class="pill">Колесо<br>Фортуны</div></div>
   <div id="bar" class="stroke">
-    <div class="bb"><img src="http://wb.local/icons/bar_carts.png"><span>Вагонетки</span></div>
     <div class="bb"><img src="http://wb.local/icons/bar_achievements.png"><span>Достижения</span></div>
     <div class="bb"><img src="http://wb.local/icons/bar_rewards.png"><span>Награды</span></div>
     <div class="bb"><img src="http://wb.local/icons/bar_daily.png"><span>Ежедневные задания</span></div>
@@ -469,7 +469,8 @@ function buildHub() {
     });
     // табличка позади ямы (с дальней от центра стороны), развёрнута к центру
     const sg = new THREE.Group(); g.add(sg);
-    sg.position.set(-Math.cos(phi) * (PR + 2.2), 0, -Math.sin(phi) * (PR + 2.2)); sg.rotation.y = Math.atan2(Math.cos(phi), Math.sin(phi));
+    // все таблички стоят с дальней стороны ямы и смотрят на главный проход (+x)
+    sg.position.set(-(PR + 2.2), 0, 0); sg.rotation.y = Math.PI / 2;
     const s = sign({ w: 10, h: 3.6, title: p.name, sub: p.sub, icon: p.open ? 'stat_strength' : p.empty ? null : 'btn_lock', bg: p.bg });
     s.position.set(0, 6.8, 0); sg.add(s);
     box(.5, 5, .5, std(0x6b3f1d), -2.5, 2.5, -.6, sg); box(.5, 5, .5, std(0x6b3f1d), 2.5, 2.5, -.6, sg);
@@ -686,9 +687,9 @@ function animHud(t) {
   $('wbadge').style.transform = `scale(${1 + .22 * Math.max(0, Math.sin(t * 6))})`;
   document.querySelectorAll('#bar .bb img').forEach((im, i) => {
     let tr = `translateY(${-4 * Math.sin(t * 2.6 + i * .9)}px)`;
-    if (i === 2 && (t % 2.4) < .6) tr += ` rotate(${12 * Math.sin(t * 28)}deg)`;
-    if (i === 4) tr += ` rotate(${(t * 40) % 360}deg)`;
-    if (i === 1) tr += ` scale(${1 + .06 * Math.max(0, Math.sin(t * 4))})`;
+    if (i === 1 && (t % 2.4) < .6) tr += ` rotate(${12 * Math.sin(t * 28)}deg)`;
+    if (i === 3) tr += ` rotate(${(t * 40) % 360}deg)`;
+    if (i === 0) tr += ` scale(${1 + .06 * Math.max(0, Math.sin(t * 4))})`;
     im.style.transform = tr;
   });
   const st = document.querySelectorAll('#stats img');
