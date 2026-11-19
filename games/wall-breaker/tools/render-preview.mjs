@@ -41,6 +41,18 @@ if (mode === 'stills' || mode === 'all') {
     console.log('still', s);
   }
 }
+if (mode === 'hud' || mode === 'all') {
+  // короткий ролик: камера стоит, анимируется только интерфейс
+  const dir = path.join(process.env.FRAMES_DIR || '/tmp', 'wb_hud');
+  fs.rmSync(dir, { recursive: true, force: true }); fs.mkdirSync(dir, { recursive: true });
+  const n = 6 * fps;
+  for (let i = 0; i < n; i++) {
+    await page.evaluate((t) => window.renderAt(0, 'hub_front', t), i / fps);
+    await page.screenshot({ path: path.join(dir, `f${String(i).padStart(4, '0')}.jpg`), type: 'jpeg', quality: 92 });
+  }
+  execFileSync('ffmpeg', ['-y', '-loglevel', 'error', '-framerate', String(fps), '-i', path.join(dir, 'f%04d.jpg'), '-c:v', 'libx264', '-pix_fmt', 'yuv420p', '-crf', '24', '-movflags', '+faststart', path.join(out, 'hud_animation.mp4')]);
+  console.log('hud done');
+}
 if (mode === 'video' || mode === 'all') {
   const dir = path.join(process.env.FRAMES_DIR || '/tmp', 'wb_frames');
   fs.rmSync(dir, { recursive: true, force: true }); fs.mkdirSync(dir, { recursive: true });

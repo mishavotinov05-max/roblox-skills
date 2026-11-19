@@ -503,3 +503,33 @@ const PICKS = [
 for (const [name, label, h1, h2, handle, glow] of PICKS) {
   ICONS.push({ group: 'pick', name, label, svg: () => pickaxe(h1, h2, handle || '#a86a3c', glow || null) });
 }
+
+// ---------- Слои для анимации ----------
+// В игре кнопка = фон-плитка (ImageLabel) + символ поверх (ImageLabel), символ анимируется отдельно
+// (покачивание, пульсация, вращение) через TweenService. Колесо: основа, вращающийся диск, верх (стрелка).
+function wheelParts() {
+  const cols = ['#ff4d6d', '#ffd23f', '#3ddc84', '#3fa9ff', '#a65bff', '#ff8a3d', '#ff5fd2', '#33e0d0'];
+  const cx = 128, cy = 128, r = 92;
+  let disc = '';
+  for (let i = 0; i < 8; i++) {
+    const a0 = (i / 8) * Math.PI * 2 - Math.PI / 2, a1 = ((i + 1) / 8) * Math.PI * 2 - Math.PI / 2;
+    disc += `<path d="M${cx} ${cy} L${cx + r * Math.cos(a0)} ${cy + r * Math.sin(a0)} A${r} ${r} 0 0 1 ${cx + r * Math.cos(a1)} ${cy + r * Math.sin(a1)}Z" fill="${cols[i]}" stroke="${OL}" stroke-width="5"/>`;
+    const am = (a0 + a1) / 2; disc += `<circle cx="${cx + r * .62 * Math.cos(am)}" cy="${cy + r * .62 * Math.sin(am)}" r="7" fill="#fff" opacity=".55"/>`;
+  }
+  disc += `<circle cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="${OL}" stroke-width="7"/>`;
+  let dots = '';
+  for (let i = 0; i < 16; i++) { const a = (i / 16) * Math.PI * 2; dots += `<circle cx="${cx + (r + 9) * Math.cos(a)}" cy="${cy + (r + 9) * Math.sin(a)}" r="4.5" fill="#fff6b0"/>`; }
+  const base = `<circle cx="128" cy="128" r="122" fill="#7a2cff" stroke="${OL}" stroke-width="8"/><circle cx="128" cy="128" r="110" fill="#b26bff"/>
+    <circle cx="${cx}" cy="${cy}" r="${r + 18}" fill="#7a3cff" stroke="${OL}" stroke-width="${SW}"/>${dots}`;
+  const top = `<circle cx="${cx}" cy="${cy}" r="20" fill="#ffd23f" stroke="${OL}" stroke-width="8"/>
+    <path d="M110 6 H146 L128 42Z" fill="#fff" stroke="${OL}" stroke-width="8" stroke-linejoin="round"/>`;
+  return { base, disc, top };
+}
+const SYMS = { shop: [shop2, .84], pets: [paw2, .8], auras: [flame2, .8], rebirth: [rebirth2, .8] };
+for (const [k, [fn, sc]] of Object.entries(SYMS)) {
+  ICONS.push({ group: 'layer', name: `layer_tile_${k}`, label: '', svg: () => { const t = tile2(...TILE[k]); return `<defs>${t.defs}</defs>${t.body}`; } });
+  ICONS.push({ group: 'layer', name: `layer_sym_${k}`, label: '', svg: () => `<g transform="translate(128 124) scale(${sc}) translate(-128 -128)">${fn()}</g>` });
+}
+ICONS.push({ group: 'layer', name: 'layer_wheel_base', label: '', svg: () => wheelParts().base });
+ICONS.push({ group: 'layer', name: 'layer_wheel_disc', label: '', svg: () => wheelParts().disc });
+ICONS.push({ group: 'layer', name: 'layer_wheel_top', label: '', svg: () => wheelParts().top });
