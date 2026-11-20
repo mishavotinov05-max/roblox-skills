@@ -721,7 +721,7 @@ def build_gui():
     # ===== Слева снизу: цветные карточки показателей =====
     # размер: UIScale "Size" (Scale = 0.6) — поменяйте число, чтобы сделать крупнее/мельче
     stats = frame("Stats", ((0, 150), (0, 264)), ((0, 10), (1, -10)), anchor=(0, 1))
-    stats.add(ui_list(padding=6), ui_scale("Size", 0.6))
+    stats.add(ui_list(padding=6), ui_scale("Size", 0.9))
     stats.add(stat_card("WinsRow", "🏆", "Победы", (255, 196, 40), 1))
     stats.add(stat_card("StrengthRow", "💪", "Сила", (235, 55, 55), 2))
     stats.add(stat_card("LuckRow", "🍀", "Удача", (60, 200, 70), 3))

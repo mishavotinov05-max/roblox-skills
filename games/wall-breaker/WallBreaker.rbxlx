@@ -37343,7 +37343,7 @@ return World
 </Item>
 <Item class="UIScale" referent="RBX002385"><Properties>
 <string name="Name">Size</string>
-<float name="Scale">0.6</float>
+<float name="Scale">0.9</float>
 </Properties>
 </Item>
 <Item class="Frame" referent="RBX002386"><Properties>
