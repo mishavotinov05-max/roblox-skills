@@ -17,11 +17,11 @@
 
 return {
 	-- Слева 2×2 (фон-плитка и символ отдельно — символ анимируется)
-	ShopTile = "rbxassetid://0", -- layer_tile_shop.png
+	ShopTile = "rbxassetid://140134205287427", -- layer_tile_shop.png
 	ShopSymbol = "rbxassetid://0", -- layer_sym_shop.png
-	PetsTile = "rbxassetid://0", -- layer_tile_pets.png
+	PetsTile = "rbxassetid://132751927335269", -- layer_tile_pets.png
 	PetsSymbol = "rbxassetid://0", -- layer_sym_pets.png
-	AurasTile = "rbxassetid://0", -- layer_tile_auras.png
+	AurasTile = "rbxassetid://85302115462208", -- layer_tile_auras.png
 	AurasSymbol = "rbxassetid://0", -- layer_sym_auras.png
 	RebirthTile = "rbxassetid://0", -- layer_tile_rebirth.png
 	RebirthSymbol = "rbxassetid://0", -- layer_sym_rebirth.png

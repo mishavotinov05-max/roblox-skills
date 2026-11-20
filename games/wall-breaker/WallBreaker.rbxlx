@@ -76047,11 +76047,11 @@ return {
 
 return {
 	-- Слева 2×2 (фон-плитка и символ отдельно — символ анимируется)
-	ShopTile = "rbxassetid://0", -- layer_tile_shop.png
+	ShopTile = "rbxassetid://140134205287427", -- layer_tile_shop.png
 	ShopSymbol = "rbxassetid://0", -- layer_sym_shop.png
-	PetsTile = "rbxassetid://0", -- layer_tile_pets.png
+	PetsTile = "rbxassetid://132751927335269", -- layer_tile_pets.png
 	PetsSymbol = "rbxassetid://0", -- layer_sym_pets.png
-	AurasTile = "rbxassetid://0", -- layer_tile_auras.png
+	AurasTile = "rbxassetid://85302115462208", -- layer_tile_auras.png
 	AurasSymbol = "rbxassetid://0", -- layer_sym_auras.png
 	RebirthTile = "rbxassetid://0", -- layer_tile_rebirth.png
 	RebirthSymbol = "rbxassetid://0", -- layer_sym_rebirth.png
@@ -82602,7 +82602,6 @@ return World
 <string name="Name">ShopButton</string>
 <Vector2 name="AnchorPoint"><X>0</X><Y>0</Y></Vector2>
 <Color3 name="BackgroundColor3"><R>1</R><G>0.7686274509803922</G><B>0.1568627450980392</B></Color3>
-<float name="BackgroundTransparency">0</float>
 <int name="BorderSizePixel">0</int>
 <UDim2 name="Position"><XS>0</XS><XO>0</XO><YS>0</YS><YO>0</YO></UDim2>
 <UDim2 name="Size"><XS>0</XS><XO>104</XO><YS>0</YS><YO>104</YO></UDim2>
@@ -82613,26 +82612,19 @@ return World
 <bool name="ClipsDescendants">false</bool>
 <Content name="Image"><null></null></Content>
 <bool name="AutoButtonColor">true</bool>
+<float name="BackgroundTransparency">1</float>
 </Properties>
 <Item class="UICorner" referent="RBX004231"><Properties>
 <string name="Name">UICorner</string>
 <UDim name="CornerRadius"><S>0</S><O>20</O></UDim>
 </Properties>
 </Item>
-<Item class="UIStroke" referent="RBX004232"><Properties>
-<string name="Name">UIStroke</string>
-<float name="Thickness">4</float>
-<Color3 name="Color"><R>0.10196078431372549</R><G>0.06274509803921569</G><B>0.2</B></Color3>
-<token name="ApplyStrokeMode">1</token>
-<float name="Transparency">0</float>
-</Properties>
-</Item>
-<Item class="UIScale" referent="RBX004233"><Properties>
+<Item class="UIScale" referent="RBX004232"><Properties>
 <string name="Name">Pulse</string>
 <float name="Scale">1</float>
 </Properties>
 </Item>
-<Item class="ImageLabel" referent="RBX004234"><Properties>
+<Item class="ImageLabel" referent="RBX004233"><Properties>
 <string name="Name">Tile</string>
 <Vector2 name="AnchorPoint"><X>0</X><Y>0</Y></Vector2>
 <Color3 name="BackgroundColor3"><R>1</R><G>1</G><B>1</B></Color3>
@@ -82640,16 +82632,16 @@ return World
 <int name="BorderSizePixel">0</int>
 <UDim2 name="Position"><XS>0</XS><XO>0</XO><YS>0</YS><YO>0</YO></UDim2>
 <UDim2 name="Size"><XS>1</XS><XO>0</XO><YS>1</YS><YO>0</YO></UDim2>
-<bool name="Visible">false</bool>
 <int name="ZIndex">2</int>
 <int name="LayoutOrder">0</int>
 <float name="Rotation">0</float>
 <bool name="ClipsDescendants">false</bool>
-<Content name="Image"><null></null></Content>
 <token name="ScaleType">3</token>
+<Content name="Image"><url>rbxassetid://140134205287427</url></Content>
+<bool name="Visible">true</bool>
 </Properties>
 </Item>
-<Item class="ImageLabel" referent="RBX004235"><Properties>
+<Item class="ImageLabel" referent="RBX004234"><Properties>
 <string name="Name">Symbol</string>
 <Vector2 name="AnchorPoint"><X>0.5</X><Y>0.5</Y></Vector2>
 <Color3 name="BackgroundColor3"><R>1</R><G>1</G><B>1</B></Color3>
@@ -82666,7 +82658,7 @@ return World
 <token name="ScaleType">3</token>
 </Properties>
 </Item>
-<Item class="TextLabel" referent="RBX004236"><Properties>
+<Item class="TextLabel" referent="RBX004235"><Properties>
 <string name="Name">Fallback</string>
 <Vector2 name="AnchorPoint"><X>0.5</X><Y>0.5</Y></Vector2>
 <Color3 name="BackgroundColor3"><R>1</R><G>1</G><B>1</B></Color3>
@@ -82674,7 +82666,6 @@ return World
 <int name="BorderSizePixel">0</int>
 <UDim2 name="Position"><XS>0.5</XS><XO>0</XO><YS>0.4</YS><YO>0</YO></UDim2>
 <UDim2 name="Size"><XS>0.62</XS><XO>0</XO><YS>0.62</YS><YO>0</YO></UDim2>
-<bool name="Visible">true</bool>
 <int name="ZIndex">3</int>
 <int name="LayoutOrder">0</int>
 <float name="Rotation">0</float>
@@ -82687,9 +82678,10 @@ return World
 <token name="TextXAlignment">2</token>
 <bool name="TextWrapped">true</bool>
 <bool name="RichText">false</bool>
+<bool name="Visible">false</bool>
 </Properties>
 </Item>
-<Item class="TextLabel" referent="RBX004237"><Properties>
+<Item class="TextLabel" referent="RBX004236"><Properties>
 <string name="Name">Label</string>
 <Vector2 name="AnchorPoint"><X>0.5</X><Y>1</Y></Vector2>
 <Color3 name="BackgroundColor3"><R>1</R><G>1</G><B>1</B></Color3>
@@ -82697,7 +82689,6 @@ return World
 <int name="BorderSizePixel">0</int>
 <UDim2 name="Position"><XS>0.5</XS><XO>0</XO><YS>1</YS><YO>-2</YO></UDim2>
 <UDim2 name="Size"><XS>1.1</XS><XO>0</XO><YS>0</YS><YO>25</YO></UDim2>
-<bool name="Visible">true</bool>
 <int name="ZIndex">4</int>
 <int name="LayoutOrder">0</int>
 <float name="Rotation">0</float>
@@ -82710,8 +82701,9 @@ return World
 <token name="TextXAlignment">2</token>
 <bool name="TextWrapped">true</bool>
 <bool name="RichText">false</bool>
+<bool name="Visible">false</bool>
 </Properties>
-<Item class="UIStroke" referent="RBX004238"><Properties>
+<Item class="UIStroke" referent="RBX004237"><Properties>
 <string name="Name">UIStroke</string>
 <float name="Thickness">3</float>
 <Color3 name="Color"><R>0.10196078431372549</R><G>0.06274509803921569</G><B>0.2</B></Color3>
@@ -82721,11 +82713,10 @@ return World
 </Item>
 </Item>
 </Item>
-<Item class="ImageButton" referent="RBX004239"><Properties>
+<Item class="ImageButton" referent="RBX004238"><Properties>
 <string name="Name">PetsButton</string>
 <Vector2 name="AnchorPoint"><X>0</X><Y>0</Y></Vector2>
 <Color3 name="BackgroundColor3"><R>0.1568627450980392</R><G>0.5882352941176471</G><B>1</B></Color3>
-<float name="BackgroundTransparency">0</float>
 <int name="BorderSizePixel">0</int>
 <UDim2 name="Position"><XS>0</XS><XO>0</XO><YS>0</YS><YO>0</YO></UDim2>
 <UDim2 name="Size"><XS>0</XS><XO>104</XO><YS>0</YS><YO>104</YO></UDim2>
@@ -82736,26 +82727,19 @@ return World
 <bool name="ClipsDescendants">false</bool>
 <Content name="Image"><null></null></Content>
 <bool name="AutoButtonColor">true</bool>
+<float name="BackgroundTransparency">1</float>
 </Properties>
-<Item class="UICorner" referent="RBX004240"><Properties>
+<Item class="UICorner" referent="RBX004239"><Properties>
 <string name="Name">UICorner</string>
 <UDim name="CornerRadius"><S>0</S><O>20</O></UDim>
 </Properties>
 </Item>
-<Item class="UIStroke" referent="RBX004241"><Properties>
-<string name="Name">UIStroke</string>
-<float name="Thickness">4</float>
-<Color3 name="Color"><R>0.10196078431372549</R><G>0.06274509803921569</G><B>0.2</B></Color3>
-<token name="ApplyStrokeMode">1</token>
-<float name="Transparency">0</float>
-</Properties>
-</Item>
-<Item class="UIScale" referent="RBX004242"><Properties>
+<Item class="UIScale" referent="RBX004240"><Properties>
 <string name="Name">Pulse</string>
 <float name="Scale">1</float>
 </Properties>
 </Item>
-<Item class="ImageLabel" referent="RBX004243"><Properties>
+<Item class="ImageLabel" referent="RBX004241"><Properties>
 <string name="Name">Tile</string>
 <Vector2 name="AnchorPoint"><X>0</X><Y>0</Y></Vector2>
 <Color3 name="BackgroundColor3"><R>1</R><G>1</G><B>1</B></Color3>
@@ -82763,16 +82747,16 @@ return World
 <int name="BorderSizePixel">0</int>
 <UDim2 name="Position"><XS>0</XS><XO>0</XO><YS>0</YS><YO>0</YO></UDim2>
 <UDim2 name="Size"><XS>1</XS><XO>0</XO><YS>1</YS><YO>0</YO></UDim2>
-<bool name="Visible">false</bool>
 <int name="ZIndex">2</int>
 <int name="LayoutOrder">0</int>
 <float name="Rotation">0</float>
 <bool name="ClipsDescendants">false</bool>
-<Content name="Image"><null></null></Content>
 <token name="ScaleType">3</token>
+<Content name="Image"><url>rbxassetid://132751927335269</url></Content>
+<bool name="Visible">true</bool>
 </Properties>
 </Item>
-<Item class="ImageLabel" referent="RBX004244"><Properties>
+<Item class="ImageLabel" referent="RBX004242"><Properties>
 <string name="Name">Symbol</string>
 <Vector2 name="AnchorPoint"><X>0.5</X><Y>0.5</Y></Vector2>
 <Color3 name="BackgroundColor3"><R>1</R><G>1</G><B>1</B></Color3>
@@ -82789,7 +82773,7 @@ return World
 <token name="ScaleType">3</token>
 </Properties>
 </Item>
-<Item class="TextLabel" referent="RBX004245"><Properties>
+<Item class="TextLabel" referent="RBX004243"><Properties>
 <string name="Name">Fallback</string>
 <Vector2 name="AnchorPoint"><X>0.5</X><Y>0.5</Y></Vector2>
 <Color3 name="BackgroundColor3"><R>1</R><G>1</G><B>1</B></Color3>
@@ -82797,7 +82781,6 @@ return World
 <int name="BorderSizePixel">0</int>
 <UDim2 name="Position"><XS>0.5</XS><XO>0</XO><YS>0.4</YS><YO>0</YO></UDim2>
 <UDim2 name="Size"><XS>0.62</XS><XO>0</XO><YS>0.62</YS><YO>0</YO></UDim2>
-<bool name="Visible">true</bool>
 <int name="ZIndex">3</int>
 <int name="LayoutOrder">0</int>
 <float name="Rotation">0</float>
@@ -82810,9 +82793,10 @@ return World
 <token name="TextXAlignment">2</token>
 <bool name="TextWrapped">true</bool>
 <bool name="RichText">false</bool>
+<bool name="Visible">false</bool>
 </Properties>
 </Item>
-<Item class="TextLabel" referent="RBX004246"><Properties>
+<Item class="TextLabel" referent="RBX004244"><Properties>
 <string name="Name">Label</string>
 <Vector2 name="AnchorPoint"><X>0.5</X><Y>1</Y></Vector2>
 <Color3 name="BackgroundColor3"><R>1</R><G>1</G><B>1</B></Color3>
@@ -82820,7 +82804,6 @@ return World
 <int name="BorderSizePixel">0</int>
 <UDim2 name="Position"><XS>0.5</XS><XO>0</XO><YS>1</YS><YO>-2</YO></UDim2>
 <UDim2 name="Size"><XS>1.1</XS><XO>0</XO><YS>0</YS><YO>25</YO></UDim2>
-<bool name="Visible">true</bool>
 <int name="ZIndex">4</int>
 <int name="LayoutOrder">0</int>
 <float name="Rotation">0</float>
@@ -82833,8 +82816,9 @@ return World
 <token name="TextXAlignment">2</token>
 <bool name="TextWrapped">true</bool>
 <bool name="RichText">false</bool>
+<bool name="Visible">false</bool>
 </Properties>
-<Item class="UIStroke" referent="RBX004247"><Properties>
+<Item class="UIStroke" referent="RBX004245"><Properties>
 <string name="Name">UIStroke</string>
 <float name="Thickness">3</float>
 <Color3 name="Color"><R>0.10196078431372549</R><G>0.06274509803921569</G><B>0.2</B></Color3>
@@ -82844,11 +82828,10 @@ return World
 </Item>
 </Item>
 </Item>
-<Item class="ImageButton" referent="RBX004248"><Properties>
+<Item class="ImageButton" referent="RBX004246"><Properties>
 <string name="Name">AurasButton</string>
 <Vector2 name="AnchorPoint"><X>0</X><Y>0</Y></Vector2>
 <Color3 name="BackgroundColor3"><R>0.5490196078431373</R><G>0.23529411764705882</G><B>0.9019607843137255</B></Color3>
-<float name="BackgroundTransparency">0</float>
 <int name="BorderSizePixel">0</int>
 <UDim2 name="Position"><XS>0</XS><XO>0</XO><YS>0</YS><YO>0</YO></UDim2>
 <UDim2 name="Size"><XS>0</XS><XO>104</XO><YS>0</YS><YO>104</YO></UDim2>
@@ -82859,26 +82842,19 @@ return World
 <bool name="ClipsDescendants">false</bool>
 <Content name="Image"><null></null></Content>
 <bool name="AutoButtonColor">true</bool>
+<float name="BackgroundTransparency">1</float>
 </Properties>
-<Item class="UICorner" referent="RBX004249"><Properties>
+<Item class="UICorner" referent="RBX004247"><Properties>
 <string name="Name">UICorner</string>
 <UDim name="CornerRadius"><S>0</S><O>20</O></UDim>
 </Properties>
 </Item>
-<Item class="UIStroke" referent="RBX004250"><Properties>
-<string name="Name">UIStroke</string>
-<float name="Thickness">4</float>
-<Color3 name="Color"><R>0.10196078431372549</R><G>0.06274509803921569</G><B>0.2</B></Color3>
-<token name="ApplyStrokeMode">1</token>
-<float name="Transparency">0</float>
-</Properties>
-</Item>
-<Item class="UIScale" referent="RBX004251"><Properties>
+<Item class="UIScale" referent="RBX004248"><Properties>
 <string name="Name">Pulse</string>
 <float name="Scale">1</float>
 </Properties>
 </Item>
-<Item class="ImageLabel" referent="RBX004252"><Properties>
+<Item class="ImageLabel" referent="RBX004249"><Properties>
 <string name="Name">Tile</string>
 <Vector2 name="AnchorPoint"><X>0</X><Y>0</Y></Vector2>
 <Color3 name="BackgroundColor3"><R>1</R><G>1</G><B>1</B></Color3>
@@ -82886,16 +82862,16 @@ return World
 <int name="BorderSizePixel">0</int>
 <UDim2 name="Position"><XS>0</XS><XO>0</XO><YS>0</YS><YO>0</YO></UDim2>
 <UDim2 name="Size"><XS>1</XS><XO>0</XO><YS>1</YS><YO>0</YO></UDim2>
-<bool name="Visible">false</bool>
 <int name="ZIndex">2</int>
 <int name="LayoutOrder">0</int>
 <float name="Rotation">0</float>
 <bool name="ClipsDescendants">false</bool>
-<Content name="Image"><null></null></Content>
 <token name="ScaleType">3</token>
+<Content name="Image"><url>rbxassetid://85302115462208</url></Content>
+<bool name="Visible">true</bool>
 </Properties>
 </Item>
-<Item class="ImageLabel" referent="RBX004253"><Properties>
+<Item class="ImageLabel" referent="RBX004250"><Properties>
 <string name="Name">Symbol</string>
 <Vector2 name="AnchorPoint"><X>0.5</X><Y>0.5</Y></Vector2>
 <Color3 name="BackgroundColor3"><R>1</R><G>1</G><B>1</B></Color3>
@@ -82912,7 +82888,7 @@ return World
 <token name="ScaleType">3</token>
 </Properties>
 </Item>
-<Item class="TextLabel" referent="RBX004254"><Properties>
+<Item class="TextLabel" referent="RBX004251"><Properties>
 <string name="Name">Fallback</string>
 <Vector2 name="AnchorPoint"><X>0.5</X><Y>0.5</Y></Vector2>
 <Color3 name="BackgroundColor3"><R>1</R><G>1</G><B>1</B></Color3>
@@ -82920,7 +82896,6 @@ return World
 <int name="BorderSizePixel">0</int>
 <UDim2 name="Position"><XS>0.5</XS><XO>0</XO><YS>0.4</YS><YO>0</YO></UDim2>
 <UDim2 name="Size"><XS>0.62</XS><XO>0</XO><YS>0.62</YS><YO>0</YO></UDim2>
-<bool name="Visible">true</bool>
 <int name="ZIndex">3</int>
 <int name="LayoutOrder">0</int>
 <float name="Rotation">0</float>
@@ -82933,9 +82908,10 @@ return World
 <token name="TextXAlignment">2</token>
 <bool name="TextWrapped">true</bool>
 <bool name="RichText">false</bool>
+<bool name="Visible">false</bool>
 </Properties>
 </Item>
-<Item class="TextLabel" referent="RBX004255"><Properties>
+<Item class="TextLabel" referent="RBX004252"><Properties>
 <string name="Name">Label</string>
 <Vector2 name="AnchorPoint"><X>0.5</X><Y>1</Y></Vector2>
 <Color3 name="BackgroundColor3"><R>1</R><G>1</G><B>1</B></Color3>
@@ -82943,7 +82919,6 @@ return World
 <int name="BorderSizePixel">0</int>
 <UDim2 name="Position"><XS>0.5</XS><XO>0</XO><YS>1</YS><YO>-2</YO></UDim2>
 <UDim2 name="Size"><XS>1.1</XS><XO>0</XO><YS>0</YS><YO>25</YO></UDim2>
-<bool name="Visible">true</bool>
 <int name="ZIndex">4</int>
 <int name="LayoutOrder">0</int>
 <float name="Rotation">0</float>
@@ -82956,8 +82931,9 @@ return World
 <token name="TextXAlignment">2</token>
 <bool name="TextWrapped">true</bool>
 <bool name="RichText">false</bool>
+<bool name="Visible">false</bool>
 </Properties>
-<Item class="UIStroke" referent="RBX004256"><Properties>
+<Item class="UIStroke" referent="RBX004253"><Properties>
 <string name="Name">UIStroke</string>
 <float name="Thickness">3</float>
 <Color3 name="Color"><R>0.10196078431372549</R><G>0.06274509803921569</G><B>0.2</B></Color3>
@@ -82967,7 +82943,7 @@ return World
 </Item>
 </Item>
 </Item>
-<Item class="ImageButton" referent="RBX004257"><Properties>
+<Item class="ImageButton" referent="RBX004254"><Properties>
 <string name="Name">RebirthButton</string>
 <Vector2 name="AnchorPoint"><X>0</X><Y>0</Y></Vector2>
 <Color3 name="BackgroundColor3"><R>0.8823529411764706</R><G>0.9019607843137255</G><B>0.9607843137254902</B></Color3>
@@ -82983,12 +82959,12 @@ return World
 <Content name="Image"><null></null></Content>
 <bool name="AutoButtonColor">true</bool>
 </Properties>
-<Item class="UICorner" referent="RBX004258"><Properties>
+<Item class="UICorner" referent="RBX004255"><Properties>
 <string name="Name">UICorner</string>
 <UDim name="CornerRadius"><S>0</S><O>20</O></UDim>
 </Properties>
 </Item>
-<Item class="UIStroke" referent="RBX004259"><Properties>
+<Item class="UIStroke" referent="RBX004256"><Properties>
 <string name="Name">UIStroke</string>
 <float name="Thickness">4</float>
 <Color3 name="Color"><R>0.10196078431372549</R><G>0.06274509803921569</G><B>0.2</B></Color3>
@@ -82996,12 +82972,12 @@ return World
 <float name="Transparency">0</float>
 </Properties>
 </Item>
-<Item class="UIScale" referent="RBX004260"><Properties>
+<Item class="UIScale" referent="RBX004257"><Properties>
 <string name="Name">Pulse</string>
 <float name="Scale">1</float>
 </Properties>
 </Item>
-<Item class="ImageLabel" referent="RBX004261"><Properties>
+<Item class="ImageLabel" referent="RBX004258"><Properties>
 <string name="Name">Tile</string>
 <Vector2 name="AnchorPoint"><X>0</X><Y>0</Y></Vector2>
 <Color3 name="BackgroundColor3"><R>1</R><G>1</G><B>1</B></Color3>
@@ -83018,7 +82994,7 @@ return World
 <token name="ScaleType">3</token>
 </Properties>
 </Item>
-<Item class="ImageLabel" referent="RBX004262"><Properties>
+<Item class="ImageLabel" referent="RBX004259"><Properties>
 <string name="Name">Symbol</string>
 <Vector2 name="AnchorPoint"><X>0.5</X><Y>0.5</Y></Vector2>
 <Color3 name="BackgroundColor3"><R>1</R><G>1</G><B>1</B></Color3>
@@ -83035,7 +83011,7 @@ return World
 <token name="ScaleType">3</token>
 </Properties>
 </Item>
-<Item class="TextLabel" referent="RBX004263"><Properties>
+<Item class="TextLabel" referent="RBX004260"><Properties>
 <string name="Name">Fallback</string>
 <Vector2 name="AnchorPoint"><X>0.5</X><Y>0.5</Y></Vector2>
 <Color3 name="BackgroundColor3"><R>1</R><G>1</G><B>1</B></Color3>
@@ -83058,7 +83034,7 @@ return World
 <bool name="RichText">false</bool>
 </Properties>
 </Item>
-<Item class="TextLabel" referent="RBX004264"><Properties>
+<Item class="TextLabel" referent="RBX004261"><Properties>
 <string name="Name">Label</string>
 <Vector2 name="AnchorPoint"><X>0.5</X><Y>1</Y></Vector2>
 <Color3 name="BackgroundColor3"><R>1</R><G>1</G><B>1</B></Color3>
@@ -83080,7 +83056,7 @@ return World
 <bool name="TextWrapped">true</bool>
 <bool name="RichText">false</bool>
 </Properties>
-<Item class="UIStroke" referent="RBX004265"><Properties>
+<Item class="UIStroke" referent="RBX004262"><Properties>
 <string name="Name">UIStroke</string>
 <float name="Thickness">3</float>
 <Color3 name="Color"><R>0.10196078431372549</R><G>0.06274509803921569</G><B>0.2</B></Color3>
@@ -83091,7 +83067,7 @@ return World
 </Item>
 </Item>
 </Item>
-<Item class="Frame" referent="RBX004266"><Properties>
+<Item class="Frame" referent="RBX004263"><Properties>
 <string name="Name">Stats</string>
 <Vector2 name="AnchorPoint"><X>0</X><Y>1</Y></Vector2>
 <Color3 name="BackgroundColor3"><R>1</R><G>1</G><B>1</B></Color3>
@@ -83105,7 +83081,7 @@ return World
 <float name="Rotation">0</float>
 <bool name="ClipsDescendants">false</bool>
 </Properties>
-<Item class="UIListLayout" referent="RBX004267"><Properties>
+<Item class="UIListLayout" referent="RBX004264"><Properties>
 <string name="Name">UIListLayout</string>
 <token name="FillDirection">1</token>
 <UDim name="Padding"><S>0</S><O>4</O></UDim>
@@ -83114,12 +83090,12 @@ return World
 <token name="VerticalAlignment">2</token>
 </Properties>
 </Item>
-<Item class="UIScale" referent="RBX004268"><Properties>
+<Item class="UIScale" referent="RBX004265"><Properties>
 <string name="Name">Size</string>
 <float name="Scale">0.7</float>
 </Properties>
 </Item>
-<Item class="Frame" referent="RBX004269"><Properties>
+<Item class="Frame" referent="RBX004266"><Properties>
 <string name="Name">WinsRow</string>
 <Vector2 name="AnchorPoint"><X>0</X><Y>0</Y></Vector2>
 <Color3 name="BackgroundColor3"><R>1</R><G>0.7686274509803922</G><B>0.1568627450980392</B></Color3>
@@ -83133,12 +83109,12 @@ return World
 <float name="Rotation">0</float>
 <bool name="ClipsDescendants">false</bool>
 </Properties>
-<Item class="UICorner" referent="RBX004270"><Properties>
+<Item class="UICorner" referent="RBX004267"><Properties>
 <string name="Name">UICorner</string>
 <UDim name="CornerRadius"><S>0</S><O>14</O></UDim>
 </Properties>
 </Item>
-<Item class="UIStroke" referent="RBX004271"><Properties>
+<Item class="UIStroke" referent="RBX004268"><Properties>
 <string name="Name">UIStroke</string>
 <float name="Thickness">4</float>
 <Color3 name="Color"><R>0.10196078431372549</R><G>0.06274509803921569</G><B>0.2</B></Color3>
@@ -83146,7 +83122,7 @@ return World
 <float name="Transparency">0</float>
 </Properties>
 </Item>
-<Item class="ImageLabel" referent="RBX004272"><Properties>
+<Item class="ImageLabel" referent="RBX004269"><Properties>
 <string name="Name">Skin</string>
 <Vector2 name="AnchorPoint"><X>0</X><Y>0</Y></Vector2>
 <Color3 name="BackgroundColor3"><R>1</R><G>1</G><B>1</B></Color3>
@@ -83163,7 +83139,7 @@ return World
 <token name="ScaleType">0</token>
 </Properties>
 </Item>
-<Item class="ImageLabel" referent="RBX004273"><Properties>
+<Item class="ImageLabel" referent="RBX004270"><Properties>
 <string name="Name">Icon</string>
 <Vector2 name="AnchorPoint"><X>0</X><Y>0.5</Y></Vector2>
 <Color3 name="BackgroundColor3"><R>1</R><G>1</G><B>1</B></Color3>
@@ -83180,7 +83156,7 @@ return World
 <token name="ScaleType">3</token>
 </Properties>
 </Item>
-<Item class="TextLabel" referent="RBX004274"><Properties>
+<Item class="TextLabel" referent="RBX004271"><Properties>
 <string name="Name">Fallback</string>
 <Vector2 name="AnchorPoint"><X>0</X><Y>0.5</Y></Vector2>
 <Color3 name="BackgroundColor3"><R>1</R><G>1</G><B>1</B></Color3>
@@ -83203,7 +83179,7 @@ return World
 <bool name="RichText">false</bool>
 </Properties>
 </Item>
-<Item class="TextLabel" referent="RBX004275"><Properties>
+<Item class="TextLabel" referent="RBX004272"><Properties>
 <string name="Name">Title</string>
 <Vector2 name="AnchorPoint"><X>0</X><Y>0</Y></Vector2>
 <Color3 name="BackgroundColor3"><R>1</R><G>1</G><B>1</B></Color3>
@@ -83225,7 +83201,7 @@ return World
 <bool name="TextWrapped">true</bool>
 <bool name="RichText">false</bool>
 </Properties>
-<Item class="UIStroke" referent="RBX004276"><Properties>
+<Item class="UIStroke" referent="RBX004273"><Properties>
 <string name="Name">UIStroke</string>
 <float name="Thickness">2.5</float>
 <Color3 name="Color"><R>0.10196078431372549</R><G>0.06274509803921569</G><B>0.2</B></Color3>
@@ -83234,7 +83210,7 @@ return World
 </Properties>
 </Item>
 </Item>
-<Item class="TextLabel" referent="RBX004277"><Properties>
+<Item class="TextLabel" referent="RBX004274"><Properties>
 <string name="Name">Value</string>
 <Vector2 name="AnchorPoint"><X>0.5</X><Y>0.5</Y></Vector2>
 <Color3 name="BackgroundColor3"><R>1</R><G>1</G><B>1</B></Color3>
@@ -83256,7 +83232,7 @@ return World
 <bool name="TextWrapped">true</bool>
 <bool name="RichText">false</bool>
 </Properties>
-<Item class="UIStroke" referent="RBX004278"><Properties>
+<Item class="UIStroke" referent="RBX004275"><Properties>
 <string name="Name">UIStroke</string>
 <float name="Thickness">3</float>
 <Color3 name="Color"><R>0.10196078431372549</R><G>0.06274509803921569</G><B>0.2</B></Color3>
@@ -83266,7 +83242,7 @@ return World
 </Item>
 </Item>
 </Item>
-<Item class="Frame" referent="RBX004279"><Properties>
+<Item class="Frame" referent="RBX004276"><Properties>
 <string name="Name">StrengthRow</string>
 <Vector2 name="AnchorPoint"><X>0</X><Y>0</Y></Vector2>
 <Color3 name="BackgroundColor3"><R>0.9215686274509803</R><G>0.21568627450980393</G><B>0.21568627450980393</B></Color3>
@@ -83280,12 +83256,12 @@ return World
 <float name="Rotation">0</float>
 <bool name="ClipsDescendants">false</bool>
 </Properties>
-<Item class="UICorner" referent="RBX004280"><Properties>
+<Item class="UICorner" referent="RBX004277"><Properties>
 <string name="Name">UICorner</string>
 <UDim name="CornerRadius"><S>0</S><O>14</O></UDim>
 </Properties>
 </Item>
-<Item class="UIStroke" referent="RBX004281"><Properties>
+<Item class="UIStroke" referent="RBX004278"><Properties>
 <string name="Name">UIStroke</string>
 <float name="Thickness">4</float>
 <Color3 name="Color"><R>0.10196078431372549</R><G>0.06274509803921569</G><B>0.2</B></Color3>
@@ -83293,7 +83269,7 @@ return World
 <float name="Transparency">0</float>
 </Properties>
 </Item>
-<Item class="ImageLabel" referent="RBX004282"><Properties>
+<Item class="ImageLabel" referent="RBX004279"><Properties>
 <string name="Name">Skin</string>
 <Vector2 name="AnchorPoint"><X>0</X><Y>0</Y></Vector2>
 <Color3 name="BackgroundColor3"><R>1</R><G>1</G><B>1</B></Color3>
@@ -83310,7 +83286,7 @@ return World
 <token name="ScaleType">0</token>
 </Properties>
 </Item>
-<Item class="ImageLabel" referent="RBX004283"><Properties>
+<Item class="ImageLabel" referent="RBX004280"><Properties>
 <string name="Name">Icon</string>
 <Vector2 name="AnchorPoint"><X>0</X><Y>0.5</Y></Vector2>
 <Color3 name="BackgroundColor3"><R>1</R><G>1</G><B>1</B></Color3>
@@ -83327,7 +83303,7 @@ return World
 <token name="ScaleType">3</token>
 </Properties>
 </Item>
-<Item class="TextLabel" referent="RBX004284"><Properties>
+<Item class="TextLabel" referent="RBX004281"><Properties>
 <string name="Name">Fallback</string>
 <Vector2 name="AnchorPoint"><X>0</X><Y>0.5</Y></Vector2>
 <Color3 name="BackgroundColor3"><R>1</R><G>1</G><B>1</B></Color3>
@@ -83350,7 +83326,7 @@ return World
 <bool name="RichText">false</bool>
 </Properties>
 </Item>
-<Item class="TextLabel" referent="RBX004285"><Properties>
+<Item class="TextLabel" referent="RBX004282"><Properties>
 <string name="Name">Title</string>
 <Vector2 name="AnchorPoint"><X>0</X><Y>0</Y></Vector2>
 <Color3 name="BackgroundColor3"><R>1</R><G>1</G><B>1</B></Color3>
@@ -83372,7 +83348,7 @@ return World
 <bool name="TextWrapped">true</bool>
 <bool name="RichText">false</bool>
 </Properties>
-<Item class="UIStroke" referent="RBX004286"><Properties>
+<Item class="UIStroke" referent="RBX004283"><Properties>
 <string name="Name">UIStroke</string>
 <float name="Thickness">2.5</float>
 <Color3 name="Color"><R>0.10196078431372549</R><G>0.06274509803921569</G><B>0.2</B></Color3>
@@ -83381,7 +83357,7 @@ return World
 </Properties>
 </Item>
 </Item>
-<Item class="TextLabel" referent="RBX004287"><Properties>
+<Item class="TextLabel" referent="RBX004284"><Properties>
 <string name="Name">Value</string>
 <Vector2 name="AnchorPoint"><X>0.5</X><Y>0.5</Y></Vector2>
 <Color3 name="BackgroundColor3"><R>1</R><G>1</G><B>1</B></Color3>
@@ -83403,7 +83379,7 @@ return World
 <bool name="TextWrapped">true</bool>
 <bool name="RichText">false</bool>
 </Properties>
-<Item class="UIStroke" referent="RBX004288"><Properties>
+<Item class="UIStroke" referent="RBX004285"><Properties>
 <string name="Name">UIStroke</string>
 <float name="Thickness">3</float>
 <Color3 name="Color"><R>0.10196078431372549</R><G>0.06274509803921569</G><B>0.2</B></Color3>
@@ -83413,7 +83389,7 @@ return World
 </Item>
 </Item>
 </Item>
-<Item class="Frame" referent="RBX004289"><Properties>
+<Item class="Frame" referent="RBX004286"><Properties>
 <string name="Name">LuckRow</string>
 <Vector2 name="AnchorPoint"><X>0</X><Y>0</Y></Vector2>
 <Color3 name="BackgroundColor3"><R>0.23529411764705882</R><G>0.7843137254901961</G><B>0.27450980392156865</B></Color3>
@@ -83427,12 +83403,12 @@ return World
 <float name="Rotation">0</float>
 <bool name="ClipsDescendants">false</bool>
 </Properties>
-<Item class="UICorner" referent="RBX004290"><Properties>
+<Item class="UICorner" referent="RBX004287"><Properties>
 <string name="Name">UICorner</string>
 <UDim name="CornerRadius"><S>0</S><O>14</O></UDim>
 </Properties>
 </Item>
-<Item class="UIStroke" referent="RBX004291"><Properties>
+<Item class="UIStroke" referent="RBX004288"><Properties>
 <string name="Name">UIStroke</string>
 <float name="Thickness">4</float>
 <Color3 name="Color"><R>0.10196078431372549</R><G>0.06274509803921569</G><B>0.2</B></Color3>
@@ -83440,7 +83416,7 @@ return World
 <float name="Transparency">0</float>
 </Properties>
 </Item>
-<Item class="ImageLabel" referent="RBX004292"><Properties>
+<Item class="ImageLabel" referent="RBX004289"><Properties>
 <string name="Name">Skin</string>
 <Vector2 name="AnchorPoint"><X>0</X><Y>0</Y></Vector2>
 <Color3 name="BackgroundColor3"><R>1</R><G>1</G><B>1</B></Color3>
@@ -83457,7 +83433,7 @@ return World
 <token name="ScaleType">0</token>
 </Properties>
 </Item>
-<Item class="ImageLabel" referent="RBX004293"><Properties>
+<Item class="ImageLabel" referent="RBX004290"><Properties>
 <string name="Name">Icon</string>
 <Vector2 name="AnchorPoint"><X>0</X><Y>0.5</Y></Vector2>
 <Color3 name="BackgroundColor3"><R>1</R><G>1</G><B>1</B></Color3>
@@ -83474,7 +83450,7 @@ return World
 <token name="ScaleType">3</token>
 </Properties>
 </Item>
-<Item class="TextLabel" referent="RBX004294"><Properties>
+<Item class="TextLabel" referent="RBX004291"><Properties>
 <string name="Name">Fallback</string>
 <Vector2 name="AnchorPoint"><X>0</X><Y>0.5</Y></Vector2>
 <Color3 name="BackgroundColor3"><R>1</R><G>1</G><B>1</B></Color3>
@@ -83497,7 +83473,7 @@ return World
 <bool name="RichText">false</bool>
 </Properties>
 </Item>
-<Item class="TextLabel" referent="RBX004295"><Properties>
+<Item class="TextLabel" referent="RBX004292"><Properties>
 <string name="Name">Title</string>
 <Vector2 name="AnchorPoint"><X>0</X><Y>0</Y></Vector2>
 <Color3 name="BackgroundColor3"><R>1</R><G>1</G><B>1</B></Color3>
@@ -83519,7 +83495,7 @@ return World
 <bool name="TextWrapped">true</bool>
 <bool name="RichText">false</bool>
 </Properties>
-<Item class="UIStroke" referent="RBX004296"><Properties>
+<Item class="UIStroke" referent="RBX004293"><Properties>
 <string name="Name">UIStroke</string>
 <float name="Thickness">2.5</float>
 <Color3 name="Color"><R>0.10196078431372549</R><G>0.06274509803921569</G><B>0.2</B></Color3>
@@ -83528,7 +83504,7 @@ return World
 </Properties>
 </Item>
 </Item>
-<Item class="TextLabel" referent="RBX004297"><Properties>
+<Item class="TextLabel" referent="RBX004294"><Properties>
 <string name="Name">Value</string>
 <Vector2 name="AnchorPoint"><X>0.5</X><Y>0.5</Y></Vector2>
 <Color3 name="BackgroundColor3"><R>1</R><G>1</G><B>1</B></Color3>
@@ -83550,7 +83526,7 @@ return World
 <bool name="TextWrapped">true</bool>
 <bool name="RichText">false</bool>
 </Properties>
-<Item class="UIStroke" referent="RBX004298"><Properties>
+<Item class="UIStroke" referent="RBX004295"><Properties>
 <string name="Name">UIStroke</string>
 <float name="Thickness">3</float>
 <Color3 name="Color"><R>0.10196078431372549</R><G>0.06274509803921569</G><B>0.2</B></Color3>
@@ -83560,7 +83536,7 @@ return World
 </Item>
 </Item>
 </Item>
-<Item class="Frame" referent="RBX004299"><Properties>
+<Item class="Frame" referent="RBX004296"><Properties>
 <string name="Name">RebirthRow</string>
 <Vector2 name="AnchorPoint"><X>0</X><Y>0</Y></Vector2>
 <Color3 name="BackgroundColor3"><R>0.9019607843137255</R><G>0.27450980392156865</G><B>0.11764705882352941</B></Color3>
@@ -83574,12 +83550,12 @@ return World
 <float name="Rotation">0</float>
 <bool name="ClipsDescendants">false</bool>
 </Properties>
-<Item class="UICorner" referent="RBX004300"><Properties>
+<Item class="UICorner" referent="RBX004297"><Properties>
 <string name="Name">UICorner</string>
 <UDim name="CornerRadius"><S>0</S><O>14</O></UDim>
 </Properties>
 </Item>
-<Item class="UIStroke" referent="RBX004301"><Properties>
+<Item class="UIStroke" referent="RBX004298"><Properties>
 <string name="Name">UIStroke</string>
 <float name="Thickness">4</float>
 <Color3 name="Color"><R>0.10196078431372549</R><G>0.06274509803921569</G><B>0.2</B></Color3>
@@ -83587,7 +83563,7 @@ return World
 <float name="Transparency">0</float>
 </Properties>
 </Item>
-<Item class="ImageLabel" referent="RBX004302"><Properties>
+<Item class="ImageLabel" referent="RBX004299"><Properties>
 <string name="Name">Skin</string>
 <Vector2 name="AnchorPoint"><X>0</X><Y>0</Y></Vector2>
 <Color3 name="BackgroundColor3"><R>1</R><G>1</G><B>1</B></Color3>
@@ -83604,7 +83580,7 @@ return World
 <token name="ScaleType">0</token>
 </Properties>
 </Item>
-<Item class="ImageLabel" referent="RBX004303"><Properties>
+<Item class="ImageLabel" referent="RBX004300"><Properties>
 <string name="Name">Icon</string>
 <Vector2 name="AnchorPoint"><X>0</X><Y>0.5</Y></Vector2>
 <Color3 name="BackgroundColor3"><R>1</R><G>1</G><B>1</B></Color3>
@@ -83621,7 +83597,7 @@ return World
 <token name="ScaleType">3</token>
 </Properties>
 </Item>
-<Item class="TextLabel" referent="RBX004304"><Properties>
+<Item class="TextLabel" referent="RBX004301"><Properties>
 <string name="Name">Fallback</string>
 <Vector2 name="AnchorPoint"><X>0</X><Y>0.5</Y></Vector2>
 <Color3 name="BackgroundColor3"><R>1</R><G>1</G><B>1</B></Color3>
@@ -83644,7 +83620,7 @@ return World
 <bool name="RichText">false</bool>
 </Properties>
 </Item>
-<Item class="TextLabel" referent="RBX004305"><Properties>
+<Item class="TextLabel" referent="RBX004302"><Properties>
 <string name="Name">Title</string>
 <Vector2 name="AnchorPoint"><X>0</X><Y>0</Y></Vector2>
 <Color3 name="BackgroundColor3"><R>1</R><G>1</G><B>1</B></Color3>
@@ -83666,7 +83642,7 @@ return World
 <bool name="TextWrapped">true</bool>
 <bool name="RichText">false</bool>
 </Properties>
-<Item class="UIStroke" referent="RBX004306"><Properties>
+<Item class="UIStroke" referent="RBX004303"><Properties>
 <string name="Name">UIStroke</string>
 <float name="Thickness">2.5</float>
 <Color3 name="Color"><R>0.10196078431372549</R><G>0.06274509803921569</G><B>0.2</B></Color3>
@@ -83675,7 +83651,7 @@ return World
 </Properties>
 </Item>
 </Item>
-<Item class="TextLabel" referent="RBX004307"><Properties>
+<Item class="TextLabel" referent="RBX004304"><Properties>
 <string name="Name">Value</string>
 <Vector2 name="AnchorPoint"><X>0.5</X><Y>0.5</Y></Vector2>
 <Color3 name="BackgroundColor3"><R>1</R><G>1</G><B>1</B></Color3>
@@ -83697,7 +83673,7 @@ return World
 <bool name="TextWrapped">true</bool>
 <bool name="RichText">false</bool>
 </Properties>
-<Item class="UIStroke" referent="RBX004308"><Properties>
+<Item class="UIStroke" referent="RBX004305"><Properties>
 <string name="Name">UIStroke</string>
 <float name="Thickness">3</float>
 <Color3 name="Color"><R>0.10196078431372549</R><G>0.06274509803921569</G><B>0.2</B></Color3>
@@ -83708,7 +83684,7 @@ return World
 </Item>
 </Item>
 </Item>
-<Item class="Frame" referent="RBX004309"><Properties>
+<Item class="Frame" referent="RBX004306"><Properties>
 <string name="Name">TopRight</string>
 <Vector2 name="AnchorPoint"><X>1</X><Y>0</Y></Vector2>
 <Color3 name="BackgroundColor3"><R>1</R><G>1</G><B>1</B></Color3>
@@ -83722,7 +83698,7 @@ return World
 <float name="Rotation">0</float>
 <bool name="ClipsDescendants">false</bool>
 </Properties>
-<Item class="UIListLayout" referent="RBX004310"><Properties>
+<Item class="UIListLayout" referent="RBX004307"><Properties>
 <string name="Name">UIListLayout</string>
 <token name="FillDirection">0</token>
 <UDim name="Padding"><S>0</S><O>0</O></UDim>
@@ -83731,7 +83707,7 @@ return World
 <token name="VerticalAlignment">1</token>
 </Properties>
 </Item>
-<Item class="ImageButton" referent="RBX004311"><Properties>
+<Item class="ImageButton" referent="RBX004308"><Properties>
 <string name="Name">SettingsButton</string>
 <Vector2 name="AnchorPoint"><X>0</X><Y>0</Y></Vector2>
 <Color3 name="BackgroundColor3"><R>1</R><G>1</G><B>1</B></Color3>
@@ -83747,7 +83723,7 @@ return World
 <Content name="Image"><null></null></Content>
 <bool name="AutoButtonColor">true</bool>
 </Properties>
-<Item class="ImageLabel" referent="RBX004312"><Properties>
+<Item class="ImageLabel" referent="RBX004309"><Properties>
 <string name="Name">Icon</string>
 <Vector2 name="AnchorPoint"><X>0.5</X><Y>0</Y></Vector2>
 <Color3 name="BackgroundColor3"><R>1</R><G>1</G><B>1</B></Color3>
@@ -83764,7 +83740,7 @@ return World
 <token name="ScaleType">3</token>
 </Properties>
 </Item>
-<Item class="TextLabel" referent="RBX004313"><Properties>
+<Item class="TextLabel" referent="RBX004310"><Properties>
 <string name="Name">Fallback</string>
 <Vector2 name="AnchorPoint"><X>0.5</X><Y>0</Y></Vector2>
 <Color3 name="BackgroundColor3"><R>1</R><G>1</G><B>1</B></Color3>
@@ -83787,7 +83763,7 @@ return World
 <bool name="RichText">false</bool>
 </Properties>
 </Item>
-<Item class="TextLabel" referent="RBX004314"><Properties>
+<Item class="TextLabel" referent="RBX004311"><Properties>
 <string name="Name">Label</string>
 <Vector2 name="AnchorPoint"><X>0.5</X><Y>1</Y></Vector2>
 <Color3 name="BackgroundColor3"><R>1</R><G>1</G><B>1</B></Color3>
@@ -83809,7 +83785,7 @@ return World
 <bool name="TextWrapped">true</bool>
 <bool name="RichText">false</bool>
 </Properties>
-<Item class="UIStroke" referent="RBX004315"><Properties>
+<Item class="UIStroke" referent="RBX004312"><Properties>
 <string name="Name">UIStroke</string>
 <float name="Thickness">2.5</float>
 <Color3 name="Color"><R>0.10196078431372549</R><G>0.06274509803921569</G><B>0.2</B></Color3>
@@ -83819,7 +83795,7 @@ return World
 </Item>
 </Item>
 </Item>
-<Item class="ImageButton" referent="RBX004316"><Properties>
+<Item class="ImageButton" referent="RBX004313"><Properties>
 <string name="Name">QuestsButton</string>
 <Vector2 name="AnchorPoint"><X>0</X><Y>0</Y></Vector2>
 <Color3 name="BackgroundColor3"><R>1</R><G>1</G><B>1</B></Color3>
@@ -83835,7 +83811,7 @@ return World
 <Content name="Image"><null></null></Content>
 <bool name="AutoButtonColor">true</bool>
 </Properties>
-<Item class="ImageLabel" referent="RBX004317"><Properties>
+<Item class="ImageLabel" referent="RBX004314"><Properties>
 <string name="Name">Icon</string>
 <Vector2 name="AnchorPoint"><X>0.5</X><Y>0</Y></Vector2>
 <Color3 name="BackgroundColor3"><R>1</R><G>1</G><B>1</B></Color3>
@@ -83852,7 +83828,7 @@ return World
 <token name="ScaleType">3</token>
 </Properties>
 </Item>
-<Item class="TextLabel" referent="RBX004318"><Properties>
+<Item class="TextLabel" referent="RBX004315"><Properties>
 <string name="Name">Fallback</string>
 <Vector2 name="AnchorPoint"><X>0.5</X><Y>0</Y></Vector2>
 <Color3 name="BackgroundColor3"><R>1</R><G>1</G><B>1</B></Color3>
@@ -83875,7 +83851,7 @@ return World
 <bool name="RichText">false</bool>
 </Properties>
 </Item>
-<Item class="TextLabel" referent="RBX004319"><Properties>
+<Item class="TextLabel" referent="RBX004316"><Properties>
 <string name="Name">Label</string>
 <Vector2 name="AnchorPoint"><X>0.5</X><Y>1</Y></Vector2>
 <Color3 name="BackgroundColor3"><R>1</R><G>1</G><B>1</B></Color3>
@@ -83897,7 +83873,7 @@ return World
 <bool name="TextWrapped">true</bool>
 <bool name="RichText">false</bool>
 </Properties>
-<Item class="UIStroke" referent="RBX004320"><Properties>
+<Item class="UIStroke" referent="RBX004317"><Properties>
 <string name="Name">UIStroke</string>
 <float name="Thickness">2.5</float>
 <Color3 name="Color"><R>0.10196078431372549</R><G>0.06274509803921569</G><B>0.2</B></Color3>
@@ -83907,7 +83883,7 @@ return World
 </Item>
 </Item>
 </Item>
-<Item class="ImageButton" referent="RBX004321"><Properties>
+<Item class="ImageButton" referent="RBX004318"><Properties>
 <string name="Name">WheelButton</string>
 <Vector2 name="AnchorPoint"><X>0</X><Y>0</Y></Vector2>
 <Color3 name="BackgroundColor3"><R>1</R><G>1</G><B>1</B></Color3>
@@ -83923,7 +83899,7 @@ return World
 <Content name="Image"><null></null></Content>
 <bool name="AutoButtonColor">true</bool>
 </Properties>
-<Item class="ImageLabel" referent="RBX004322"><Properties>
+<Item class="ImageLabel" referent="RBX004319"><Properties>
 <string name="Name">Base</string>
 <Vector2 name="AnchorPoint"><X>0.5</X><Y>0</Y></Vector2>
 <Color3 name="BackgroundColor3"><R>1</R><G>1</G><B>1</B></Color3>
@@ -83940,7 +83916,7 @@ return World
 <token name="ScaleType">3</token>
 </Properties>
 </Item>
-<Item class="ImageLabel" referent="RBX004323"><Properties>
+<Item class="ImageLabel" referent="RBX004320"><Properties>
 <string name="Name">Disc</string>
 <Vector2 name="AnchorPoint"><X>0.5</X><Y>0</Y></Vector2>
 <Color3 name="BackgroundColor3"><R>1</R><G>1</G><B>1</B></Color3>
@@ -83957,7 +83933,7 @@ return World
 <token name="ScaleType">3</token>
 </Properties>
 </Item>
-<Item class="ImageLabel" referent="RBX004324"><Properties>
+<Item class="ImageLabel" referent="RBX004321"><Properties>
 <string name="Name">Top</string>
 <Vector2 name="AnchorPoint"><X>0.5</X><Y>0</Y></Vector2>
 <Color3 name="BackgroundColor3"><R>1</R><G>1</G><B>1</B></Color3>
@@ -83974,7 +83950,7 @@ return World
 <token name="ScaleType">3</token>
 </Properties>
 </Item>
-<Item class="TextLabel" referent="RBX004325"><Properties>
+<Item class="TextLabel" referent="RBX004322"><Properties>
 <string name="Name">Fallback</string>
 <Vector2 name="AnchorPoint"><X>0.5</X><Y>0</Y></Vector2>
 <Color3 name="BackgroundColor3"><R>1</R><G>1</G><B>1</B></Color3>
@@ -83997,7 +83973,7 @@ return World
 <bool name="RichText">false</bool>
 </Properties>
 </Item>
-<Item class="TextLabel" referent="RBX004326"><Properties>
+<Item class="TextLabel" referent="RBX004323"><Properties>
 <string name="Name">Label</string>
 <Vector2 name="AnchorPoint"><X>0.5</X><Y>1</Y></Vector2>
 <Color3 name="BackgroundColor3"><R>1</R><G>1</G><B>1</B></Color3>
@@ -84019,7 +83995,7 @@ return World
 <bool name="TextWrapped">true</bool>
 <bool name="RichText">false</bool>
 </Properties>
-<Item class="UIStroke" referent="RBX004327"><Properties>
+<Item class="UIStroke" referent="RBX004324"><Properties>
 <string name="Name">UIStroke</string>
 <float name="Thickness">2.5</float>
 <Color3 name="Color"><R>0.10196078431372549</R><G>0.06274509803921569</G><B>0.2</B></Color3>
@@ -84029,7 +84005,7 @@ return World
 </Item>
 </Item>
 </Item>
-<Item class="ImageButton" referent="RBX004328"><Properties>
+<Item class="ImageButton" referent="RBX004325"><Properties>
 <string name="Name">RewardsButton</string>
 <Vector2 name="AnchorPoint"><X>0</X><Y>0</Y></Vector2>
 <Color3 name="BackgroundColor3"><R>1</R><G>1</G><B>1</B></Color3>
@@ -84045,7 +84021,7 @@ return World
 <Content name="Image"><null></null></Content>
 <bool name="AutoButtonColor">true</bool>
 </Properties>
-<Item class="ImageLabel" referent="RBX004329"><Properties>
+<Item class="ImageLabel" referent="RBX004326"><Properties>
 <string name="Name">Icon</string>
 <Vector2 name="AnchorPoint"><X>0.5</X><Y>0</Y></Vector2>
 <Color3 name="BackgroundColor3"><R>1</R><G>1</G><B>1</B></Color3>
@@ -84062,7 +84038,7 @@ return World
 <token name="ScaleType">3</token>
 </Properties>
 </Item>
-<Item class="TextLabel" referent="RBX004330"><Properties>
+<Item class="TextLabel" referent="RBX004327"><Properties>
 <string name="Name">Fallback</string>
 <Vector2 name="AnchorPoint"><X>0.5</X><Y>0</Y></Vector2>
 <Color3 name="BackgroundColor3"><R>1</R><G>1</G><B>1</B></Color3>
@@ -84085,7 +84061,7 @@ return World
 <bool name="RichText">false</bool>
 </Properties>
 </Item>
-<Item class="TextLabel" referent="RBX004331"><Properties>
+<Item class="TextLabel" referent="RBX004328"><Properties>
 <string name="Name">Label</string>
 <Vector2 name="AnchorPoint"><X>0.5</X><Y>1</Y></Vector2>
 <Color3 name="BackgroundColor3"><R>1</R><G>1</G><B>1</B></Color3>
@@ -84107,7 +84083,7 @@ return World
 <bool name="TextWrapped">true</bool>
 <bool name="RichText">false</bool>
 </Properties>
-<Item class="UIStroke" referent="RBX004332"><Properties>
+<Item class="UIStroke" referent="RBX004329"><Properties>
 <string name="Name">UIStroke</string>
 <float name="Thickness">2.5</float>
 <Color3 name="Color"><R>0.10196078431372549</R><G>0.06274509803921569</G><B>0.2</B></Color3>
@@ -84116,7 +84092,7 @@ return World
 </Properties>
 </Item>
 </Item>
-<Item class="Frame" referent="RBX004333"><Properties>
+<Item class="Frame" referent="RBX004330"><Properties>
 <string name="Name">Badge</string>
 <Vector2 name="AnchorPoint"><X>1</X><Y>0</Y></Vector2>
 <Color3 name="BackgroundColor3"><R>0.9215686274509803</R><G>0.1568627450980392</G><B>0.19607843137254902</B></Color3>
@@ -84130,12 +84106,12 @@ return World
 <float name="Rotation">0</float>
 <bool name="ClipsDescendants">false</bool>
 </Properties>
-<Item class="UICorner" referent="RBX004334"><Properties>
+<Item class="UICorner" referent="RBX004331"><Properties>
 <string name="Name">UICorner</string>
 <UDim name="CornerRadius"><S>1</S><O>0</O></UDim>
 </Properties>
 </Item>
-<Item class="UIStroke" referent="RBX004335"><Properties>
+<Item class="UIStroke" referent="RBX004332"><Properties>
 <string name="Name">UIStroke</string>
 <float name="Thickness">2.5</float>
 <Color3 name="Color"><R>1</R><G>1</G><B>1</B></Color3>
@@ -84143,12 +84119,12 @@ return World
 <float name="Transparency">0</float>
 </Properties>
 </Item>
-<Item class="UIScale" referent="RBX004336"><Properties>
+<Item class="UIScale" referent="RBX004333"><Properties>
 <string name="Name">UIScale</string>
 <float name="Scale">1</float>
 </Properties>
 </Item>
-<Item class="TextLabel" referent="RBX004337"><Properties>
+<Item class="TextLabel" referent="RBX004334"><Properties>
 <string name="Name">Text</string>
 <Vector2 name="AnchorPoint"><X>0</X><Y>0</Y></Vector2>
 <Color3 name="BackgroundColor3"><R>1</R><G>1</G><B>1</B></Color3>
@@ -84174,7 +84150,7 @@ return World
 </Item>
 </Item>
 </Item>
-<Item class="Frame" referent="RBX004338"><Properties>
+<Item class="Frame" referent="RBX004335"><Properties>
 <string name="Name">PowerPanel</string>
 <Vector2 name="AnchorPoint"><X>0.5</X><Y>1</Y></Vector2>
 <Color3 name="BackgroundColor3"><R>1</R><G>1</G><B>1</B></Color3>
@@ -84188,12 +84164,12 @@ return World
 <float name="Rotation">0</float>
 <bool name="ClipsDescendants">false</bool>
 </Properties>
-<Item class="UIScale" referent="RBX004339"><Properties>
+<Item class="UIScale" referent="RBX004336"><Properties>
 <string name="Name">Size</string>
 <float name="Scale">0.6</float>
 </Properties>
 </Item>
-<Item class="TextLabel" referent="RBX004340"><Properties>
+<Item class="TextLabel" referent="RBX004337"><Properties>
 <string name="Name">StrengthBig</string>
 <Vector2 name="AnchorPoint"><X>0</X><Y>0</Y></Vector2>
 <Color3 name="BackgroundColor3"><R>1</R><G>1</G><B>1</B></Color3>
@@ -84215,7 +84191,7 @@ return World
 <bool name="TextWrapped">true</bool>
 <bool name="RichText">false</bool>
 </Properties>
-<Item class="UIStroke" referent="RBX004341"><Properties>
+<Item class="UIStroke" referent="RBX004338"><Properties>
 <string name="Name">UIStroke</string>
 <float name="Thickness">6</float>
 <Color3 name="Color"><R>0.10196078431372549</R><G>0.06274509803921569</G><B>0.2</B></Color3>
@@ -84224,7 +84200,7 @@ return World
 </Properties>
 </Item>
 </Item>
-<Item class="TextButton" referent="RBX004342"><Properties>
+<Item class="TextButton" referent="RBX004339"><Properties>
 <string name="Name">PowerStrikeButton</string>
 <Vector2 name="AnchorPoint"><X>1</X><Y>0</Y></Vector2>
 <Color3 name="BackgroundColor3"><R>1</R><G>0.7843137254901961</G><B>0.1568627450980392</B></Color3>
@@ -84247,12 +84223,12 @@ return World
 <bool name="RichText">false</bool>
 <bool name="AutoButtonColor">true</bool>
 </Properties>
-<Item class="UICorner" referent="RBX004343"><Properties>
+<Item class="UICorner" referent="RBX004340"><Properties>
 <string name="Name">UICorner</string>
 <UDim name="CornerRadius"><S>0</S><O>12</O></UDim>
 </Properties>
 </Item>
-<Item class="UIStroke" referent="RBX004344"><Properties>
+<Item class="UIStroke" referent="RBX004341"><Properties>
 <string name="Name">UIStroke</string>
 <float name="Thickness">3</float>
 <Color3 name="Color"><R>0.10196078431372549</R><G>0.06274509803921569</G><B>0.2</B></Color3>
@@ -84260,7 +84236,7 @@ return World
 <float name="Transparency">0</float>
 </Properties>
 </Item>
-<Item class="ImageLabel" referent="RBX004345"><Properties>
+<Item class="ImageLabel" referent="RBX004342"><Properties>
 <string name="Name">Icon</string>
 <Vector2 name="AnchorPoint"><X>0</X><Y>0.5</Y></Vector2>
 <Color3 name="BackgroundColor3"><R>1</R><G>1</G><B>1</B></Color3>
@@ -84277,7 +84253,7 @@ return World
 <token name="ScaleType">3</token>
 </Properties>
 </Item>
-<Item class="TextLabel" referent="RBX004346"><Properties>
+<Item class="TextLabel" referent="RBX004343"><Properties>
 <string name="Name">Fallback</string>
 <Vector2 name="AnchorPoint"><X>0</X><Y>0.5</Y></Vector2>
 <Color3 name="BackgroundColor3"><R>1</R><G>1</G><B>1</B></Color3>
@@ -84300,7 +84276,7 @@ return World
 <bool name="RichText">false</bool>
 </Properties>
 </Item>
-<Item class="TextLabel" referent="RBX004347"><Properties>
+<Item class="TextLabel" referent="RBX004344"><Properties>
 <string name="Name">Text</string>
 <Vector2 name="AnchorPoint"><X>0</X><Y>0</Y></Vector2>
 <Color3 name="BackgroundColor3"><R>1</R><G>1</G><B>1</B></Color3>
@@ -84323,7 +84299,7 @@ return World
 <bool name="TextWrapped">true</bool>
 <bool name="RichText">false</bool>
 </Properties>
-<Item class="UIStroke" referent="RBX004348"><Properties>
+<Item class="UIStroke" referent="RBX004345"><Properties>
 <string name="Name">UIStroke</string>
 <float name="Thickness">3.5</float>
 <Color3 name="Color"><R>0.10196078431372549</R><G>0.06274509803921569</G><B>0.2</B></Color3>
@@ -84332,7 +84308,7 @@ return World
 </Properties>
 </Item>
 </Item>
-<Item class="ImageLabel" referent="RBX004349"><Properties>
+<Item class="ImageLabel" referent="RBX004346"><Properties>
 <string name="Name">Skin</string>
 <Vector2 name="AnchorPoint"><X>0</X><Y>0</Y></Vector2>
 <Color3 name="BackgroundColor3"><R>1</R><G>1</G><B>1</B></Color3>
@@ -84350,7 +84326,7 @@ return World
 </Properties>
 </Item>
 </Item>
-<Item class="Frame" referent="RBX004350"><Properties>
+<Item class="Frame" referent="RBX004347"><Properties>
 <string name="Name">LevelBar</string>
 <Vector2 name="AnchorPoint"><X>0</X><Y>0</Y></Vector2>
 <Color3 name="BackgroundColor3"><R>0.23529411764705882</R><G>0.23529411764705882</G><B>0.3137254901960784</B></Color3>
@@ -84364,12 +84340,12 @@ return World
 <float name="Rotation">0</float>
 <bool name="ClipsDescendants">false</bool>
 </Properties>
-<Item class="UICorner" referent="RBX004351"><Properties>
+<Item class="UICorner" referent="RBX004348"><Properties>
 <string name="Name">UICorner</string>
 <UDim name="CornerRadius"><S>0</S><O>18</O></UDim>
 </Properties>
 </Item>
-<Item class="UIStroke" referent="RBX004352"><Properties>
+<Item class="UIStroke" referent="RBX004349"><Properties>
 <string name="Name">UIStroke</string>
 <float name="Thickness">5</float>
 <Color3 name="Color"><R>0.10196078431372549</R><G>0.06274509803921569</G><B>0.2</B></Color3>
@@ -84377,7 +84353,7 @@ return World
 <float name="Transparency">0</float>
 </Properties>
 </Item>
-<Item class="ImageLabel" referent="RBX004353"><Properties>
+<Item class="ImageLabel" referent="RBX004350"><Properties>
 <string name="Name">Skin</string>
 <Vector2 name="AnchorPoint"><X>0</X><Y>0</Y></Vector2>
 <Color3 name="BackgroundColor3"><R>1</R><G>1</G><B>1</B></Color3>
@@ -84394,7 +84370,7 @@ return World
 <token name="ScaleType">0</token>
 </Properties>
 </Item>
-<Item class="Frame" referent="RBX004354"><Properties>
+<Item class="Frame" referent="RBX004351"><Properties>
 <string name="Name">Fill</string>
 <Vector2 name="AnchorPoint"><X>0</X><Y>0</Y></Vector2>
 <Color3 name="BackgroundColor3"><R>1</R><G>0.7686274509803922</G><B>0.1568627450980392</B></Color3>
@@ -84408,12 +84384,12 @@ return World
 <float name="Rotation">0</float>
 <bool name="ClipsDescendants">true</bool>
 </Properties>
-<Item class="UICorner" referent="RBX004355"><Properties>
+<Item class="UICorner" referent="RBX004352"><Properties>
 <string name="Name">UICorner</string>
 <UDim name="CornerRadius"><S>0</S><O>18</O></UDim>
 </Properties>
 </Item>
-<Item class="ImageLabel" referent="RBX004356"><Properties>
+<Item class="ImageLabel" referent="RBX004353"><Properties>
 <string name="Name">Skin</string>
 <Vector2 name="AnchorPoint"><X>0</X><Y>0</Y></Vector2>
 <Color3 name="BackgroundColor3"><R>1</R><G>1</G><B>1</B></Color3>
@@ -84431,7 +84407,7 @@ return World
 </Properties>
 </Item>
 </Item>
-<Item class="ImageLabel" referent="RBX004357"><Properties>
+<Item class="ImageLabel" referent="RBX004354"><Properties>
 <string name="Name">Icon</string>
 <Vector2 name="AnchorPoint"><X>0</X><Y>0.5</Y></Vector2>
 <Color3 name="BackgroundColor3"><R>1</R><G>1</G><B>1</B></Color3>
@@ -84448,7 +84424,7 @@ return World
 <token name="ScaleType">3</token>
 </Properties>
 </Item>
-<Item class="TextLabel" referent="RBX004358"><Properties>
+<Item class="TextLabel" referent="RBX004355"><Properties>
 <string name="Name">Fallback</string>
 <Vector2 name="AnchorPoint"><X>0</X><Y>0.5</Y></Vector2>
 <Color3 name="BackgroundColor3"><R>1</R><G>1</G><B>1</B></Color3>
@@ -84471,7 +84447,7 @@ return World
 <bool name="RichText">false</bool>
 </Properties>
 </Item>
-<Item class="TextLabel" referent="RBX004359"><Properties>
+<Item class="TextLabel" referent="RBX004356"><Properties>
 <string name="Name">Level</string>
 <Vector2 name="AnchorPoint"><X>0</X><Y>0.5</Y></Vector2>
 <Color3 name="BackgroundColor3"><R>1</R><G>1</G><B>1</B></Color3>
@@ -84493,7 +84469,7 @@ return World
 <bool name="TextWrapped">true</bool>
 <bool name="RichText">false</bool>
 </Properties>
-<Item class="UIStroke" referent="RBX004360"><Properties>
+<Item class="UIStroke" referent="RBX004357"><Properties>
 <string name="Name">UIStroke</string>
 <float name="Thickness">5</float>
 <Color3 name="Color"><R>0.10196078431372549</R><G>0.06274509803921569</G><B>0.2</B></Color3>
@@ -84502,7 +84478,7 @@ return World
 </Properties>
 </Item>
 </Item>
-<Item class="TextLabel" referent="RBX004361"><Properties>
+<Item class="TextLabel" referent="RBX004358"><Properties>
 <string name="Name">Xp</string>
 <Vector2 name="AnchorPoint"><X>1</X><Y>0.5</Y></Vector2>
 <Color3 name="BackgroundColor3"><R>1</R><G>1</G><B>1</B></Color3>
@@ -84524,7 +84500,7 @@ return World
 <bool name="TextWrapped">true</bool>
 <bool name="RichText">false</bool>
 </Properties>
-<Item class="UIStroke" referent="RBX004362"><Properties>
+<Item class="UIStroke" referent="RBX004359"><Properties>
 <string name="Name">UIStroke</string>
 <float name="Thickness">5</float>
 <Color3 name="Color"><R>0.10196078431372549</R><G>0.06274509803921569</G><B>0.2</B></Color3>
@@ -84534,7 +84510,7 @@ return World
 </Item>
 </Item>
 </Item>
-<Item class="Frame" referent="RBX004363"><Properties>
+<Item class="Frame" referent="RBX004360"><Properties>
 <string name="Name">XpButtons</string>
 <Vector2 name="AnchorPoint"><X>0</X><Y>0</Y></Vector2>
 <Color3 name="BackgroundColor3"><R>1</R><G>1</G><B>1</B></Color3>
@@ -84548,7 +84524,7 @@ return World
 <float name="Rotation">0</float>
 <bool name="ClipsDescendants">false</bool>
 </Properties>
-<Item class="UIListLayout" referent="RBX004364"><Properties>
+<Item class="UIListLayout" referent="RBX004361"><Properties>
 <string name="Name">UIListLayout</string>
 <token name="FillDirection">0</token>
 <UDim name="Padding"><S>0</S><O>10</O></UDim>
@@ -84557,7 +84533,7 @@ return World
 <token name="VerticalAlignment">1</token>
 </Properties>
 </Item>
-<Item class="TextButton" referent="RBX004365"><Properties>
+<Item class="TextButton" referent="RBX004362"><Properties>
 <string name="Name">XpSmallButton</string>
 <Vector2 name="AnchorPoint"><X>0</X><Y>0</Y></Vector2>
 <Color3 name="BackgroundColor3"><R>1</R><G>0.7686274509803922</G><B>0.1568627450980392</B></Color3>
@@ -84580,12 +84556,12 @@ return World
 <bool name="RichText">false</bool>
 <bool name="AutoButtonColor">true</bool>
 </Properties>
-<Item class="UICorner" referent="RBX004366"><Properties>
+<Item class="UICorner" referent="RBX004363"><Properties>
 <string name="Name">UICorner</string>
 <UDim name="CornerRadius"><S>0</S><O>16</O></UDim>
 </Properties>
 </Item>
-<Item class="UIStroke" referent="RBX004367"><Properties>
+<Item class="UIStroke" referent="RBX004364"><Properties>
 <string name="Name">UIStroke</string>
 <float name="Thickness">3</float>
 <Color3 name="Color"><R>0.10196078431372549</R><G>0.06274509803921569</G><B>0.2</B></Color3>
@@ -84593,7 +84569,7 @@ return World
 <float name="Transparency">0</float>
 </Properties>
 </Item>
-<Item class="UIPadding" referent="RBX004368"><Properties>
+<Item class="UIPadding" referent="RBX004365"><Properties>
 <string name="Name">UIPadding</string>
 <UDim name="PaddingTop"><S>0</S><O>4</O></UDim>
 <UDim name="PaddingBottom"><S>0</S><O>4</O></UDim>
@@ -84602,7 +84578,7 @@ return World
 </Properties>
 </Item>
 </Item>
-<Item class="TextButton" referent="RBX004369"><Properties>
+<Item class="TextButton" referent="RBX004366"><Properties>
 <string name="Name">XpMediumButton</string>
 <Vector2 name="AnchorPoint"><X>0</X><Y>0</Y></Vector2>
 <Color3 name="BackgroundColor3"><R>0.5882352941176471</R><G>0.23529411764705882</G><B>0.9215686274509803</B></Color3>
@@ -84625,12 +84601,12 @@ return World
 <bool name="RichText">false</bool>
 <bool name="AutoButtonColor">true</bool>
 </Properties>
-<Item class="UICorner" referent="RBX004370"><Properties>
+<Item class="UICorner" referent="RBX004367"><Properties>
 <string name="Name">UICorner</string>
 <UDim name="CornerRadius"><S>0</S><O>16</O></UDim>
 </Properties>
 </Item>
-<Item class="UIStroke" referent="RBX004371"><Properties>
+<Item class="UIStroke" referent="RBX004368"><Properties>
 <string name="Name">UIStroke</string>
 <float name="Thickness">3</float>
 <Color3 name="Color"><R>0.10196078431372549</R><G>0.06274509803921569</G><B>0.2</B></Color3>
@@ -84638,7 +84614,7 @@ return World
 <float name="Transparency">0</float>
 </Properties>
 </Item>
-<Item class="UIPadding" referent="RBX004372"><Properties>
+<Item class="UIPadding" referent="RBX004369"><Properties>
 <string name="Name">UIPadding</string>
 <UDim name="PaddingTop"><S>0</S><O>4</O></UDim>
 <UDim name="PaddingBottom"><S>0</S><O>4</O></UDim>
@@ -84647,7 +84623,7 @@ return World
 </Properties>
 </Item>
 </Item>
-<Item class="TextButton" referent="RBX004373"><Properties>
+<Item class="TextButton" referent="RBX004370"><Properties>
 <string name="Name">XpBigButton</string>
 <Vector2 name="AnchorPoint"><X>0</X><Y>0</Y></Vector2>
 <Color3 name="BackgroundColor3"><R>0.9215686274509803</R><G>0.21568627450980393</G><B>0.27450980392156865</B></Color3>
@@ -84670,12 +84646,12 @@ return World
 <bool name="RichText">false</bool>
 <bool name="AutoButtonColor">true</bool>
 </Properties>
-<Item class="UICorner" referent="RBX004374"><Properties>
+<Item class="UICorner" referent="RBX004371"><Properties>
 <string name="Name">UICorner</string>
 <UDim name="CornerRadius"><S>0</S><O>16</O></UDim>
 </Properties>
 </Item>
-<Item class="UIStroke" referent="RBX004375"><Properties>
+<Item class="UIStroke" referent="RBX004372"><Properties>
 <string name="Name">UIStroke</string>
 <float name="Thickness">3</float>
 <Color3 name="Color"><R>0.10196078431372549</R><G>0.06274509803921569</G><B>0.2</B></Color3>
@@ -84683,7 +84659,7 @@ return World
 <float name="Transparency">0</float>
 </Properties>
 </Item>
-<Item class="UIPadding" referent="RBX004376"><Properties>
+<Item class="UIPadding" referent="RBX004373"><Properties>
 <string name="Name">UIPadding</string>
 <UDim name="PaddingTop"><S>0</S><O>4</O></UDim>
 <UDim name="PaddingBottom"><S>0</S><O>4</O></UDim>
@@ -84694,7 +84670,7 @@ return World
 </Item>
 </Item>
 </Item>
-<Item class="Frame" referent="RBX004377"><Properties>
+<Item class="Frame" referent="RBX004374"><Properties>
 <string name="Name">LevelPanel</string>
 <Vector2 name="AnchorPoint"><X>0.5</X><Y>0</Y></Vector2>
 <Color3 name="BackgroundColor3"><R>1</R><G>1</G><B>1</B></Color3>
@@ -84708,7 +84684,7 @@ return World
 <float name="Rotation">0</float>
 <bool name="ClipsDescendants">false</bool>
 </Properties>
-<Item class="TextLabel" referent="RBX004378"><Properties>
+<Item class="TextLabel" referent="RBX004375"><Properties>
 <string name="Name">Title</string>
 <Vector2 name="AnchorPoint"><X>0</X><Y>0</Y></Vector2>
 <Color3 name="BackgroundColor3"><R>1</R><G>1</G><B>1</B></Color3>
@@ -84730,7 +84706,7 @@ return World
 <bool name="TextWrapped">true</bool>
 <bool name="RichText">false</bool>
 </Properties>
-<Item class="UIStroke" referent="RBX004379"><Properties>
+<Item class="UIStroke" referent="RBX004376"><Properties>
 <string name="Name">UIStroke</string>
 <float name="Thickness">3</float>
 <Color3 name="Color"><R>0.10196078431372549</R><G>0.06274509803921569</G><B>0.2</B></Color3>
@@ -84739,7 +84715,7 @@ return World
 </Properties>
 </Item>
 </Item>
-<Item class="TextLabel" referent="RBX004380"><Properties>
+<Item class="TextLabel" referent="RBX004377"><Properties>
 <string name="Name">Sub</string>
 <Vector2 name="AnchorPoint"><X>0</X><Y>0</Y></Vector2>
 <Color3 name="BackgroundColor3"><R>1</R><G>1</G><B>1</B></Color3>
@@ -84761,7 +84737,7 @@ return World
 <bool name="TextWrapped">true</bool>
 <bool name="RichText">false</bool>
 </Properties>
-<Item class="UIStroke" referent="RBX004381"><Properties>
+<Item class="UIStroke" referent="RBX004378"><Properties>
 <string name="Name">UIStroke</string>
 <float name="Thickness">2</float>
 <Color3 name="Color"><R>0.10196078431372549</R><G>0.06274509803921569</G><B>0.2</B></Color3>
@@ -84770,7 +84746,7 @@ return World
 </Properties>
 </Item>
 </Item>
-<Item class="Frame" referent="RBX004382"><Properties>
+<Item class="Frame" referent="RBX004379"><Properties>
 <string name="Name">Bar</string>
 <Vector2 name="AnchorPoint"><X>0</X><Y>0</Y></Vector2>
 <Color3 name="BackgroundColor3"><R>0.10196078431372549</R><G>0.06274509803921569</G><B>0.2</B></Color3>
@@ -84784,12 +84760,12 @@ return World
 <float name="Rotation">0</float>
 <bool name="ClipsDescendants">false</bool>
 </Properties>
-<Item class="UICorner" referent="RBX004383"><Properties>
+<Item class="UICorner" referent="RBX004380"><Properties>
 <string name="Name">UICorner</string>
 <UDim name="CornerRadius"><S>0</S><O>12</O></UDim>
 </Properties>
 </Item>
-<Item class="UIStroke" referent="RBX004384"><Properties>
+<Item class="UIStroke" referent="RBX004381"><Properties>
 <string name="Name">UIStroke</string>
 <float name="Thickness">3</float>
 <Color3 name="Color"><R>0.10196078431372549</R><G>0.06274509803921569</G><B>0.2</B></Color3>
@@ -84797,7 +84773,7 @@ return World
 <float name="Transparency">0</float>
 </Properties>
 </Item>
-<Item class="Frame" referent="RBX004385"><Properties>
+<Item class="Frame" referent="RBX004382"><Properties>
 <string name="Name">Fill</string>
 <Vector2 name="AnchorPoint"><X>0</X><Y>0</Y></Vector2>
 <Color3 name="BackgroundColor3"><R>1</R><G>0.7686274509803922</G><B>0.23921568627450981</B></Color3>
@@ -84811,13 +84787,13 @@ return World
 <float name="Rotation">0</float>
 <bool name="ClipsDescendants">false</bool>
 </Properties>
-<Item class="UICorner" referent="RBX004386"><Properties>
+<Item class="UICorner" referent="RBX004383"><Properties>
 <string name="Name">UICorner</string>
 <UDim name="CornerRadius"><S>0</S><O>12</O></UDim>
 </Properties>
 </Item>
 </Item>
-<Item class="TextLabel" referent="RBX004387"><Properties>
+<Item class="TextLabel" referent="RBX004384"><Properties>
 <string name="Name">BarText</string>
 <Vector2 name="AnchorPoint"><X>0</X><Y>0</Y></Vector2>
 <Color3 name="BackgroundColor3"><R>1</R><G>1</G><B>1</B></Color3>
@@ -84839,7 +84815,7 @@ return World
 <bool name="TextWrapped">true</bool>
 <bool name="RichText">false</bool>
 </Properties>
-<Item class="UIStroke" referent="RBX004388"><Properties>
+<Item class="UIStroke" referent="RBX004385"><Properties>
 <string name="Name">UIStroke</string>
 <float name="Thickness">2</float>
 <Color3 name="Color"><R>0.10196078431372549</R><G>0.06274509803921569</G><B>0.2</B></Color3>
@@ -84850,7 +84826,7 @@ return World
 </Item>
 </Item>
 </Item>
-<Item class="Frame" referent="RBX004389"><Properties>
+<Item class="Frame" referent="RBX004386"><Properties>
 <string name="Name">EggPreview</string>
 <Vector2 name="AnchorPoint"><X>0.5</X><Y>0.5</Y></Vector2>
 <Color3 name="BackgroundColor3"><R>0.11764705882352941</R><G>0.07058823529411765</G><B>0.23529411764705882</B></Color3>
@@ -84864,12 +84840,12 @@ return World
 <float name="Rotation">0</float>
 <bool name="ClipsDescendants">false</bool>
 </Properties>
-<Item class="UICorner" referent="RBX004390"><Properties>
+<Item class="UICorner" referent="RBX004387"><Properties>
 <string name="Name">UICorner</string>
 <UDim name="CornerRadius"><S>0</S><O>22</O></UDim>
 </Properties>
 </Item>
-<Item class="UIStroke" referent="RBX004391"><Properties>
+<Item class="UIStroke" referent="RBX004388"><Properties>
 <string name="Name">UIStroke</string>
 <float name="Thickness">5</float>
 <Color3 name="Color"><R>1</R><G>0.5490196078431373</G><B>0.1568627450980392</B></Color3>
@@ -84877,12 +84853,12 @@ return World
 <float name="Transparency">0</float>
 </Properties>
 </Item>
-<Item class="UIScale" referent="RBX004392"><Properties>
+<Item class="UIScale" referent="RBX004389"><Properties>
 <string name="Name">UIScale</string>
 <float name="Scale">1</float>
 </Properties>
 </Item>
-<Item class="Frame" referent="RBX004393"><Properties>
+<Item class="Frame" referent="RBX004390"><Properties>
 <string name="Name">EggBox</string>
 <Vector2 name="AnchorPoint"><X>0</X><Y>0</Y></Vector2>
 <Color3 name="BackgroundColor3"><R>1</R><G>0.5490196078431373</G><B>0.1568627450980392</B></Color3>
@@ -84896,12 +84872,12 @@ return World
 <float name="Rotation">0</float>
 <bool name="ClipsDescendants">false</bool>
 </Properties>
-<Item class="UICorner" referent="RBX004394"><Properties>
+<Item class="UICorner" referent="RBX004391"><Properties>
 <string name="Name">UICorner</string>
 <UDim name="CornerRadius"><S>0</S><O>18</O></UDim>
 </Properties>
 </Item>
-<Item class="UIStroke" referent="RBX004395"><Properties>
+<Item class="UIStroke" referent="RBX004392"><Properties>
 <string name="Name">UIStroke</string>
 <float name="Thickness">3</float>
 <Color3 name="Color"><R>0.10196078431372549</R><G>0.06274509803921569</G><B>0.2</B></Color3>
@@ -84909,7 +84885,7 @@ return World
 <float name="Transparency">0</float>
 </Properties>
 </Item>
-<Item class="TextLabel" referent="RBX004396"><Properties>
+<Item class="TextLabel" referent="RBX004393"><Properties>
 <string name="Name">Title</string>
 <Vector2 name="AnchorPoint"><X>0</X><Y>0</Y></Vector2>
 <Color3 name="BackgroundColor3"><R>1</R><G>1</G><B>1</B></Color3>
@@ -84932,7 +84908,7 @@ return World
 <bool name="TextWrapped">true</bool>
 <bool name="RichText">false</bool>
 </Properties>
-<Item class="UIStroke" referent="RBX004397"><Properties>
+<Item class="UIStroke" referent="RBX004394"><Properties>
 <string name="Name">UIStroke</string>
 <float name="Thickness">3.5</float>
 <Color3 name="Color"><R>0.10196078431372549</R><G>0.06274509803921569</G><B>0.2</B></Color3>
@@ -84941,7 +84917,7 @@ return World
 </Properties>
 </Item>
 </Item>
-<Item class="TextLabel" referent="RBX004398"><Properties>
+<Item class="TextLabel" referent="RBX004395"><Properties>
 <string name="Name">EggIcon</string>
 <Vector2 name="AnchorPoint"><X>0.5</X><Y>0</Y></Vector2>
 <Color3 name="BackgroundColor3"><R>1</R><G>1</G><B>1</B></Color3>
@@ -84964,7 +84940,7 @@ return World
 <bool name="RichText">false</bool>
 </Properties>
 </Item>
-<Item class="Frame" referent="RBX004399"><Properties>
+<Item class="Frame" referent="RBX004396"><Properties>
 <string name="Name">PriceBg</string>
 <Vector2 name="AnchorPoint"><X>0</X><Y>0</Y></Vector2>
 <Color3 name="BackgroundColor3"><R>0.10196078431372549</R><G>0.06274509803921569</G><B>0.2</B></Color3>
@@ -84978,12 +84954,12 @@ return World
 <float name="Rotation">0</float>
 <bool name="ClipsDescendants">false</bool>
 </Properties>
-<Item class="UICorner" referent="RBX004400"><Properties>
+<Item class="UICorner" referent="RBX004397"><Properties>
 <string name="Name">UICorner</string>
 <UDim name="CornerRadius"><S>0</S><O>14</O></UDim>
 </Properties>
 </Item>
-<Item class="TextLabel" referent="RBX004401"><Properties>
+<Item class="TextLabel" referent="RBX004398"><Properties>
 <string name="Name">Price</string>
 <Vector2 name="AnchorPoint"><X>0</X><Y>0</Y></Vector2>
 <Color3 name="BackgroundColor3"><R>1</R><G>1</G><B>1</B></Color3>
@@ -85005,7 +84981,7 @@ return World
 <bool name="TextWrapped">true</bool>
 <bool name="RichText">false</bool>
 </Properties>
-<Item class="UIStroke" referent="RBX004402"><Properties>
+<Item class="UIStroke" referent="RBX004399"><Properties>
 <string name="Name">UIStroke</string>
 <float name="Thickness">2.5</float>
 <Color3 name="Color"><R>0.10196078431372549</R><G>0.06274509803921569</G><B>0.2</B></Color3>
@@ -85016,7 +84992,7 @@ return World
 </Item>
 </Item>
 </Item>
-<Item class="TextLabel" referent="RBX004403"><Properties>
+<Item class="TextLabel" referent="RBX004400"><Properties>
 <string name="Name">Header</string>
 <Vector2 name="AnchorPoint"><X>0</X><Y>0</Y></Vector2>
 <Color3 name="BackgroundColor3"><R>1</R><G>1</G><B>1</B></Color3>
@@ -85038,7 +85014,7 @@ return World
 <bool name="TextWrapped">true</bool>
 <bool name="RichText">false</bool>
 </Properties>
-<Item class="UIStroke" referent="RBX004404"><Properties>
+<Item class="UIStroke" referent="RBX004401"><Properties>
 <string name="Name">UIStroke</string>
 <float name="Thickness">3</float>
 <Color3 name="Color"><R>0.10196078431372549</R><G>0.06274509803921569</G><B>0.2</B></Color3>
@@ -85047,7 +85023,7 @@ return World
 </Properties>
 </Item>
 </Item>
-<Item class="Frame" referent="RBX004405"><Properties>
+<Item class="Frame" referent="RBX004402"><Properties>
 <string name="Name">Pets</string>
 <Vector2 name="AnchorPoint"><X>0</X><Y>0</Y></Vector2>
 <Color3 name="BackgroundColor3"><R>1</R><G>1</G><B>1</B></Color3>
@@ -85061,7 +85037,7 @@ return World
 <float name="Rotation">0</float>
 <bool name="ClipsDescendants">false</bool>
 </Properties>
-<Item class="UIListLayout" referent="RBX004406"><Properties>
+<Item class="UIListLayout" referent="RBX004403"><Properties>
 <string name="Name">UIListLayout</string>
 <token name="FillDirection">0</token>
 <UDim name="Padding"><S>0</S><O>8</O></UDim>
@@ -85070,7 +85046,7 @@ return World
 <token name="VerticalAlignment">1</token>
 </Properties>
 </Item>
-<Item class="Frame" referent="RBX004407"><Properties>
+<Item class="Frame" referent="RBX004404"><Properties>
 <string name="Name">PetTemplate</string>
 <Vector2 name="AnchorPoint"><X>0</X><Y>0</Y></Vector2>
 <Color3 name="BackgroundColor3"><R>0.23529411764705882</R><G>0.17647058823529413</G><B>0.39215686274509803</B></Color3>
@@ -85084,12 +85060,12 @@ return World
 <float name="Rotation">0</float>
 <bool name="ClipsDescendants">false</bool>
 </Properties>
-<Item class="UICorner" referent="RBX004408"><Properties>
+<Item class="UICorner" referent="RBX004405"><Properties>
 <string name="Name">UICorner</string>
 <UDim name="CornerRadius"><S>0</S><O>14</O></UDim>
 </Properties>
 </Item>
-<Item class="UIStroke" referent="RBX004409"><Properties>
+<Item class="UIStroke" referent="RBX004406"><Properties>
 <string name="Name">UIStroke</string>
 <float name="Thickness">3</float>
 <Color3 name="Color"><R>0.6666666666666666</R><G>0.6862745098039216</G><B>0.7450980392156863</B></Color3>
@@ -85097,7 +85073,7 @@ return World
 <float name="Transparency">0</float>
 </Properties>
 </Item>
-<Item class="TextLabel" referent="RBX004410"><Properties>
+<Item class="TextLabel" referent="RBX004407"><Properties>
 <string name="Name">Emoji</string>
 <Vector2 name="AnchorPoint"><X>0.5</X><Y>0</Y></Vector2>
 <Color3 name="BackgroundColor3"><R>1</R><G>1</G><B>1</B></Color3>
@@ -85120,7 +85096,7 @@ return World
 <bool name="RichText">false</bool>
 </Properties>
 </Item>
-<Item class="TextLabel" referent="RBX004411"><Properties>
+<Item class="TextLabel" referent="RBX004408"><Properties>
 <string name="Name">PetName</string>
 <Vector2 name="AnchorPoint"><X>0</X><Y>0</Y></Vector2>
 <Color3 name="BackgroundColor3"><R>1</R><G>1</G><B>1</B></Color3>
@@ -85142,7 +85118,7 @@ return World
 <bool name="TextWrapped">true</bool>
 <bool name="RichText">false</bool>
 </Properties>
-<Item class="UIStroke" referent="RBX004412"><Properties>
+<Item class="UIStroke" referent="RBX004409"><Properties>
 <string name="Name">UIStroke</string>
 <float name="Thickness">2</float>
 <Color3 name="Color"><R>0.10196078431372549</R><G>0.06274509803921569</G><B>0.2</B></Color3>
@@ -85151,7 +85127,7 @@ return World
 </Properties>
 </Item>
 </Item>
-<Item class="TextLabel" referent="RBX004413"><Properties>
+<Item class="TextLabel" referent="RBX004410"><Properties>
 <string name="Name">Mult</string>
 <Vector2 name="AnchorPoint"><X>0</X><Y>0</Y></Vector2>
 <Color3 name="BackgroundColor3"><R>1</R><G>1</G><B>1</B></Color3>
@@ -85173,7 +85149,7 @@ return World
 <bool name="TextWrapped">true</bool>
 <bool name="RichText">false</bool>
 </Properties>
-<Item class="UIStroke" referent="RBX004414"><Properties>
+<Item class="UIStroke" referent="RBX004411"><Properties>
 <string name="Name">UIStroke</string>
 <float name="Thickness">2</float>
 <Color3 name="Color"><R>0.10196078431372549</R><G>0.06274509803921569</G><B>0.2</B></Color3>
@@ -85182,7 +85158,7 @@ return World
 </Properties>
 </Item>
 </Item>
-<Item class="TextLabel" referent="RBX004415"><Properties>
+<Item class="TextLabel" referent="RBX004412"><Properties>
 <string name="Name">Chance</string>
 <Vector2 name="AnchorPoint"><X>0</X><Y>0</Y></Vector2>
 <Color3 name="BackgroundColor3"><R>1</R><G>1</G><B>1</B></Color3>
@@ -85204,7 +85180,7 @@ return World
 <bool name="TextWrapped">true</bool>
 <bool name="RichText">false</bool>
 </Properties>
-<Item class="UIStroke" referent="RBX004416"><Properties>
+<Item class="UIStroke" referent="RBX004413"><Properties>
 <string name="Name">UIStroke</string>
 <float name="Thickness">2</float>
 <Color3 name="Color"><R>0.10196078431372549</R><G>0.06274509803921569</G><B>0.2</B></Color3>
@@ -85215,7 +85191,7 @@ return World
 </Item>
 </Item>
 </Item>
-<Item class="TextButton" referent="RBX004417"><Properties>
+<Item class="TextButton" referent="RBX004414"><Properties>
 <string name="Name">OpenButton</string>
 <Vector2 name="AnchorPoint"><X>1</X><Y>0.5</Y></Vector2>
 <Color3 name="BackgroundColor3"><R>0.23529411764705882</R><G>0.7843137254901961</G><B>0.3137254901960784</B></Color3>
@@ -85238,12 +85214,12 @@ return World
 <bool name="RichText">false</bool>
 <bool name="AutoButtonColor">true</bool>
 </Properties>
-<Item class="UICorner" referent="RBX004418"><Properties>
+<Item class="UICorner" referent="RBX004415"><Properties>
 <string name="Name">UICorner</string>
 <UDim name="CornerRadius"><S>0</S><O>12</O></UDim>
 </Properties>
 </Item>
-<Item class="UIStroke" referent="RBX004419"><Properties>
+<Item class="UIStroke" referent="RBX004416"><Properties>
 <string name="Name">UIStroke</string>
 <float name="Thickness">3</float>
 <Color3 name="Color"><R>0.10196078431372549</R><G>0.06274509803921569</G><B>0.2</B></Color3>
@@ -85251,7 +85227,7 @@ return World
 <float name="Transparency">0</float>
 </Properties>
 </Item>
-<Item class="UIPadding" referent="RBX004420"><Properties>
+<Item class="UIPadding" referent="RBX004417"><Properties>
 <string name="Name">UIPadding</string>
 <UDim name="PaddingTop"><S>0</S><O>4</O></UDim>
 <UDim name="PaddingBottom"><S>0</S><O>4</O></UDim>
@@ -85261,7 +85237,7 @@ return World
 </Item>
 </Item>
 </Item>
-<Item class="Frame" referent="RBX004421"><Properties>
+<Item class="Frame" referent="RBX004418"><Properties>
 <string name="Name">EggOpen</string>
 <Vector2 name="AnchorPoint"><X>0</X><Y>0</Y></Vector2>
 <Color3 name="BackgroundColor3"><R>0.0196078431372549</R><G>0</G><B>0.058823529411764705</B></Color3>
@@ -85275,7 +85251,7 @@ return World
 <float name="Rotation">0</float>
 <bool name="ClipsDescendants">false</bool>
 </Properties>
-<Item class="TextLabel" referent="RBX004422"><Properties>
+<Item class="TextLabel" referent="RBX004419"><Properties>
 <string name="Name">Title</string>
 <Vector2 name="AnchorPoint"><X>0.5</X><Y>0.5</Y></Vector2>
 <Color3 name="BackgroundColor3"><R>1</R><G>1</G><B>1</B></Color3>
@@ -85297,7 +85273,7 @@ return World
 <bool name="TextWrapped">true</bool>
 <bool name="RichText">false</bool>
 </Properties>
-<Item class="UIStroke" referent="RBX004423"><Properties>
+<Item class="UIStroke" referent="RBX004420"><Properties>
 <string name="Name">UIStroke</string>
 <float name="Thickness">4</float>
 <Color3 name="Color"><R>0.10196078431372549</R><G>0.06274509803921569</G><B>0.2</B></Color3>
@@ -85306,7 +85282,7 @@ return World
 </Properties>
 </Item>
 </Item>
-<Item class="Frame" referent="RBX004424"><Properties>
+<Item class="Frame" referent="RBX004421"><Properties>
 <string name="Name">Reel</string>
 <Vector2 name="AnchorPoint"><X>0.5</X><Y>0.5</Y></Vector2>
 <Color3 name="BackgroundColor3"><R>0.10980392156862745</R><G>0.06274509803921569</G><B>0.20392156862745098</B></Color3>
@@ -85320,12 +85296,12 @@ return World
 <float name="Rotation">0</float>
 <bool name="ClipsDescendants">true</bool>
 </Properties>
-<Item class="UICorner" referent="RBX004425"><Properties>
+<Item class="UICorner" referent="RBX004422"><Properties>
 <string name="Name">UICorner</string>
 <UDim name="CornerRadius"><S>0</S><O>26</O></UDim>
 </Properties>
 </Item>
-<Item class="UIStroke" referent="RBX004426"><Properties>
+<Item class="UIStroke" referent="RBX004423"><Properties>
 <string name="Name">UIStroke</string>
 <float name="Thickness">5</float>
 <Color3 name="Color"><R>0.47058823529411764</R><G>0.27450980392156865</G><B>0.8627450980392157</B></Color3>
@@ -85333,7 +85309,7 @@ return World
 <float name="Transparency">0</float>
 </Properties>
 </Item>
-<Item class="Frame" referent="RBX004427"><Properties>
+<Item class="Frame" referent="RBX004424"><Properties>
 <string name="Name">Strip</string>
 <Vector2 name="AnchorPoint"><X>0</X><Y>0</Y></Vector2>
 <Color3 name="BackgroundColor3"><R>1</R><G>1</G><B>1</B></Color3>
@@ -85348,7 +85324,7 @@ return World
 <bool name="ClipsDescendants">false</bool>
 </Properties>
 </Item>
-<Item class="Frame" referent="RBX004428"><Properties>
+<Item class="Frame" referent="RBX004425"><Properties>
 <string name="Name">CardTemplate</string>
 <Vector2 name="AnchorPoint"><X>0</X><Y>0.5</Y></Vector2>
 <Color3 name="BackgroundColor3"><R>0.27450980392156865</R><G>0.23529411764705882</G><B>0.43137254901960786</B></Color3>
@@ -85362,12 +85338,12 @@ return World
 <float name="Rotation">0</float>
 <bool name="ClipsDescendants">false</bool>
 </Properties>
-<Item class="UICorner" referent="RBX004429"><Properties>
+<Item class="UICorner" referent="RBX004426"><Properties>
 <string name="Name">UICorner</string>
 <UDim name="CornerRadius"><S>0</S><O>18</O></UDim>
 </Properties>
 </Item>
-<Item class="UIStroke" referent="RBX004430"><Properties>
+<Item class="UIStroke" referent="RBX004427"><Properties>
 <string name="Name">UIStroke</string>
 <float name="Thickness">3</float>
 <Color3 name="Color"><R>0.0784313725490196</R><G>0.0392156862745098</G><B>0.1568627450980392</B></Color3>
@@ -85375,7 +85351,7 @@ return World
 <float name="Transparency">0</float>
 </Properties>
 </Item>
-<Item class="Frame" referent="RBX004431"><Properties>
+<Item class="Frame" referent="RBX004428"><Properties>
 <string name="Name">Spot</string>
 <Vector2 name="AnchorPoint"><X>0</X><Y>0</Y></Vector2>
 <Color3 name="BackgroundColor3"><R>1</R><G>1</G><B>1</B></Color3>
@@ -85390,7 +85366,7 @@ return World
 <bool name="ClipsDescendants">false</bool>
 </Properties>
 </Item>
-<Item class="TextLabel" referent="RBX004432"><Properties>
+<Item class="TextLabel" referent="RBX004429"><Properties>
 <string name="Name">Emoji</string>
 <Vector2 name="AnchorPoint"><X>0.5</X><Y>0</Y></Vector2>
 <Color3 name="BackgroundColor3"><R>1</R><G>1</G><B>1</B></Color3>
@@ -85413,7 +85389,7 @@ return World
 <bool name="RichText">false</bool>
 </Properties>
 </Item>
-<Item class="TextLabel" referent="RBX004433"><Properties>
+<Item class="TextLabel" referent="RBX004430"><Properties>
 <string name="Name">PetName</string>
 <Vector2 name="AnchorPoint"><X>0</X><Y>0</Y></Vector2>
 <Color3 name="BackgroundColor3"><R>1</R><G>1</G><B>1</B></Color3>
@@ -85435,7 +85411,7 @@ return World
 <bool name="TextWrapped">true</bool>
 <bool name="RichText">false</bool>
 </Properties>
-<Item class="UIStroke" referent="RBX004434"><Properties>
+<Item class="UIStroke" referent="RBX004431"><Properties>
 <string name="Name">UIStroke</string>
 <float name="Thickness">2.5</float>
 <Color3 name="Color"><R>0.10196078431372549</R><G>0.06274509803921569</G><B>0.2</B></Color3>
@@ -85444,7 +85420,7 @@ return World
 </Properties>
 </Item>
 </Item>
-<Item class="TextLabel" referent="RBX004435"><Properties>
+<Item class="TextLabel" referent="RBX004432"><Properties>
 <string name="Name">Mult</string>
 <Vector2 name="AnchorPoint"><X>0</X><Y>0</Y></Vector2>
 <Color3 name="BackgroundColor3"><R>1</R><G>1</G><B>1</B></Color3>
@@ -85466,7 +85442,7 @@ return World
 <bool name="TextWrapped">true</bool>
 <bool name="RichText">false</bool>
 </Properties>
-<Item class="UIStroke" referent="RBX004436"><Properties>
+<Item class="UIStroke" referent="RBX004433"><Properties>
 <string name="Name">UIStroke</string>
 <float name="Thickness">2</float>
 <Color3 name="Color"><R>0.10196078431372549</R><G>0.06274509803921569</G><B>0.2</B></Color3>
@@ -85476,7 +85452,7 @@ return World
 </Item>
 </Item>
 </Item>
-<Item class="Frame" referent="RBX004437"><Properties>
+<Item class="Frame" referent="RBX004434"><Properties>
 <string name="Name">Marker</string>
 <Vector2 name="AnchorPoint"><X>0.5</X><Y>0</Y></Vector2>
 <Color3 name="BackgroundColor3"><R>1</R><G>0.8235294117647058</G><B>0.23529411764705882</B></Color3>
@@ -85492,7 +85468,7 @@ return World
 </Properties>
 </Item>
 </Item>
-<Item class="Frame" referent="RBX004438"><Properties>
+<Item class="Frame" referent="RBX004435"><Properties>
 <string name="Name">WinCard</string>
 <Vector2 name="AnchorPoint"><X>0.5</X><Y>0.5</Y></Vector2>
 <Color3 name="BackgroundColor3"><R>1</R><G>0.7450980392156863</G><B>0.1568627450980392</B></Color3>
@@ -85506,12 +85482,12 @@ return World
 <float name="Rotation">0</float>
 <bool name="ClipsDescendants">false</bool>
 </Properties>
-<Item class="UICorner" referent="RBX004439"><Properties>
+<Item class="UICorner" referent="RBX004436"><Properties>
 <string name="Name">UICorner</string>
 <UDim name="CornerRadius"><S>0</S><O>26</O></UDim>
 </Properties>
 </Item>
-<Item class="UIStroke" referent="RBX004440"><Properties>
+<Item class="UIStroke" referent="RBX004437"><Properties>
 <string name="Name">UIStroke</string>
 <float name="Thickness">6</float>
 <Color3 name="Color"><R>1</R><G>1</G><B>1</B></Color3>
@@ -85519,12 +85495,12 @@ return World
 <float name="Transparency">0</float>
 </Properties>
 </Item>
-<Item class="UIScale" referent="RBX004441"><Properties>
+<Item class="UIScale" referent="RBX004438"><Properties>
 <string name="Name">UIScale</string>
 <float name="Scale">1</float>
 </Properties>
 </Item>
-<Item class="Frame" referent="RBX004442"><Properties>
+<Item class="Frame" referent="RBX004439"><Properties>
 <string name="Name">Spot</string>
 <Vector2 name="AnchorPoint"><X>0</X><Y>0</Y></Vector2>
 <Color3 name="BackgroundColor3"><R>1</R><G>1</G><B>1</B></Color3>
@@ -85539,7 +85515,7 @@ return World
 <bool name="ClipsDescendants">false</bool>
 </Properties>
 </Item>
-<Item class="TextLabel" referent="RBX004443"><Properties>
+<Item class="TextLabel" referent="RBX004440"><Properties>
 <string name="Name">Emoji</string>
 <Vector2 name="AnchorPoint"><X>0.5</X><Y>0</Y></Vector2>
 <Color3 name="BackgroundColor3"><R>1</R><G>1</G><B>1</B></Color3>
@@ -85562,7 +85538,7 @@ return World
 <bool name="RichText">false</bool>
 </Properties>
 </Item>
-<Item class="TextLabel" referent="RBX004444"><Properties>
+<Item class="TextLabel" referent="RBX004441"><Properties>
 <string name="Name">PetName</string>
 <Vector2 name="AnchorPoint"><X>0</X><Y>0</Y></Vector2>
 <Color3 name="BackgroundColor3"><R>1</R><G>1</G><B>1</B></Color3>
@@ -85584,7 +85560,7 @@ return World
 <bool name="TextWrapped">true</bool>
 <bool name="RichText">false</bool>
 </Properties>
-<Item class="UIStroke" referent="RBX004445"><Properties>
+<Item class="UIStroke" referent="RBX004442"><Properties>
 <string name="Name">UIStroke</string>
 <float name="Thickness">4</float>
 <Color3 name="Color"><R>0.10196078431372549</R><G>0.06274509803921569</G><B>0.2</B></Color3>
@@ -85593,7 +85569,7 @@ return World
 </Properties>
 </Item>
 </Item>
-<Item class="TextLabel" referent="RBX004446"><Properties>
+<Item class="TextLabel" referent="RBX004443"><Properties>
 <string name="Name">Rarity</string>
 <Vector2 name="AnchorPoint"><X>0</X><Y>0</Y></Vector2>
 <Color3 name="BackgroundColor3"><R>1</R><G>1</G><B>1</B></Color3>
@@ -85615,7 +85591,7 @@ return World
 <bool name="TextWrapped">true</bool>
 <bool name="RichText">false</bool>
 </Properties>
-<Item class="UIStroke" referent="RBX004447"><Properties>
+<Item class="UIStroke" referent="RBX004444"><Properties>
 <string name="Name">UIStroke</string>
 <float name="Thickness">3</float>
 <Color3 name="Color"><R>0.10196078431372549</R><G>0.06274509803921569</G><B>0.2</B></Color3>
@@ -85624,7 +85600,7 @@ return World
 </Properties>
 </Item>
 </Item>
-<Item class="TextLabel" referent="RBX004448"><Properties>
+<Item class="TextLabel" referent="RBX004445"><Properties>
 <string name="Name">Mult</string>
 <Vector2 name="AnchorPoint"><X>0</X><Y>0</Y></Vector2>
 <Color3 name="BackgroundColor3"><R>1</R><G>1</G><B>1</B></Color3>
@@ -85646,7 +85622,7 @@ return World
 <bool name="TextWrapped">true</bool>
 <bool name="RichText">false</bool>
 </Properties>
-<Item class="UIStroke" referent="RBX004449"><Properties>
+<Item class="UIStroke" referent="RBX004446"><Properties>
 <string name="Name">UIStroke</string>
 <float name="Thickness">3</float>
 <Color3 name="Color"><R>0.10196078431372549</R><G>0.06274509803921569</G><B>0.2</B></Color3>
@@ -85657,7 +85633,7 @@ return World
 </Item>
 </Item>
 </Item>
-<Item class="Frame" referent="RBX004450"><Properties>
+<Item class="Frame" referent="RBX004447"><Properties>
 <string name="Name">Toasts</string>
 <Vector2 name="AnchorPoint"><X>0</X><Y>0</Y></Vector2>
 <Color3 name="BackgroundColor3"><R>1</R><G>1</G><B>1</B></Color3>
@@ -85672,7 +85648,7 @@ return World
 <bool name="ClipsDescendants">false</bool>
 </Properties>
 </Item>
-<Item class="Frame" referent="RBX004451"><Properties>
+<Item class="Frame" referent="RBX004448"><Properties>
 <string name="Name">Panels</string>
 <Vector2 name="AnchorPoint"><X>0</X><Y>0</Y></Vector2>
 <Color3 name="BackgroundColor3"><R>1</R><G>1</G><B>1</B></Color3>
@@ -85686,7 +85662,7 @@ return World
 <float name="Rotation">0</float>
 <bool name="ClipsDescendants">false</bool>
 </Properties>
-<Item class="Frame" referent="RBX004452"><Properties>
+<Item class="Frame" referent="RBX004449"><Properties>
 <string name="Name">ShopPanel</string>
 <Vector2 name="AnchorPoint"><X>0.5</X><Y>0.5</Y></Vector2>
 <Color3 name="BackgroundColor3"><R>0.16862745098039217</R><G>0.10196078431372549</G><B>0.3686274509803922</B></Color3>
@@ -85700,12 +85676,12 @@ return World
 <float name="Rotation">0</float>
 <bool name="ClipsDescendants">false</bool>
 </Properties>
-<Item class="UICorner" referent="RBX004453"><Properties>
+<Item class="UICorner" referent="RBX004450"><Properties>
 <string name="Name">UICorner</string>
 <UDim name="CornerRadius"><S>0</S><O>22</O></UDim>
 </Properties>
 </Item>
-<Item class="UIStroke" referent="RBX004454"><Properties>
+<Item class="UIStroke" referent="RBX004451"><Properties>
 <string name="Name">UIStroke</string>
 <float name="Thickness">5</float>
 <Color3 name="Color"><R>0.10196078431372549</R><G>0.06274509803921569</G><B>0.2</B></Color3>
@@ -85713,12 +85689,12 @@ return World
 <float name="Transparency">0</float>
 </Properties>
 </Item>
-<Item class="UIScale" referent="RBX004455"><Properties>
+<Item class="UIScale" referent="RBX004452"><Properties>
 <string name="Name">UIScale</string>
 <float name="Scale">1</float>
 </Properties>
 </Item>
-<Item class="TextLabel" referent="RBX004456"><Properties>
+<Item class="TextLabel" referent="RBX004453"><Properties>
 <string name="Name">Title</string>
 <Vector2 name="AnchorPoint"><X>0</X><Y>0</Y></Vector2>
 <Color3 name="BackgroundColor3"><R>1</R><G>1</G><B>1</B></Color3>
@@ -85740,7 +85716,7 @@ return World
 <bool name="TextWrapped">true</bool>
 <bool name="RichText">false</bool>
 </Properties>
-<Item class="UIStroke" referent="RBX004457"><Properties>
+<Item class="UIStroke" referent="RBX004454"><Properties>
 <string name="Name">UIStroke</string>
 <float name="Thickness">4</float>
 <Color3 name="Color"><R>0.10196078431372549</R><G>0.06274509803921569</G><B>0.2</B></Color3>
@@ -85749,7 +85725,7 @@ return World
 </Properties>
 </Item>
 </Item>
-<Item class="TextButton" referent="RBX004458"><Properties>
+<Item class="TextButton" referent="RBX004455"><Properties>
 <string name="Name">CloseButton</string>
 <Vector2 name="AnchorPoint"><X>1</X><Y>0</Y></Vector2>
 <Color3 name="BackgroundColor3"><R>0.9019607843137255</R><G>0.23529411764705882</G><B>0.23529411764705882</B></Color3>
@@ -85772,12 +85748,12 @@ return World
 <bool name="RichText">false</bool>
 <bool name="AutoButtonColor">true</bool>
 </Properties>
-<Item class="UICorner" referent="RBX004459"><Properties>
+<Item class="UICorner" referent="RBX004456"><Properties>
 <string name="Name">UICorner</string>
 <UDim name="CornerRadius"><S>0</S><O>12</O></UDim>
 </Properties>
 </Item>
-<Item class="UIStroke" referent="RBX004460"><Properties>
+<Item class="UIStroke" referent="RBX004457"><Properties>
 <string name="Name">UIStroke</string>
 <float name="Thickness">3</float>
 <Color3 name="Color"><R>0.10196078431372549</R><G>0.06274509803921569</G><B>0.2</B></Color3>
@@ -85785,7 +85761,7 @@ return World
 <float name="Transparency">0</float>
 </Properties>
 </Item>
-<Item class="UIPadding" referent="RBX004461"><Properties>
+<Item class="UIPadding" referent="RBX004458"><Properties>
 <string name="Name">UIPadding</string>
 <UDim name="PaddingTop"><S>0</S><O>4</O></UDim>
 <UDim name="PaddingBottom"><S>0</S><O>4</O></UDim>
@@ -85794,7 +85770,7 @@ return World
 </Properties>
 </Item>
 </Item>
-<Item class="ScrollingFrame" referent="RBX004462"><Properties>
+<Item class="ScrollingFrame" referent="RBX004459"><Properties>
 <string name="Name">Content</string>
 <Vector2 name="AnchorPoint"><X>0</X><Y>0</Y></Vector2>
 <Color3 name="BackgroundColor3"><R>1</R><G>1</G><B>1</B></Color3>
@@ -85812,7 +85788,7 @@ return World
 <int name="ScrollBarThickness">8</int>
 <token name="ScrollingDirection">2</token>
 </Properties>
-<Item class="UIPadding" referent="RBX004463"><Properties>
+<Item class="UIPadding" referent="RBX004460"><Properties>
 <string name="Name">UIPadding</string>
 <UDim name="PaddingTop"><S>0</S><O>6</O></UDim>
 <UDim name="PaddingBottom"><S>0</S><O>6</O></UDim>
@@ -85820,7 +85796,7 @@ return World
 <UDim name="PaddingRight"><S>0</S><O>6</O></UDim>
 </Properties>
 </Item>
-<Item class="UIGridLayout" referent="RBX004464"><Properties>
+<Item class="UIGridLayout" referent="RBX004461"><Properties>
 <string name="Name">UIGridLayout</string>
 <UDim2 name="CellSize"><XS>0</XS><XO>180</XO><YS>0</YS><YO>196</YO></UDim2>
 <UDim2 name="CellPadding"><XS>0</XS><XO>10</XO><YS>0</YS><YO>10</YO></UDim2>
@@ -85829,7 +85805,7 @@ return World
 </Properties>
 </Item>
 </Item>
-<Item class="Frame" referent="RBX004465"><Properties>
+<Item class="Frame" referent="RBX004462"><Properties>
 <string name="Name">Template</string>
 <Vector2 name="AnchorPoint"><X>0</X><Y>0</Y></Vector2>
 <Color3 name="BackgroundColor3"><R>0.27450980392156865</R><G>0.18823529411764706</G><B>0.5490196078431373</B></Color3>
@@ -85843,12 +85819,12 @@ return World
 <float name="Rotation">0</float>
 <bool name="ClipsDescendants">false</bool>
 </Properties>
-<Item class="UICorner" referent="RBX004466"><Properties>
+<Item class="UICorner" referent="RBX004463"><Properties>
 <string name="Name">UICorner</string>
 <UDim name="CornerRadius"><S>0</S><O>14</O></UDim>
 </Properties>
 </Item>
-<Item class="UIStroke" referent="RBX004467"><Properties>
+<Item class="UIStroke" referent="RBX004464"><Properties>
 <string name="Name">UIStroke</string>
 <float name="Thickness">3</float>
 <Color3 name="Color"><R>0.10196078431372549</R><G>0.06274509803921569</G><B>0.2</B></Color3>
@@ -85856,7 +85832,7 @@ return World
 <float name="Transparency">0</float>
 </Properties>
 </Item>
-<Item class="ImageLabel" referent="RBX004468"><Properties>
+<Item class="ImageLabel" referent="RBX004465"><Properties>
 <string name="Name">Icon</string>
 <Vector2 name="AnchorPoint"><X>0.5</X><Y>0</Y></Vector2>
 <Color3 name="BackgroundColor3"><R>1</R><G>1</G><B>1</B></Color3>
@@ -85873,7 +85849,7 @@ return World
 <token name="ScaleType">3</token>
 </Properties>
 </Item>
-<Item class="TextLabel" referent="RBX004469"><Properties>
+<Item class="TextLabel" referent="RBX004466"><Properties>
 <string name="Name">Fallback</string>
 <Vector2 name="AnchorPoint"><X>0.5</X><Y>0</Y></Vector2>
 <Color3 name="BackgroundColor3"><R>1</R><G>1</G><B>1</B></Color3>
@@ -85896,7 +85872,7 @@ return World
 <bool name="RichText">false</bool>
 </Properties>
 </Item>
-<Item class="TextLabel" referent="RBX004470"><Properties>
+<Item class="TextLabel" referent="RBX004467"><Properties>
 <string name="Name">NameLabel</string>
 <Vector2 name="AnchorPoint"><X>0</X><Y>0</Y></Vector2>
 <Color3 name="BackgroundColor3"><R>1</R><G>1</G><B>1</B></Color3>
@@ -85918,7 +85894,7 @@ return World
 <bool name="TextWrapped">true</bool>
 <bool name="RichText">false</bool>
 </Properties>
-<Item class="UIStroke" referent="RBX004471"><Properties>
+<Item class="UIStroke" referent="RBX004468"><Properties>
 <string name="Name">UIStroke</string>
 <float name="Thickness">2.5</float>
 <Color3 name="Color"><R>0.10196078431372549</R><G>0.06274509803921569</G><B>0.2</B></Color3>
@@ -85927,7 +85903,7 @@ return World
 </Properties>
 </Item>
 </Item>
-<Item class="TextLabel" referent="RBX004472"><Properties>
+<Item class="TextLabel" referent="RBX004469"><Properties>
 <string name="Name">InfoLabel</string>
 <Vector2 name="AnchorPoint"><X>0</X><Y>0</Y></Vector2>
 <Color3 name="BackgroundColor3"><R>1</R><G>1</G><B>1</B></Color3>
@@ -85949,7 +85925,7 @@ return World
 <bool name="TextWrapped">true</bool>
 <bool name="RichText">false</bool>
 </Properties>
-<Item class="UIStroke" referent="RBX004473"><Properties>
+<Item class="UIStroke" referent="RBX004470"><Properties>
 <string name="Name">UIStroke</string>
 <float name="Thickness">1.5</float>
 <Color3 name="Color"><R>0.10196078431372549</R><G>0.06274509803921569</G><B>0.2</B></Color3>
@@ -85958,7 +85934,7 @@ return World
 </Properties>
 </Item>
 </Item>
-<Item class="TextButton" referent="RBX004474"><Properties>
+<Item class="TextButton" referent="RBX004471"><Properties>
 <string name="Name">ActionButton</string>
 <Vector2 name="AnchorPoint"><X>0.5</X><Y>1</Y></Vector2>
 <Color3 name="BackgroundColor3"><R>0.23921568627450981</R><G>0.7843137254901961</G><B>0.43137254901960786</B></Color3>
@@ -85981,12 +85957,12 @@ return World
 <bool name="RichText">false</bool>
 <bool name="AutoButtonColor">true</bool>
 </Properties>
-<Item class="UICorner" referent="RBX004475"><Properties>
+<Item class="UICorner" referent="RBX004472"><Properties>
 <string name="Name">UICorner</string>
 <UDim name="CornerRadius"><S>0</S><O>12</O></UDim>
 </Properties>
 </Item>
-<Item class="UIStroke" referent="RBX004476"><Properties>
+<Item class="UIStroke" referent="RBX004473"><Properties>
 <string name="Name">UIStroke</string>
 <float name="Thickness">3</float>
 <Color3 name="Color"><R>0.10196078431372549</R><G>0.06274509803921569</G><B>0.2</B></Color3>
@@ -85994,7 +85970,7 @@ return World
 <float name="Transparency">0</float>
 </Properties>
 </Item>
-<Item class="UIPadding" referent="RBX004477"><Properties>
+<Item class="UIPadding" referent="RBX004474"><Properties>
 <string name="Name">UIPadding</string>
 <UDim name="PaddingTop"><S>0</S><O>4</O></UDim>
 <UDim name="PaddingBottom"><S>0</S><O>4</O></UDim>
@@ -86004,7 +85980,7 @@ return World
 </Item>
 </Item>
 </Item>
-<Item class="Frame" referent="RBX004478"><Properties>
+<Item class="Frame" referent="RBX004475"><Properties>
 <string name="Name">Tabs</string>
 <Vector2 name="AnchorPoint"><X>0</X><Y>0</Y></Vector2>
 <Color3 name="BackgroundColor3"><R>1</R><G>1</G><B>1</B></Color3>
@@ -86018,7 +85994,7 @@ return World
 <float name="Rotation">0</float>
 <bool name="ClipsDescendants">false</bool>
 </Properties>
-<Item class="UIListLayout" referent="RBX004479"><Properties>
+<Item class="UIListLayout" referent="RBX004476"><Properties>
 <string name="Name">UIListLayout</string>
 <token name="FillDirection">0</token>
 <UDim name="Padding"><S>0</S><O>8</O></UDim>
@@ -86027,7 +86003,7 @@ return World
 <token name="VerticalAlignment">1</token>
 </Properties>
 </Item>
-<Item class="TextButton" referent="RBX004480"><Properties>
+<Item class="TextButton" referent="RBX004477"><Properties>
 <string name="Name">LuckTab</string>
 <Vector2 name="AnchorPoint"><X>0</X><Y>0</Y></Vector2>
 <Color3 name="BackgroundColor3"><R>0.35294117647058826</R><G>0.27450980392156865</G><B>0.6274509803921569</B></Color3>
@@ -86050,12 +86026,12 @@ return World
 <bool name="RichText">false</bool>
 <bool name="AutoButtonColor">true</bool>
 </Properties>
-<Item class="UICorner" referent="RBX004481"><Properties>
+<Item class="UICorner" referent="RBX004478"><Properties>
 <string name="Name">UICorner</string>
 <UDim name="CornerRadius"><S>0</S><O>12</O></UDim>
 </Properties>
 </Item>
-<Item class="UIStroke" referent="RBX004482"><Properties>
+<Item class="UIStroke" referent="RBX004479"><Properties>
 <string name="Name">UIStroke</string>
 <float name="Thickness">3</float>
 <Color3 name="Color"><R>0.10196078431372549</R><G>0.06274509803921569</G><B>0.2</B></Color3>
@@ -86063,7 +86039,7 @@ return World
 <float name="Transparency">0</float>
 </Properties>
 </Item>
-<Item class="UIPadding" referent="RBX004483"><Properties>
+<Item class="UIPadding" referent="RBX004480"><Properties>
 <string name="Name">UIPadding</string>
 <UDim name="PaddingTop"><S>0</S><O>4</O></UDim>
 <UDim name="PaddingBottom"><S>0</S><O>4</O></UDim>
@@ -86072,7 +86048,7 @@ return World
 </Properties>
 </Item>
 </Item>
-<Item class="TextButton" referent="RBX004484"><Properties>
+<Item class="TextButton" referent="RBX004481"><Properties>
 <string name="Name">DonateTab</string>
 <Vector2 name="AnchorPoint"><X>0</X><Y>0</Y></Vector2>
 <Color3 name="BackgroundColor3"><R>0.35294117647058826</R><G>0.27450980392156865</G><B>0.6274509803921569</B></Color3>
@@ -86095,12 +86071,12 @@ return World
 <bool name="RichText">false</bool>
 <bool name="AutoButtonColor">true</bool>
 </Properties>
-<Item class="UICorner" referent="RBX004485"><Properties>
+<Item class="UICorner" referent="RBX004482"><Properties>
 <string name="Name">UICorner</string>
 <UDim name="CornerRadius"><S>0</S><O>12</O></UDim>
 </Properties>
 </Item>
-<Item class="UIStroke" referent="RBX004486"><Properties>
+<Item class="UIStroke" referent="RBX004483"><Properties>
 <string name="Name">UIStroke</string>
 <float name="Thickness">3</float>
 <Color3 name="Color"><R>0.10196078431372549</R><G>0.06274509803921569</G><B>0.2</B></Color3>
@@ -86108,7 +86084,7 @@ return World
 <float name="Transparency">0</float>
 </Properties>
 </Item>
-<Item class="UIPadding" referent="RBX004487"><Properties>
+<Item class="UIPadding" referent="RBX004484"><Properties>
 <string name="Name">UIPadding</string>
 <UDim name="PaddingTop"><S>0</S><O>4</O></UDim>
 <UDim name="PaddingBottom"><S>0</S><O>4</O></UDim>
@@ -86119,7 +86095,7 @@ return World
 </Item>
 </Item>
 </Item>
-<Item class="Frame" referent="RBX004488"><Properties>
+<Item class="Frame" referent="RBX004485"><Properties>
 <string name="Name">PetsPanel</string>
 <Vector2 name="AnchorPoint"><X>0.5</X><Y>0.5</Y></Vector2>
 <Color3 name="BackgroundColor3"><R>0.16862745098039217</R><G>0.10196078431372549</G><B>0.3686274509803922</B></Color3>
@@ -86133,12 +86109,12 @@ return World
 <float name="Rotation">0</float>
 <bool name="ClipsDescendants">false</bool>
 </Properties>
-<Item class="UICorner" referent="RBX004489"><Properties>
+<Item class="UICorner" referent="RBX004486"><Properties>
 <string name="Name">UICorner</string>
 <UDim name="CornerRadius"><S>0</S><O>22</O></UDim>
 </Properties>
 </Item>
-<Item class="UIStroke" referent="RBX004490"><Properties>
+<Item class="UIStroke" referent="RBX004487"><Properties>
 <string name="Name">UIStroke</string>
 <float name="Thickness">5</float>
 <Color3 name="Color"><R>0.10196078431372549</R><G>0.06274509803921569</G><B>0.2</B></Color3>
@@ -86146,12 +86122,12 @@ return World
 <float name="Transparency">0</float>
 </Properties>
 </Item>
-<Item class="UIScale" referent="RBX004491"><Properties>
+<Item class="UIScale" referent="RBX004488"><Properties>
 <string name="Name">UIScale</string>
 <float name="Scale">1</float>
 </Properties>
 </Item>
-<Item class="TextLabel" referent="RBX004492"><Properties>
+<Item class="TextLabel" referent="RBX004489"><Properties>
 <string name="Name">Title</string>
 <Vector2 name="AnchorPoint"><X>0</X><Y>0</Y></Vector2>
 <Color3 name="BackgroundColor3"><R>1</R><G>1</G><B>1</B></Color3>
@@ -86173,7 +86149,7 @@ return World
 <bool name="TextWrapped">true</bool>
 <bool name="RichText">false</bool>
 </Properties>
-<Item class="UIStroke" referent="RBX004493"><Properties>
+<Item class="UIStroke" referent="RBX004490"><Properties>
 <string name="Name">UIStroke</string>
 <float name="Thickness">4</float>
 <Color3 name="Color"><R>0.10196078431372549</R><G>0.06274509803921569</G><B>0.2</B></Color3>
@@ -86182,7 +86158,7 @@ return World
 </Properties>
 </Item>
 </Item>
-<Item class="TextButton" referent="RBX004494"><Properties>
+<Item class="TextButton" referent="RBX004491"><Properties>
 <string name="Name">CloseButton</string>
 <Vector2 name="AnchorPoint"><X>1</X><Y>0</Y></Vector2>
 <Color3 name="BackgroundColor3"><R>0.9019607843137255</R><G>0.23529411764705882</G><B>0.23529411764705882</B></Color3>
@@ -86205,12 +86181,12 @@ return World
 <bool name="RichText">false</bool>
 <bool name="AutoButtonColor">true</bool>
 </Properties>
-<Item class="UICorner" referent="RBX004495"><Properties>
+<Item class="UICorner" referent="RBX004492"><Properties>
 <string name="Name">UICorner</string>
 <UDim name="CornerRadius"><S>0</S><O>12</O></UDim>
 </Properties>
 </Item>
-<Item class="UIStroke" referent="RBX004496"><Properties>
+<Item class="UIStroke" referent="RBX004493"><Properties>
 <string name="Name">UIStroke</string>
 <float name="Thickness">3</float>
 <Color3 name="Color"><R>0.10196078431372549</R><G>0.06274509803921569</G><B>0.2</B></Color3>
@@ -86218,7 +86194,7 @@ return World
 <float name="Transparency">0</float>
 </Properties>
 </Item>
-<Item class="UIPadding" referent="RBX004497"><Properties>
+<Item class="UIPadding" referent="RBX004494"><Properties>
 <string name="Name">UIPadding</string>
 <UDim name="PaddingTop"><S>0</S><O>4</O></UDim>
 <UDim name="PaddingBottom"><S>0</S><O>4</O></UDim>
@@ -86227,7 +86203,7 @@ return World
 </Properties>
 </Item>
 </Item>
-<Item class="ScrollingFrame" referent="RBX004498"><Properties>
+<Item class="ScrollingFrame" referent="RBX004495"><Properties>
 <string name="Name">Content</string>
 <Vector2 name="AnchorPoint"><X>0</X><Y>0</Y></Vector2>
 <Color3 name="BackgroundColor3"><R>1</R><G>1</G><B>1</B></Color3>
@@ -86245,7 +86221,7 @@ return World
 <int name="ScrollBarThickness">8</int>
 <token name="ScrollingDirection">2</token>
 </Properties>
-<Item class="UIPadding" referent="RBX004499"><Properties>
+<Item class="UIPadding" referent="RBX004496"><Properties>
 <string name="Name">UIPadding</string>
 <UDim name="PaddingTop"><S>0</S><O>6</O></UDim>
 <UDim name="PaddingBottom"><S>0</S><O>6</O></UDim>
@@ -86253,7 +86229,7 @@ return World
 <UDim name="PaddingRight"><S>0</S><O>6</O></UDim>
 </Properties>
 </Item>
-<Item class="UIGridLayout" referent="RBX004500"><Properties>
+<Item class="UIGridLayout" referent="RBX004497"><Properties>
 <string name="Name">UIGridLayout</string>
 <UDim2 name="CellSize"><XS>0</XS><XO>180</XO><YS>0</YS><YO>196</YO></UDim2>
 <UDim2 name="CellPadding"><XS>0</XS><XO>10</XO><YS>0</YS><YO>10</YO></UDim2>
@@ -86262,7 +86238,7 @@ return World
 </Properties>
 </Item>
 </Item>
-<Item class="Frame" referent="RBX004501"><Properties>
+<Item class="Frame" referent="RBX004498"><Properties>
 <string name="Name">Template</string>
 <Vector2 name="AnchorPoint"><X>0</X><Y>0</Y></Vector2>
 <Color3 name="BackgroundColor3"><R>0.27450980392156865</R><G>0.18823529411764706</G><B>0.5490196078431373</B></Color3>
@@ -86276,12 +86252,12 @@ return World
 <float name="Rotation">0</float>
 <bool name="ClipsDescendants">false</bool>
 </Properties>
-<Item class="UICorner" referent="RBX004502"><Properties>
+<Item class="UICorner" referent="RBX004499"><Properties>
 <string name="Name">UICorner</string>
 <UDim name="CornerRadius"><S>0</S><O>14</O></UDim>
 </Properties>
 </Item>
-<Item class="UIStroke" referent="RBX004503"><Properties>
+<Item class="UIStroke" referent="RBX004500"><Properties>
 <string name="Name">UIStroke</string>
 <float name="Thickness">3</float>
 <Color3 name="Color"><R>0.10196078431372549</R><G>0.06274509803921569</G><B>0.2</B></Color3>
@@ -86289,7 +86265,7 @@ return World
 <float name="Transparency">0</float>
 </Properties>
 </Item>
-<Item class="ImageLabel" referent="RBX004504"><Properties>
+<Item class="ImageLabel" referent="RBX004501"><Properties>
 <string name="Name">Icon</string>
 <Vector2 name="AnchorPoint"><X>0.5</X><Y>0</Y></Vector2>
 <Color3 name="BackgroundColor3"><R>1</R><G>1</G><B>1</B></Color3>
@@ -86306,7 +86282,7 @@ return World
 <token name="ScaleType">3</token>
 </Properties>
 </Item>
-<Item class="TextLabel" referent="RBX004505"><Properties>
+<Item class="TextLabel" referent="RBX004502"><Properties>
 <string name="Name">Fallback</string>
 <Vector2 name="AnchorPoint"><X>0.5</X><Y>0</Y></Vector2>
 <Color3 name="BackgroundColor3"><R>1</R><G>1</G><B>1</B></Color3>
@@ -86329,7 +86305,7 @@ return World
 <bool name="RichText">false</bool>
 </Properties>
 </Item>
-<Item class="TextLabel" referent="RBX004506"><Properties>
+<Item class="TextLabel" referent="RBX004503"><Properties>
 <string name="Name">NameLabel</string>
 <Vector2 name="AnchorPoint"><X>0</X><Y>0</Y></Vector2>
 <Color3 name="BackgroundColor3"><R>1</R><G>1</G><B>1</B></Color3>
@@ -86351,7 +86327,7 @@ return World
 <bool name="TextWrapped">true</bool>
 <bool name="RichText">false</bool>
 </Properties>
-<Item class="UIStroke" referent="RBX004507"><Properties>
+<Item class="UIStroke" referent="RBX004504"><Properties>
 <string name="Name">UIStroke</string>
 <float name="Thickness">2.5</float>
 <Color3 name="Color"><R>0.10196078431372549</R><G>0.06274509803921569</G><B>0.2</B></Color3>
@@ -86360,7 +86336,7 @@ return World
 </Properties>
 </Item>
 </Item>
-<Item class="TextLabel" referent="RBX004508"><Properties>
+<Item class="TextLabel" referent="RBX004505"><Properties>
 <string name="Name">InfoLabel</string>
 <Vector2 name="AnchorPoint"><X>0</X><Y>0</Y></Vector2>
 <Color3 name="BackgroundColor3"><R>1</R><G>1</G><B>1</B></Color3>
@@ -86382,7 +86358,7 @@ return World
 <bool name="TextWrapped">true</bool>
 <bool name="RichText">false</bool>
 </Properties>
-<Item class="UIStroke" referent="RBX004509"><Properties>
+<Item class="UIStroke" referent="RBX004506"><Properties>
 <string name="Name">UIStroke</string>
 <float name="Thickness">1.5</float>
 <Color3 name="Color"><R>0.10196078431372549</R><G>0.06274509803921569</G><B>0.2</B></Color3>
@@ -86391,7 +86367,7 @@ return World
 </Properties>
 </Item>
 </Item>
-<Item class="TextButton" referent="RBX004510"><Properties>
+<Item class="TextButton" referent="RBX004507"><Properties>
 <string name="Name">ActionButton</string>
 <Vector2 name="AnchorPoint"><X>0.5</X><Y>1</Y></Vector2>
 <Color3 name="BackgroundColor3"><R>0.23921568627450981</R><G>0.7843137254901961</G><B>0.43137254901960786</B></Color3>
@@ -86414,12 +86390,12 @@ return World
 <bool name="RichText">false</bool>
 <bool name="AutoButtonColor">true</bool>
 </Properties>
-<Item class="UICorner" referent="RBX004511"><Properties>
+<Item class="UICorner" referent="RBX004508"><Properties>
 <string name="Name">UICorner</string>
 <UDim name="CornerRadius"><S>0</S><O>12</O></UDim>
 </Properties>
 </Item>
-<Item class="UIStroke" referent="RBX004512"><Properties>
+<Item class="UIStroke" referent="RBX004509"><Properties>
 <string name="Name">UIStroke</string>
 <float name="Thickness">3</float>
 <Color3 name="Color"><R>0.10196078431372549</R><G>0.06274509803921569</G><B>0.2</B></Color3>
@@ -86427,7 +86403,7 @@ return World
 <float name="Transparency">0</float>
 </Properties>
 </Item>
-<Item class="UIPadding" referent="RBX004513"><Properties>
+<Item class="UIPadding" referent="RBX004510"><Properties>
 <string name="Name">UIPadding</string>
 <UDim name="PaddingTop"><S>0</S><O>4</O></UDim>
 <UDim name="PaddingBottom"><S>0</S><O>4</O></UDim>
@@ -86436,7 +86412,7 @@ return World
 </Properties>
 </Item>
 </Item>
-<Item class="TextButton" referent="RBX004514"><Properties>
+<Item class="TextButton" referent="RBX004511"><Properties>
 <string name="Name">DeleteButton</string>
 <Vector2 name="AnchorPoint"><X>1</X><Y>0</Y></Vector2>
 <Color3 name="BackgroundColor3"><R>0.7843137254901961</R><G>0.23529411764705882</G><B>0.23529411764705882</B></Color3>
@@ -86459,12 +86435,12 @@ return World
 <bool name="RichText">false</bool>
 <bool name="AutoButtonColor">true</bool>
 </Properties>
-<Item class="UICorner" referent="RBX004515"><Properties>
+<Item class="UICorner" referent="RBX004512"><Properties>
 <string name="Name">UICorner</string>
 <UDim name="CornerRadius"><S>0</S><O>12</O></UDim>
 </Properties>
 </Item>
-<Item class="UIStroke" referent="RBX004516"><Properties>
+<Item class="UIStroke" referent="RBX004513"><Properties>
 <string name="Name">UIStroke</string>
 <float name="Thickness">3</float>
 <Color3 name="Color"><R>0.10196078431372549</R><G>0.06274509803921569</G><B>0.2</B></Color3>
@@ -86474,7 +86450,7 @@ return World
 </Item>
 </Item>
 </Item>
-<Item class="TextLabel" referent="RBX004517"><Properties>
+<Item class="TextLabel" referent="RBX004514"><Properties>
 <string name="Name">Info</string>
 <Vector2 name="AnchorPoint"><X>0</X><Y>0</Y></Vector2>
 <Color3 name="BackgroundColor3"><R>1</R><G>1</G><B>1</B></Color3>
@@ -86496,7 +86472,7 @@ return World
 <bool name="TextWrapped">true</bool>
 <bool name="RichText">false</bool>
 </Properties>
-<Item class="UIStroke" referent="RBX004518"><Properties>
+<Item class="UIStroke" referent="RBX004515"><Properties>
 <string name="Name">UIStroke</string>
 <float name="Thickness">2</float>
 <Color3 name="Color"><R>0.10196078431372549</R><G>0.06274509803921569</G><B>0.2</B></Color3>
@@ -86505,7 +86481,7 @@ return World
 </Properties>
 </Item>
 </Item>
-<Item class="TextButton" referent="RBX004519"><Properties>
+<Item class="TextButton" referent="RBX004516"><Properties>
 <string name="Name">EquipBestButton</string>
 <Vector2 name="AnchorPoint"><X>1</X><Y>0</Y></Vector2>
 <Color3 name="BackgroundColor3"><R>0.24705882352941178</R><G>0.5490196078431373</G><B>1</B></Color3>
@@ -86528,12 +86504,12 @@ return World
 <bool name="RichText">false</bool>
 <bool name="AutoButtonColor">true</bool>
 </Properties>
-<Item class="UICorner" referent="RBX004520"><Properties>
+<Item class="UICorner" referent="RBX004517"><Properties>
 <string name="Name">UICorner</string>
 <UDim name="CornerRadius"><S>0</S><O>12</O></UDim>
 </Properties>
 </Item>
-<Item class="UIStroke" referent="RBX004521"><Properties>
+<Item class="UIStroke" referent="RBX004518"><Properties>
 <string name="Name">UIStroke</string>
 <float name="Thickness">3</float>
 <Color3 name="Color"><R>0.10196078431372549</R><G>0.06274509803921569</G><B>0.2</B></Color3>
@@ -86541,7 +86517,7 @@ return World
 <float name="Transparency">0</float>
 </Properties>
 </Item>
-<Item class="UIPadding" referent="RBX004522"><Properties>
+<Item class="UIPadding" referent="RBX004519"><Properties>
 <string name="Name">UIPadding</string>
 <UDim name="PaddingTop"><S>0</S><O>4</O></UDim>
 <UDim name="PaddingBottom"><S>0</S><O>4</O></UDim>
@@ -86551,7 +86527,7 @@ return World
 </Item>
 </Item>
 </Item>
-<Item class="Frame" referent="RBX004523"><Properties>
+<Item class="Frame" referent="RBX004520"><Properties>
 <string name="Name">AurasPanel</string>
 <Vector2 name="AnchorPoint"><X>0.5</X><Y>0.5</Y></Vector2>
 <Color3 name="BackgroundColor3"><R>0.16862745098039217</R><G>0.10196078431372549</G><B>0.3686274509803922</B></Color3>
@@ -86565,12 +86541,12 @@ return World
 <float name="Rotation">0</float>
 <bool name="ClipsDescendants">false</bool>
 </Properties>
-<Item class="UICorner" referent="RBX004524"><Properties>
+<Item class="UICorner" referent="RBX004521"><Properties>
 <string name="Name">UICorner</string>
 <UDim name="CornerRadius"><S>0</S><O>22</O></UDim>
 </Properties>
 </Item>
-<Item class="UIStroke" referent="RBX004525"><Properties>
+<Item class="UIStroke" referent="RBX004522"><Properties>
 <string name="Name">UIStroke</string>
 <float name="Thickness">5</float>
 <Color3 name="Color"><R>0.10196078431372549</R><G>0.06274509803921569</G><B>0.2</B></Color3>
@@ -86578,12 +86554,12 @@ return World
 <float name="Transparency">0</float>
 </Properties>
 </Item>
-<Item class="UIScale" referent="RBX004526"><Properties>
+<Item class="UIScale" referent="RBX004523"><Properties>
 <string name="Name">UIScale</string>
 <float name="Scale">1</float>
 </Properties>
 </Item>
-<Item class="TextLabel" referent="RBX004527"><Properties>
+<Item class="TextLabel" referent="RBX004524"><Properties>
 <string name="Name">Title</string>
 <Vector2 name="AnchorPoint"><X>0</X><Y>0</Y></Vector2>
 <Color3 name="BackgroundColor3"><R>1</R><G>1</G><B>1</B></Color3>
@@ -86605,7 +86581,7 @@ return World
 <bool name="TextWrapped">true</bool>
 <bool name="RichText">false</bool>
 </Properties>
-<Item class="UIStroke" referent="RBX004528"><Properties>
+<Item class="UIStroke" referent="RBX004525"><Properties>
 <string name="Name">UIStroke</string>
 <float name="Thickness">4</float>
 <Color3 name="Color"><R>0.10196078431372549</R><G>0.06274509803921569</G><B>0.2</B></Color3>
@@ -86614,7 +86590,7 @@ return World
 </Properties>
 </Item>
 </Item>
-<Item class="TextButton" referent="RBX004529"><Properties>
+<Item class="TextButton" referent="RBX004526"><Properties>
 <string name="Name">CloseButton</string>
 <Vector2 name="AnchorPoint"><X>1</X><Y>0</Y></Vector2>
 <Color3 name="BackgroundColor3"><R>0.9019607843137255</R><G>0.23529411764705882</G><B>0.23529411764705882</B></Color3>
@@ -86637,12 +86613,12 @@ return World
 <bool name="RichText">false</bool>
 <bool name="AutoButtonColor">true</bool>
 </Properties>
-<Item class="UICorner" referent="RBX004530"><Properties>
+<Item class="UICorner" referent="RBX004527"><Properties>
 <string name="Name">UICorner</string>
 <UDim name="CornerRadius"><S>0</S><O>12</O></UDim>
 </Properties>
 </Item>
-<Item class="UIStroke" referent="RBX004531"><Properties>
+<Item class="UIStroke" referent="RBX004528"><Properties>
 <string name="Name">UIStroke</string>
 <float name="Thickness">3</float>
 <Color3 name="Color"><R>0.10196078431372549</R><G>0.06274509803921569</G><B>0.2</B></Color3>
@@ -86650,7 +86626,7 @@ return World
 <float name="Transparency">0</float>
 </Properties>
 </Item>
-<Item class="UIPadding" referent="RBX004532"><Properties>
+<Item class="UIPadding" referent="RBX004529"><Properties>
 <string name="Name">UIPadding</string>
 <UDim name="PaddingTop"><S>0</S><O>4</O></UDim>
 <UDim name="PaddingBottom"><S>0</S><O>4</O></UDim>
@@ -86659,7 +86635,7 @@ return World
 </Properties>
 </Item>
 </Item>
-<Item class="ScrollingFrame" referent="RBX004533"><Properties>
+<Item class="ScrollingFrame" referent="RBX004530"><Properties>
 <string name="Name">Content</string>
 <Vector2 name="AnchorPoint"><X>0</X><Y>0</Y></Vector2>
 <Color3 name="BackgroundColor3"><R>1</R><G>1</G><B>1</B></Color3>
@@ -86677,7 +86653,7 @@ return World
 <int name="ScrollBarThickness">8</int>
 <token name="ScrollingDirection">2</token>
 </Properties>
-<Item class="UIPadding" referent="RBX004534"><Properties>
+<Item class="UIPadding" referent="RBX004531"><Properties>
 <string name="Name">UIPadding</string>
 <UDim name="PaddingTop"><S>0</S><O>6</O></UDim>
 <UDim name="PaddingBottom"><S>0</S><O>6</O></UDim>
@@ -86685,7 +86661,7 @@ return World
 <UDim name="PaddingRight"><S>0</S><O>6</O></UDim>
 </Properties>
 </Item>
-<Item class="UIGridLayout" referent="RBX004535"><Properties>
+<Item class="UIGridLayout" referent="RBX004532"><Properties>
 <string name="Name">UIGridLayout</string>
 <UDim2 name="CellSize"><XS>0</XS><XO>180</XO><YS>0</YS><YO>196</YO></UDim2>
 <UDim2 name="CellPadding"><XS>0</XS><XO>10</XO><YS>0</YS><YO>10</YO></UDim2>
@@ -86694,7 +86670,7 @@ return World
 </Properties>
 </Item>
 </Item>
-<Item class="Frame" referent="RBX004536"><Properties>
+<Item class="Frame" referent="RBX004533"><Properties>
 <string name="Name">Template</string>
 <Vector2 name="AnchorPoint"><X>0</X><Y>0</Y></Vector2>
 <Color3 name="BackgroundColor3"><R>0.27450980392156865</R><G>0.18823529411764706</G><B>0.5490196078431373</B></Color3>
@@ -86708,12 +86684,12 @@ return World
 <float name="Rotation">0</float>
 <bool name="ClipsDescendants">false</bool>
 </Properties>
-<Item class="UICorner" referent="RBX004537"><Properties>
+<Item class="UICorner" referent="RBX004534"><Properties>
 <string name="Name">UICorner</string>
 <UDim name="CornerRadius"><S>0</S><O>14</O></UDim>
 </Properties>
 </Item>
-<Item class="UIStroke" referent="RBX004538"><Properties>
+<Item class="UIStroke" referent="RBX004535"><Properties>
 <string name="Name">UIStroke</string>
 <float name="Thickness">3</float>
 <Color3 name="Color"><R>0.10196078431372549</R><G>0.06274509803921569</G><B>0.2</B></Color3>
@@ -86721,7 +86697,7 @@ return World
 <float name="Transparency">0</float>
 </Properties>
 </Item>
-<Item class="ImageLabel" referent="RBX004539"><Properties>
+<Item class="ImageLabel" referent="RBX004536"><Properties>
 <string name="Name">Icon</string>
 <Vector2 name="AnchorPoint"><X>0.5</X><Y>0</Y></Vector2>
 <Color3 name="BackgroundColor3"><R>1</R><G>1</G><B>1</B></Color3>
@@ -86738,7 +86714,7 @@ return World
 <token name="ScaleType">3</token>
 </Properties>
 </Item>
-<Item class="TextLabel" referent="RBX004540"><Properties>
+<Item class="TextLabel" referent="RBX004537"><Properties>
 <string name="Name">Fallback</string>
 <Vector2 name="AnchorPoint"><X>0.5</X><Y>0</Y></Vector2>
 <Color3 name="BackgroundColor3"><R>1</R><G>1</G><B>1</B></Color3>
@@ -86761,7 +86737,7 @@ return World
 <bool name="RichText">false</bool>
 </Properties>
 </Item>
-<Item class="TextLabel" referent="RBX004541"><Properties>
+<Item class="TextLabel" referent="RBX004538"><Properties>
 <string name="Name">NameLabel</string>
 <Vector2 name="AnchorPoint"><X>0</X><Y>0</Y></Vector2>
 <Color3 name="BackgroundColor3"><R>1</R><G>1</G><B>1</B></Color3>
@@ -86783,7 +86759,7 @@ return World
 <bool name="TextWrapped">true</bool>
 <bool name="RichText">false</bool>
 </Properties>
-<Item class="UIStroke" referent="RBX004542"><Properties>
+<Item class="UIStroke" referent="RBX004539"><Properties>
 <string name="Name">UIStroke</string>
 <float name="Thickness">2.5</float>
 <Color3 name="Color"><R>0.10196078431372549</R><G>0.06274509803921569</G><B>0.2</B></Color3>
@@ -86792,7 +86768,7 @@ return World
 </Properties>
 </Item>
 </Item>
-<Item class="TextLabel" referent="RBX004543"><Properties>
+<Item class="TextLabel" referent="RBX004540"><Properties>
 <string name="Name">InfoLabel</string>
 <Vector2 name="AnchorPoint"><X>0</X><Y>0</Y></Vector2>
 <Color3 name="BackgroundColor3"><R>1</R><G>1</G><B>1</B></Color3>
@@ -86814,7 +86790,7 @@ return World
 <bool name="TextWrapped">true</bool>
 <bool name="RichText">false</bool>
 </Properties>
-<Item class="UIStroke" referent="RBX004544"><Properties>
+<Item class="UIStroke" referent="RBX004541"><Properties>
 <string name="Name">UIStroke</string>
 <float name="Thickness">1.5</float>
 <Color3 name="Color"><R>0.10196078431372549</R><G>0.06274509803921569</G><B>0.2</B></Color3>
@@ -86823,7 +86799,7 @@ return World
 </Properties>
 </Item>
 </Item>
-<Item class="TextButton" referent="RBX004545"><Properties>
+<Item class="TextButton" referent="RBX004542"><Properties>
 <string name="Name">ActionButton</string>
 <Vector2 name="AnchorPoint"><X>0.5</X><Y>1</Y></Vector2>
 <Color3 name="BackgroundColor3"><R>0.23921568627450981</R><G>0.7843137254901961</G><B>0.43137254901960786</B></Color3>
@@ -86846,12 +86822,12 @@ return World
 <bool name="RichText">false</bool>
 <bool name="AutoButtonColor">true</bool>
 </Properties>
-<Item class="UICorner" referent="RBX004546"><Properties>
+<Item class="UICorner" referent="RBX004543"><Properties>
 <string name="Name">UICorner</string>
 <UDim name="CornerRadius"><S>0</S><O>12</O></UDim>
 </Properties>
 </Item>
-<Item class="UIStroke" referent="RBX004547"><Properties>
+<Item class="UIStroke" referent="RBX004544"><Properties>
 <string name="Name">UIStroke</string>
 <float name="Thickness">3</float>
 <Color3 name="Color"><R>0.10196078431372549</R><G>0.06274509803921569</G><B>0.2</B></Color3>
@@ -86859,7 +86835,7 @@ return World
 <float name="Transparency">0</float>
 </Properties>
 </Item>
-<Item class="UIPadding" referent="RBX004548"><Properties>
+<Item class="UIPadding" referent="RBX004545"><Properties>
 <string name="Name">UIPadding</string>
 <UDim name="PaddingTop"><S>0</S><O>4</O></UDim>
 <UDim name="PaddingBottom"><S>0</S><O>4</O></UDim>
@@ -86870,7 +86846,7 @@ return World
 </Item>
 </Item>
 </Item>
-<Item class="Frame" referent="RBX004549"><Properties>
+<Item class="Frame" referent="RBX004546"><Properties>
 <string name="Name">TraderPanel</string>
 <Vector2 name="AnchorPoint"><X>0.5</X><Y>0.5</Y></Vector2>
 <Color3 name="BackgroundColor3"><R>0.16862745098039217</R><G>0.10196078431372549</G><B>0.3686274509803922</B></Color3>
@@ -86884,12 +86860,12 @@ return World
 <float name="Rotation">0</float>
 <bool name="ClipsDescendants">false</bool>
 </Properties>
-<Item class="UICorner" referent="RBX004550"><Properties>
+<Item class="UICorner" referent="RBX004547"><Properties>
 <string name="Name">UICorner</string>
 <UDim name="CornerRadius"><S>0</S><O>22</O></UDim>
 </Properties>
 </Item>
-<Item class="UIStroke" referent="RBX004551"><Properties>
+<Item class="UIStroke" referent="RBX004548"><Properties>
 <string name="Name">UIStroke</string>
 <float name="Thickness">5</float>
 <Color3 name="Color"><R>0.10196078431372549</R><G>0.06274509803921569</G><B>0.2</B></Color3>
@@ -86897,12 +86873,12 @@ return World
 <float name="Transparency">0</float>
 </Properties>
 </Item>
-<Item class="UIScale" referent="RBX004552"><Properties>
+<Item class="UIScale" referent="RBX004549"><Properties>
 <string name="Name">UIScale</string>
 <float name="Scale">1</float>
 </Properties>
 </Item>
-<Item class="TextLabel" referent="RBX004553"><Properties>
+<Item class="TextLabel" referent="RBX004550"><Properties>
 <string name="Name">Title</string>
 <Vector2 name="AnchorPoint"><X>0</X><Y>0</Y></Vector2>
 <Color3 name="BackgroundColor3"><R>1</R><G>1</G><B>1</B></Color3>
@@ -86924,7 +86900,7 @@ return World
 <bool name="TextWrapped">true</bool>
 <bool name="RichText">false</bool>
 </Properties>
-<Item class="UIStroke" referent="RBX004554"><Properties>
+<Item class="UIStroke" referent="RBX004551"><Properties>
 <string name="Name">UIStroke</string>
 <float name="Thickness">4</float>
 <Color3 name="Color"><R>0.10196078431372549</R><G>0.06274509803921569</G><B>0.2</B></Color3>
@@ -86933,7 +86909,7 @@ return World
 </Properties>
 </Item>
 </Item>
-<Item class="TextButton" referent="RBX004555"><Properties>
+<Item class="TextButton" referent="RBX004552"><Properties>
 <string name="Name">CloseButton</string>
 <Vector2 name="AnchorPoint"><X>1</X><Y>0</Y></Vector2>
 <Color3 name="BackgroundColor3"><R>0.9019607843137255</R><G>0.23529411764705882</G><B>0.23529411764705882</B></Color3>
@@ -86956,12 +86932,12 @@ return World
 <bool name="RichText">false</bool>
 <bool name="AutoButtonColor">true</bool>
 </Properties>
-<Item class="UICorner" referent="RBX004556"><Properties>
+<Item class="UICorner" referent="RBX004553"><Properties>
 <string name="Name">UICorner</string>
 <UDim name="CornerRadius"><S>0</S><O>12</O></UDim>
 </Properties>
 </Item>
-<Item class="UIStroke" referent="RBX004557"><Properties>
+<Item class="UIStroke" referent="RBX004554"><Properties>
 <string name="Name">UIStroke</string>
 <float name="Thickness">3</float>
 <Color3 name="Color"><R>0.10196078431372549</R><G>0.06274509803921569</G><B>0.2</B></Color3>
@@ -86969,7 +86945,7 @@ return World
 <float name="Transparency">0</float>
 </Properties>
 </Item>
-<Item class="UIPadding" referent="RBX004558"><Properties>
+<Item class="UIPadding" referent="RBX004555"><Properties>
 <string name="Name">UIPadding</string>
 <UDim name="PaddingTop"><S>0</S><O>4</O></UDim>
 <UDim name="PaddingBottom"><S>0</S><O>4</O></UDim>
@@ -86978,7 +86954,7 @@ return World
 </Properties>
 </Item>
 </Item>
-<Item class="ScrollingFrame" referent="RBX004559"><Properties>
+<Item class="ScrollingFrame" referent="RBX004556"><Properties>
 <string name="Name">Content</string>
 <Vector2 name="AnchorPoint"><X>0</X><Y>0</Y></Vector2>
 <Color3 name="BackgroundColor3"><R>1</R><G>1</G><B>1</B></Color3>
@@ -86996,7 +86972,7 @@ return World
 <int name="ScrollBarThickness">8</int>
 <token name="ScrollingDirection">2</token>
 </Properties>
-<Item class="UIPadding" referent="RBX004560"><Properties>
+<Item class="UIPadding" referent="RBX004557"><Properties>
 <string name="Name">UIPadding</string>
 <UDim name="PaddingTop"><S>0</S><O>6</O></UDim>
 <UDim name="PaddingBottom"><S>0</S><O>6</O></UDim>
@@ -87004,7 +86980,7 @@ return World
 <UDim name="PaddingRight"><S>0</S><O>6</O></UDim>
 </Properties>
 </Item>
-<Item class="UIListLayout" referent="RBX004561"><Properties>
+<Item class="UIListLayout" referent="RBX004558"><Properties>
 <string name="Name">UIListLayout</string>
 <token name="FillDirection">1</token>
 <UDim name="Padding"><S>0</S><O>8</O></UDim>
@@ -87014,7 +86990,7 @@ return World
 </Properties>
 </Item>
 </Item>
-<Item class="Frame" referent="RBX004562"><Properties>
+<Item class="Frame" referent="RBX004559"><Properties>
 <string name="Name">Template</string>
 <Vector2 name="AnchorPoint"><X>0</X><Y>0</Y></Vector2>
 <Color3 name="BackgroundColor3"><R>0.27450980392156865</R><G>0.18823529411764706</G><B>0.5490196078431373</B></Color3>
@@ -87028,12 +87004,12 @@ return World
 <float name="Rotation">0</float>
 <bool name="ClipsDescendants">false</bool>
 </Properties>
-<Item class="UICorner" referent="RBX004563"><Properties>
+<Item class="UICorner" referent="RBX004560"><Properties>
 <string name="Name">UICorner</string>
 <UDim name="CornerRadius"><S>0</S><O>14</O></UDim>
 </Properties>
 </Item>
-<Item class="UIStroke" referent="RBX004564"><Properties>
+<Item class="UIStroke" referent="RBX004561"><Properties>
 <string name="Name">UIStroke</string>
 <float name="Thickness">3</float>
 <Color3 name="Color"><R>0.10196078431372549</R><G>0.06274509803921569</G><B>0.2</B></Color3>
@@ -87041,7 +87017,7 @@ return World
 <float name="Transparency">0</float>
 </Properties>
 </Item>
-<Item class="ImageLabel" referent="RBX004565"><Properties>
+<Item class="ImageLabel" referent="RBX004562"><Properties>
 <string name="Name">Icon</string>
 <Vector2 name="AnchorPoint"><X>0</X><Y>0.5</Y></Vector2>
 <Color3 name="BackgroundColor3"><R>1</R><G>1</G><B>1</B></Color3>
@@ -87058,7 +87034,7 @@ return World
 <token name="ScaleType">3</token>
 </Properties>
 </Item>
-<Item class="TextLabel" referent="RBX004566"><Properties>
+<Item class="TextLabel" referent="RBX004563"><Properties>
 <string name="Name">Fallback</string>
 <Vector2 name="AnchorPoint"><X>0</X><Y>0.5</Y></Vector2>
 <Color3 name="BackgroundColor3"><R>1</R><G>1</G><B>1</B></Color3>
@@ -87081,7 +87057,7 @@ return World
 <bool name="RichText">false</bool>
 </Properties>
 </Item>
-<Item class="TextLabel" referent="RBX004567"><Properties>
+<Item class="TextLabel" referent="RBX004564"><Properties>
 <string name="Name">NameLabel</string>
 <Vector2 name="AnchorPoint"><X>0</X><Y>0</Y></Vector2>
 <Color3 name="BackgroundColor3"><R>1</R><G>1</G><B>1</B></Color3>
@@ -87103,7 +87079,7 @@ return World
 <bool name="TextWrapped">true</bool>
 <bool name="RichText">false</bool>
 </Properties>
-<Item class="UIStroke" referent="RBX004568"><Properties>
+<Item class="UIStroke" referent="RBX004565"><Properties>
 <string name="Name">UIStroke</string>
 <float name="Thickness">2.5</float>
 <Color3 name="Color"><R>0.10196078431372549</R><G>0.06274509803921569</G><B>0.2</B></Color3>
@@ -87112,7 +87088,7 @@ return World
 </Properties>
 </Item>
 </Item>
-<Item class="TextLabel" referent="RBX004569"><Properties>
+<Item class="TextLabel" referent="RBX004566"><Properties>
 <string name="Name">InfoLabel</string>
 <Vector2 name="AnchorPoint"><X>0</X><Y>0</Y></Vector2>
 <Color3 name="BackgroundColor3"><R>1</R><G>1</G><B>1</B></Color3>
@@ -87134,7 +87110,7 @@ return World
 <bool name="TextWrapped">true</bool>
 <bool name="RichText">false</bool>
 </Properties>
-<Item class="UIStroke" referent="RBX004570"><Properties>
+<Item class="UIStroke" referent="RBX004567"><Properties>
 <string name="Name">UIStroke</string>
 <float name="Thickness">1.5</float>
 <Color3 name="Color"><R>0.10196078431372549</R><G>0.06274509803921569</G><B>0.2</B></Color3>
@@ -87143,7 +87119,7 @@ return World
 </Properties>
 </Item>
 </Item>
-<Item class="TextButton" referent="RBX004571"><Properties>
+<Item class="TextButton" referent="RBX004568"><Properties>
 <string name="Name">ActionButton</string>
 <Vector2 name="AnchorPoint"><X>1</X><Y>0.5</Y></Vector2>
 <Color3 name="BackgroundColor3"><R>0.23921568627450981</R><G>0.7843137254901961</G><B>0.43137254901960786</B></Color3>
@@ -87166,12 +87142,12 @@ return World
 <bool name="RichText">false</bool>
 <bool name="AutoButtonColor">true</bool>
 </Properties>
-<Item class="UICorner" referent="RBX004572"><Properties>
+<Item class="UICorner" referent="RBX004569"><Properties>
 <string name="Name">UICorner</string>
 <UDim name="CornerRadius"><S>0</S><O>12</O></UDim>
 </Properties>
 </Item>
-<Item class="UIStroke" referent="RBX004573"><Properties>
+<Item class="UIStroke" referent="RBX004570"><Properties>
 <string name="Name">UIStroke</string>
 <float name="Thickness">3</float>
 <Color3 name="Color"><R>0.10196078431372549</R><G>0.06274509803921569</G><B>0.2</B></Color3>
@@ -87179,7 +87155,7 @@ return World
 <float name="Transparency">0</float>
 </Properties>
 </Item>
-<Item class="UIPadding" referent="RBX004574"><Properties>
+<Item class="UIPadding" referent="RBX004571"><Properties>
 <string name="Name">UIPadding</string>
 <UDim name="PaddingTop"><S>0</S><O>4</O></UDim>
 <UDim name="PaddingBottom"><S>0</S><O>4</O></UDim>
@@ -87189,7 +87165,7 @@ return World
 </Item>
 </Item>
 </Item>
-<Item class="TextLabel" referent="RBX004575"><Properties>
+<Item class="TextLabel" referent="RBX004572"><Properties>
 <string name="Name">Total</string>
 <Vector2 name="AnchorPoint"><X>0</X><Y>0</Y></Vector2>
 <Color3 name="BackgroundColor3"><R>1</R><G>1</G><B>1</B></Color3>
@@ -87211,7 +87187,7 @@ return World
 <bool name="TextWrapped">true</bool>
 <bool name="RichText">false</bool>
 </Properties>
-<Item class="UIStroke" referent="RBX004576"><Properties>
+<Item class="UIStroke" referent="RBX004573"><Properties>
 <string name="Name">UIStroke</string>
 <float name="Thickness">2</float>
 <Color3 name="Color"><R>0.10196078431372549</R><G>0.06274509803921569</G><B>0.2</B></Color3>
@@ -87220,7 +87196,7 @@ return World
 </Properties>
 </Item>
 </Item>
-<Item class="TextButton" referent="RBX004577"><Properties>
+<Item class="TextButton" referent="RBX004574"><Properties>
 <string name="Name">SelectAllButton</string>
 <Vector2 name="AnchorPoint"><X>0</X><Y>1</Y></Vector2>
 <Color3 name="BackgroundColor3"><R>0.24705882352941178</R><G>0.5490196078431373</G><B>1</B></Color3>
@@ -87243,12 +87219,12 @@ return World
 <bool name="RichText">false</bool>
 <bool name="AutoButtonColor">true</bool>
 </Properties>
-<Item class="UICorner" referent="RBX004578"><Properties>
+<Item class="UICorner" referent="RBX004575"><Properties>
 <string name="Name">UICorner</string>
 <UDim name="CornerRadius"><S>0</S><O>12</O></UDim>
 </Properties>
 </Item>
-<Item class="UIStroke" referent="RBX004579"><Properties>
+<Item class="UIStroke" referent="RBX004576"><Properties>
 <string name="Name">UIStroke</string>
 <float name="Thickness">3</float>
 <Color3 name="Color"><R>0.10196078431372549</R><G>0.06274509803921569</G><B>0.2</B></Color3>
@@ -87256,7 +87232,7 @@ return World
 <float name="Transparency">0</float>
 </Properties>
 </Item>
-<Item class="UIPadding" referent="RBX004580"><Properties>
+<Item class="UIPadding" referent="RBX004577"><Properties>
 <string name="Name">UIPadding</string>
 <UDim name="PaddingTop"><S>0</S><O>4</O></UDim>
 <UDim name="PaddingBottom"><S>0</S><O>4</O></UDim>
@@ -87265,7 +87241,7 @@ return World
 </Properties>
 </Item>
 </Item>
-<Item class="TextButton" referent="RBX004581"><Properties>
+<Item class="TextButton" referent="RBX004578"><Properties>
 <string name="Name">SellSelectedButton</string>
 <Vector2 name="AnchorPoint"><X>0.5</X><Y>1</Y></Vector2>
 <Color3 name="BackgroundColor3"><R>0.23921568627450981</R><G>0.7843137254901961</G><B>0.43137254901960786</B></Color3>
@@ -87288,12 +87264,12 @@ return World
 <bool name="RichText">false</bool>
 <bool name="AutoButtonColor">true</bool>
 </Properties>
-<Item class="UICorner" referent="RBX004582"><Properties>
+<Item class="UICorner" referent="RBX004579"><Properties>
 <string name="Name">UICorner</string>
 <UDim name="CornerRadius"><S>0</S><O>12</O></UDim>
 </Properties>
 </Item>
-<Item class="UIStroke" referent="RBX004583"><Properties>
+<Item class="UIStroke" referent="RBX004580"><Properties>
 <string name="Name">UIStroke</string>
 <float name="Thickness">3</float>
 <Color3 name="Color"><R>0.10196078431372549</R><G>0.06274509803921569</G><B>0.2</B></Color3>
@@ -87301,7 +87277,7 @@ return World
 <float name="Transparency">0</float>
 </Properties>
 </Item>
-<Item class="UIPadding" referent="RBX004584"><Properties>
+<Item class="UIPadding" referent="RBX004581"><Properties>
 <string name="Name">UIPadding</string>
 <UDim name="PaddingTop"><S>0</S><O>4</O></UDim>
 <UDim name="PaddingBottom"><S>0</S><O>4</O></UDim>
@@ -87310,7 +87286,7 @@ return World
 </Properties>
 </Item>
 </Item>
-<Item class="TextButton" referent="RBX004585"><Properties>
+<Item class="TextButton" referent="RBX004582"><Properties>
 <string name="Name">SellAllButton</string>
 <Vector2 name="AnchorPoint"><X>1</X><Y>1</Y></Vector2>
 <Color3 name="BackgroundColor3"><R>1</R><G>0.6274509803921569</G><B>0.1568627450980392</B></Color3>
@@ -87333,12 +87309,12 @@ return World
 <bool name="RichText">false</bool>
 <bool name="AutoButtonColor">true</bool>
 </Properties>
-<Item class="UICorner" referent="RBX004586"><Properties>
+<Item class="UICorner" referent="RBX004583"><Properties>
 <string name="Name">UICorner</string>
 <UDim name="CornerRadius"><S>0</S><O>12</O></UDim>
 </Properties>
 </Item>
-<Item class="UIStroke" referent="RBX004587"><Properties>
+<Item class="UIStroke" referent="RBX004584"><Properties>
 <string name="Name">UIStroke</string>
 <float name="Thickness">3</float>
 <Color3 name="Color"><R>0.10196078431372549</R><G>0.06274509803921569</G><B>0.2</B></Color3>
@@ -87346,7 +87322,7 @@ return World
 <float name="Transparency">0</float>
 </Properties>
 </Item>
-<Item class="UIPadding" referent="RBX004588"><Properties>
+<Item class="UIPadding" referent="RBX004585"><Properties>
 <string name="Name">UIPadding</string>
 <UDim name="PaddingTop"><S>0</S><O>4</O></UDim>
 <UDim name="PaddingBottom"><S>0</S><O>4</O></UDim>
@@ -87356,7 +87332,7 @@ return World
 </Item>
 </Item>
 </Item>
-<Item class="Frame" referent="RBX004589"><Properties>
+<Item class="Frame" referent="RBX004586"><Properties>
 <string name="Name">RebirthPanel</string>
 <Vector2 name="AnchorPoint"><X>0.5</X><Y>0.5</Y></Vector2>
 <Color3 name="BackgroundColor3"><R>0.16862745098039217</R><G>0.10196078431372549</G><B>0.3686274509803922</B></Color3>
@@ -87370,12 +87346,12 @@ return World
 <float name="Rotation">0</float>
 <bool name="ClipsDescendants">false</bool>
 </Properties>
-<Item class="UICorner" referent="RBX004590"><Properties>
+<Item class="UICorner" referent="RBX004587"><Properties>
 <string name="Name">UICorner</string>
 <UDim name="CornerRadius"><S>0</S><O>22</O></UDim>
 </Properties>
 </Item>
-<Item class="UIStroke" referent="RBX004591"><Properties>
+<Item class="UIStroke" referent="RBX004588"><Properties>
 <string name="Name">UIStroke</string>
 <float name="Thickness">5</float>
 <Color3 name="Color"><R>0.10196078431372549</R><G>0.06274509803921569</G><B>0.2</B></Color3>
@@ -87383,12 +87359,12 @@ return World
 <float name="Transparency">0</float>
 </Properties>
 </Item>
-<Item class="UIScale" referent="RBX004592"><Properties>
+<Item class="UIScale" referent="RBX004589"><Properties>
 <string name="Name">UIScale</string>
 <float name="Scale">1</float>
 </Properties>
 </Item>
-<Item class="TextLabel" referent="RBX004593"><Properties>
+<Item class="TextLabel" referent="RBX004590"><Properties>
 <string name="Name">Title</string>
 <Vector2 name="AnchorPoint"><X>0</X><Y>0</Y></Vector2>
 <Color3 name="BackgroundColor3"><R>1</R><G>1</G><B>1</B></Color3>
@@ -87410,7 +87386,7 @@ return World
 <bool name="TextWrapped">true</bool>
 <bool name="RichText">false</bool>
 </Properties>
-<Item class="UIStroke" referent="RBX004594"><Properties>
+<Item class="UIStroke" referent="RBX004591"><Properties>
 <string name="Name">UIStroke</string>
 <float name="Thickness">4</float>
 <Color3 name="Color"><R>0.10196078431372549</R><G>0.06274509803921569</G><B>0.2</B></Color3>
@@ -87419,7 +87395,7 @@ return World
 </Properties>
 </Item>
 </Item>
-<Item class="TextButton" referent="RBX004595"><Properties>
+<Item class="TextButton" referent="RBX004592"><Properties>
 <string name="Name">CloseButton</string>
 <Vector2 name="AnchorPoint"><X>1</X><Y>0</Y></Vector2>
 <Color3 name="BackgroundColor3"><R>0.9019607843137255</R><G>0.23529411764705882</G><B>0.23529411764705882</B></Color3>
@@ -87442,12 +87418,12 @@ return World
 <bool name="RichText">false</bool>
 <bool name="AutoButtonColor">true</bool>
 </Properties>
-<Item class="UICorner" referent="RBX004596"><Properties>
+<Item class="UICorner" referent="RBX004593"><Properties>
 <string name="Name">UICorner</string>
 <UDim name="CornerRadius"><S>0</S><O>12</O></UDim>
 </Properties>
 </Item>
-<Item class="UIStroke" referent="RBX004597"><Properties>
+<Item class="UIStroke" referent="RBX004594"><Properties>
 <string name="Name">UIStroke</string>
 <float name="Thickness">3</float>
 <Color3 name="Color"><R>0.10196078431372549</R><G>0.06274509803921569</G><B>0.2</B></Color3>
@@ -87455,7 +87431,7 @@ return World
 <float name="Transparency">0</float>
 </Properties>
 </Item>
-<Item class="UIPadding" referent="RBX004598"><Properties>
+<Item class="UIPadding" referent="RBX004595"><Properties>
 <string name="Name">UIPadding</string>
 <UDim name="PaddingTop"><S>0</S><O>4</O></UDim>
 <UDim name="PaddingBottom"><S>0</S><O>4</O></UDim>
@@ -87464,7 +87440,7 @@ return World
 </Properties>
 </Item>
 </Item>
-<Item class="TextLabel" referent="RBX004599"><Properties>
+<Item class="TextLabel" referent="RBX004596"><Properties>
 <string name="Name">Info</string>
 <Vector2 name="AnchorPoint"><X>0</X><Y>0</Y></Vector2>
 <Color3 name="BackgroundColor3"><R>1</R><G>1</G><B>1</B></Color3>
@@ -87486,7 +87462,7 @@ return World
 <bool name="TextWrapped">true</bool>
 <bool name="RichText">false</bool>
 </Properties>
-<Item class="UIStroke" referent="RBX004600"><Properties>
+<Item class="UIStroke" referent="RBX004597"><Properties>
 <string name="Name">UIStroke</string>
 <float name="Thickness">2</float>
 <Color3 name="Color"><R>0.10196078431372549</R><G>0.06274509803921569</G><B>0.2</B></Color3>
@@ -87495,7 +87471,7 @@ return World
 </Properties>
 </Item>
 </Item>
-<Item class="TextButton" referent="RBX004601"><Properties>
+<Item class="TextButton" referent="RBX004598"><Properties>
 <string name="Name">RebirthButton</string>
 <Vector2 name="AnchorPoint"><X>0.5</X><Y>1</Y></Vector2>
 <Color3 name="BackgroundColor3"><R>0.6509803921568628</R><G>0.3568627450980392</G><B>1</B></Color3>
@@ -87518,12 +87494,12 @@ return World
 <bool name="RichText">false</bool>
 <bool name="AutoButtonColor">true</bool>
 </Properties>
-<Item class="UICorner" referent="RBX004602"><Properties>
+<Item class="UICorner" referent="RBX004599"><Properties>
 <string name="Name">UICorner</string>
 <UDim name="CornerRadius"><S>0</S><O>12</O></UDim>
 </Properties>
 </Item>
-<Item class="UIStroke" referent="RBX004603"><Properties>
+<Item class="UIStroke" referent="RBX004600"><Properties>
 <string name="Name">UIStroke</string>
 <float name="Thickness">3</float>
 <Color3 name="Color"><R>0.10196078431372549</R><G>0.06274509803921569</G><B>0.2</B></Color3>
@@ -87531,7 +87507,7 @@ return World
 <float name="Transparency">0</float>
 </Properties>
 </Item>
-<Item class="UIPadding" referent="RBX004604"><Properties>
+<Item class="UIPadding" referent="RBX004601"><Properties>
 <string name="Name">UIPadding</string>
 <UDim name="PaddingTop"><S>0</S><O>4</O></UDim>
 <UDim name="PaddingBottom"><S>0</S><O>4</O></UDim>
@@ -87541,7 +87517,7 @@ return World
 </Item>
 </Item>
 </Item>
-<Item class="Frame" referent="RBX004605"><Properties>
+<Item class="Frame" referent="RBX004602"><Properties>
 <string name="Name">WheelPanel</string>
 <Vector2 name="AnchorPoint"><X>0.5</X><Y>0.5</Y></Vector2>
 <Color3 name="BackgroundColor3"><R>0.16862745098039217</R><G>0.10196078431372549</G><B>0.3686274509803922</B></Color3>
@@ -87555,12 +87531,12 @@ return World
 <float name="Rotation">0</float>
 <bool name="ClipsDescendants">false</bool>
 </Properties>
-<Item class="UICorner" referent="RBX004606"><Properties>
+<Item class="UICorner" referent="RBX004603"><Properties>
 <string name="Name">UICorner</string>
 <UDim name="CornerRadius"><S>0</S><O>22</O></UDim>
 </Properties>
 </Item>
-<Item class="UIStroke" referent="RBX004607"><Properties>
+<Item class="UIStroke" referent="RBX004604"><Properties>
 <string name="Name">UIStroke</string>
 <float name="Thickness">5</float>
 <Color3 name="Color"><R>0.10196078431372549</R><G>0.06274509803921569</G><B>0.2</B></Color3>
@@ -87568,12 +87544,12 @@ return World
 <float name="Transparency">0</float>
 </Properties>
 </Item>
-<Item class="UIScale" referent="RBX004608"><Properties>
+<Item class="UIScale" referent="RBX004605"><Properties>
 <string name="Name">UIScale</string>
 <float name="Scale">1</float>
 </Properties>
 </Item>
-<Item class="TextLabel" referent="RBX004609"><Properties>
+<Item class="TextLabel" referent="RBX004606"><Properties>
 <string name="Name">Title</string>
 <Vector2 name="AnchorPoint"><X>0</X><Y>0</Y></Vector2>
 <Color3 name="BackgroundColor3"><R>1</R><G>1</G><B>1</B></Color3>
@@ -87595,7 +87571,7 @@ return World
 <bool name="TextWrapped">true</bool>
 <bool name="RichText">false</bool>
 </Properties>
-<Item class="UIStroke" referent="RBX004610"><Properties>
+<Item class="UIStroke" referent="RBX004607"><Properties>
 <string name="Name">UIStroke</string>
 <float name="Thickness">4</float>
 <Color3 name="Color"><R>0.10196078431372549</R><G>0.06274509803921569</G><B>0.2</B></Color3>
@@ -87604,7 +87580,7 @@ return World
 </Properties>
 </Item>
 </Item>
-<Item class="TextButton" referent="RBX004611"><Properties>
+<Item class="TextButton" referent="RBX004608"><Properties>
 <string name="Name">CloseButton</string>
 <Vector2 name="AnchorPoint"><X>1</X><Y>0</Y></Vector2>
 <Color3 name="BackgroundColor3"><R>0.9019607843137255</R><G>0.23529411764705882</G><B>0.23529411764705882</B></Color3>
@@ -87627,12 +87603,12 @@ return World
 <bool name="RichText">false</bool>
 <bool name="AutoButtonColor">true</bool>
 </Properties>
-<Item class="UICorner" referent="RBX004612"><Properties>
+<Item class="UICorner" referent="RBX004609"><Properties>
 <string name="Name">UICorner</string>
 <UDim name="CornerRadius"><S>0</S><O>12</O></UDim>
 </Properties>
 </Item>
-<Item class="UIStroke" referent="RBX004613"><Properties>
+<Item class="UIStroke" referent="RBX004610"><Properties>
 <string name="Name">UIStroke</string>
 <float name="Thickness">3</float>
 <Color3 name="Color"><R>0.10196078431372549</R><G>0.06274509803921569</G><B>0.2</B></Color3>
@@ -87640,7 +87616,7 @@ return World
 <float name="Transparency">0</float>
 </Properties>
 </Item>
-<Item class="UIPadding" referent="RBX004614"><Properties>
+<Item class="UIPadding" referent="RBX004611"><Properties>
 <string name="Name">UIPadding</string>
 <UDim name="PaddingTop"><S>0</S><O>4</O></UDim>
 <UDim name="PaddingBottom"><S>0</S><O>4</O></UDim>
@@ -87649,7 +87625,7 @@ return World
 </Properties>
 </Item>
 </Item>
-<Item class="Frame" referent="RBX004615"><Properties>
+<Item class="Frame" referent="RBX004612"><Properties>
 <string name="Name">Wheel</string>
 <Vector2 name="AnchorPoint"><X>0.5</X><Y>0</Y></Vector2>
 <Color3 name="BackgroundColor3"><R>1</R><G>1</G><B>1</B></Color3>
@@ -87663,7 +87639,7 @@ return World
 <float name="Rotation">0</float>
 <bool name="ClipsDescendants">false</bool>
 </Properties>
-<Item class="Frame" referent="RBX004616"><Properties>
+<Item class="Frame" referent="RBX004613"><Properties>
 <string name="Name">Disc</string>
 <Vector2 name="AnchorPoint"><X>0</X><Y>0</Y></Vector2>
 <Color3 name="BackgroundColor3"><R>0.47843137254901963</R><G>0.23529411764705882</G><B>1</B></Color3>
@@ -87677,12 +87653,12 @@ return World
 <float name="Rotation">0</float>
 <bool name="ClipsDescendants">false</bool>
 </Properties>
-<Item class="UICorner" referent="RBX004617"><Properties>
+<Item class="UICorner" referent="RBX004614"><Properties>
 <string name="Name">UICorner</string>
 <UDim name="CornerRadius"><S>1</S><O>0</O></UDim>
 </Properties>
 </Item>
-<Item class="UIStroke" referent="RBX004618"><Properties>
+<Item class="UIStroke" referent="RBX004615"><Properties>
 <string name="Name">UIStroke</string>
 <float name="Thickness">6</float>
 <Color3 name="Color"><R>0.10196078431372549</R><G>0.06274509803921569</G><B>0.2</B></Color3>
@@ -87690,7 +87666,7 @@ return World
 <float name="Transparency">0</float>
 </Properties>
 </Item>
-<Item class="ImageLabel" referent="RBX004619"><Properties>
+<Item class="ImageLabel" referent="RBX004616"><Properties>
 <string name="Name">DiscImage</string>
 <Vector2 name="AnchorPoint"><X>0</X><Y>0</Y></Vector2>
 <Color3 name="BackgroundColor3"><R>1</R><G>1</G><B>1</B></Color3>
@@ -87708,7 +87684,7 @@ return World
 </Properties>
 </Item>
 </Item>
-<Item class="TextLabel" referent="RBX004620"><Properties>
+<Item class="TextLabel" referent="RBX004617"><Properties>
 <string name="Name">Pointer</string>
 <Vector2 name="AnchorPoint"><X>0.5</X><Y>1</Y></Vector2>
 <Color3 name="BackgroundColor3"><R>1</R><G>1</G><B>1</B></Color3>
@@ -87730,7 +87706,7 @@ return World
 <bool name="TextWrapped">true</bool>
 <bool name="RichText">false</bool>
 </Properties>
-<Item class="UIStroke" referent="RBX004621"><Properties>
+<Item class="UIStroke" referent="RBX004618"><Properties>
 <string name="Name">UIStroke</string>
 <float name="Thickness">3</float>
 <Color3 name="Color"><R>0.10196078431372549</R><G>0.06274509803921569</G><B>0.2</B></Color3>
@@ -87739,7 +87715,7 @@ return World
 </Properties>
 </Item>
 </Item>
-<Item class="Frame" referent="RBX004622"><Properties>
+<Item class="Frame" referent="RBX004619"><Properties>
 <string name="Name">Hub</string>
 <Vector2 name="AnchorPoint"><X>0.5</X><Y>0.5</Y></Vector2>
 <Color3 name="BackgroundColor3"><R>1</R><G>0.8235294117647058</G><B>0.24705882352941178</B></Color3>
@@ -87753,12 +87729,12 @@ return World
 <float name="Rotation">0</float>
 <bool name="ClipsDescendants">false</bool>
 </Properties>
-<Item class="UICorner" referent="RBX004623"><Properties>
+<Item class="UICorner" referent="RBX004620"><Properties>
 <string name="Name">UICorner</string>
 <UDim name="CornerRadius"><S>1</S><O>0</O></UDim>
 </Properties>
 </Item>
-<Item class="UIStroke" referent="RBX004624"><Properties>
+<Item class="UIStroke" referent="RBX004621"><Properties>
 <string name="Name">UIStroke</string>
 <float name="Thickness">4</float>
 <Color3 name="Color"><R>0.10196078431372549</R><G>0.06274509803921569</G><B>0.2</B></Color3>
@@ -87768,7 +87744,7 @@ return World
 </Item>
 </Item>
 </Item>
-<Item class="TextLabel" referent="RBX004625"><Properties>
+<Item class="TextLabel" referent="RBX004622"><Properties>
 <string name="Name">Timer</string>
 <Vector2 name="AnchorPoint"><X>0</X><Y>0</Y></Vector2>
 <Color3 name="BackgroundColor3"><R>1</R><G>1</G><B>1</B></Color3>
@@ -87790,7 +87766,7 @@ return World
 <bool name="TextWrapped">true</bool>
 <bool name="RichText">false</bool>
 </Properties>
-<Item class="UIStroke" referent="RBX004626"><Properties>
+<Item class="UIStroke" referent="RBX004623"><Properties>
 <string name="Name">UIStroke</string>
 <float name="Thickness">2</float>
 <Color3 name="Color"><R>0.10196078431372549</R><G>0.06274509803921569</G><B>0.2</B></Color3>
@@ -87799,7 +87775,7 @@ return World
 </Properties>
 </Item>
 </Item>
-<Item class="TextButton" referent="RBX004627"><Properties>
+<Item class="TextButton" referent="RBX004624"><Properties>
 <string name="Name">SpinButton</string>
 <Vector2 name="AnchorPoint"><X>1</X><Y>1</Y></Vector2>
 <Color3 name="BackgroundColor3"><R>1</R><G>0.6274509803921569</G><B>0.1568627450980392</B></Color3>
@@ -87822,12 +87798,12 @@ return World
 <bool name="RichText">false</bool>
 <bool name="AutoButtonColor">true</bool>
 </Properties>
-<Item class="UICorner" referent="RBX004628"><Properties>
+<Item class="UICorner" referent="RBX004625"><Properties>
 <string name="Name">UICorner</string>
 <UDim name="CornerRadius"><S>0</S><O>12</O></UDim>
 </Properties>
 </Item>
-<Item class="UIStroke" referent="RBX004629"><Properties>
+<Item class="UIStroke" referent="RBX004626"><Properties>
 <string name="Name">UIStroke</string>
 <float name="Thickness">3</float>
 <Color3 name="Color"><R>0.10196078431372549</R><G>0.06274509803921569</G><B>0.2</B></Color3>
@@ -87835,7 +87811,7 @@ return World
 <float name="Transparency">0</float>
 </Properties>
 </Item>
-<Item class="UIPadding" referent="RBX004630"><Properties>
+<Item class="UIPadding" referent="RBX004627"><Properties>
 <string name="Name">UIPadding</string>
 <UDim name="PaddingTop"><S>0</S><O>4</O></UDim>
 <UDim name="PaddingBottom"><S>0</S><O>4</O></UDim>
@@ -87844,7 +87820,7 @@ return World
 </Properties>
 </Item>
 </Item>
-<Item class="TextButton" referent="RBX004631"><Properties>
+<Item class="TextButton" referent="RBX004628"><Properties>
 <string name="Name">BuySpinButton</string>
 <Vector2 name="AnchorPoint"><X>0</X><Y>1</Y></Vector2>
 <Color3 name="BackgroundColor3"><R>0.6509803921568628</R><G>0.3568627450980392</G><B>1</B></Color3>
@@ -87867,12 +87843,12 @@ return World
 <bool name="RichText">false</bool>
 <bool name="AutoButtonColor">true</bool>
 </Properties>
-<Item class="UICorner" referent="RBX004632"><Properties>
+<Item class="UICorner" referent="RBX004629"><Properties>
 <string name="Name">UICorner</string>
 <UDim name="CornerRadius"><S>0</S><O>12</O></UDim>
 </Properties>
 </Item>
-<Item class="UIStroke" referent="RBX004633"><Properties>
+<Item class="UIStroke" referent="RBX004630"><Properties>
 <string name="Name">UIStroke</string>
 <float name="Thickness">3</float>
 <Color3 name="Color"><R>0.10196078431372549</R><G>0.06274509803921569</G><B>0.2</B></Color3>
@@ -87880,7 +87856,7 @@ return World
 <float name="Transparency">0</float>
 </Properties>
 </Item>
-<Item class="UIPadding" referent="RBX004634"><Properties>
+<Item class="UIPadding" referent="RBX004631"><Properties>
 <string name="Name">UIPadding</string>
 <UDim name="PaddingTop"><S>0</S><O>4</O></UDim>
 <UDim name="PaddingBottom"><S>0</S><O>4</O></UDim>
@@ -87890,7 +87866,7 @@ return World
 </Item>
 </Item>
 </Item>
-<Item class="Frame" referent="RBX004635"><Properties>
+<Item class="Frame" referent="RBX004632"><Properties>
 <string name="Name">RewardsPanel</string>
 <Vector2 name="AnchorPoint"><X>0.5</X><Y>0.5</Y></Vector2>
 <Color3 name="BackgroundColor3"><R>0.16862745098039217</R><G>0.10196078431372549</G><B>0.3686274509803922</B></Color3>
@@ -87904,12 +87880,12 @@ return World
 <float name="Rotation">0</float>
 <bool name="ClipsDescendants">false</bool>
 </Properties>
-<Item class="UICorner" referent="RBX004636"><Properties>
+<Item class="UICorner" referent="RBX004633"><Properties>
 <string name="Name">UICorner</string>
 <UDim name="CornerRadius"><S>0</S><O>22</O></UDim>
 </Properties>
 </Item>
-<Item class="UIStroke" referent="RBX004637"><Properties>
+<Item class="UIStroke" referent="RBX004634"><Properties>
 <string name="Name">UIStroke</string>
 <float name="Thickness">5</float>
 <Color3 name="Color"><R>0.10196078431372549</R><G>0.06274509803921569</G><B>0.2</B></Color3>
@@ -87917,12 +87893,12 @@ return World
 <float name="Transparency">0</float>
 </Properties>
 </Item>
-<Item class="UIScale" referent="RBX004638"><Properties>
+<Item class="UIScale" referent="RBX004635"><Properties>
 <string name="Name">UIScale</string>
 <float name="Scale">1</float>
 </Properties>
 </Item>
-<Item class="TextLabel" referent="RBX004639"><Properties>
+<Item class="TextLabel" referent="RBX004636"><Properties>
 <string name="Name">Title</string>
 <Vector2 name="AnchorPoint"><X>0</X><Y>0</Y></Vector2>
 <Color3 name="BackgroundColor3"><R>1</R><G>1</G><B>1</B></Color3>
@@ -87944,7 +87920,7 @@ return World
 <bool name="TextWrapped">true</bool>
 <bool name="RichText">false</bool>
 </Properties>
-<Item class="UIStroke" referent="RBX004640"><Properties>
+<Item class="UIStroke" referent="RBX004637"><Properties>
 <string name="Name">UIStroke</string>
 <float name="Thickness">4</float>
 <Color3 name="Color"><R>0.10196078431372549</R><G>0.06274509803921569</G><B>0.2</B></Color3>
@@ -87953,7 +87929,7 @@ return World
 </Properties>
 </Item>
 </Item>
-<Item class="TextButton" referent="RBX004641"><Properties>
+<Item class="TextButton" referent="RBX004638"><Properties>
 <string name="Name">CloseButton</string>
 <Vector2 name="AnchorPoint"><X>1</X><Y>0</Y></Vector2>
 <Color3 name="BackgroundColor3"><R>0.9019607843137255</R><G>0.23529411764705882</G><B>0.23529411764705882</B></Color3>
@@ -87976,12 +87952,12 @@ return World
 <bool name="RichText">false</bool>
 <bool name="AutoButtonColor">true</bool>
 </Properties>
-<Item class="UICorner" referent="RBX004642"><Properties>
+<Item class="UICorner" referent="RBX004639"><Properties>
 <string name="Name">UICorner</string>
 <UDim name="CornerRadius"><S>0</S><O>12</O></UDim>
 </Properties>
 </Item>
-<Item class="UIStroke" referent="RBX004643"><Properties>
+<Item class="UIStroke" referent="RBX004640"><Properties>
 <string name="Name">UIStroke</string>
 <float name="Thickness">3</float>
 <Color3 name="Color"><R>0.10196078431372549</R><G>0.06274509803921569</G><B>0.2</B></Color3>
@@ -87989,7 +87965,7 @@ return World
 <float name="Transparency">0</float>
 </Properties>
 </Item>
-<Item class="UIPadding" referent="RBX004644"><Properties>
+<Item class="UIPadding" referent="RBX004641"><Properties>
 <string name="Name">UIPadding</string>
 <UDim name="PaddingTop"><S>0</S><O>4</O></UDim>
 <UDim name="PaddingBottom"><S>0</S><O>4</O></UDim>
@@ -87998,7 +87974,7 @@ return World
 </Properties>
 </Item>
 </Item>
-<Item class="TextLabel" referent="RBX004645"><Properties>
+<Item class="TextLabel" referent="RBX004642"><Properties>
 <string name="Name">Info</string>
 <Vector2 name="AnchorPoint"><X>0</X><Y>0</Y></Vector2>
 <Color3 name="BackgroundColor3"><R>1</R><G>1</G><B>1</B></Color3>
@@ -88020,7 +87996,7 @@ return World
 <bool name="TextWrapped">true</bool>
 <bool name="RichText">false</bool>
 </Properties>
-<Item class="UIStroke" referent="RBX004646"><Properties>
+<Item class="UIStroke" referent="RBX004643"><Properties>
 <string name="Name">UIStroke</string>
 <float name="Thickness">2</float>
 <Color3 name="Color"><R>0.10196078431372549</R><G>0.06274509803921569</G><B>0.2</B></Color3>
@@ -88029,7 +88005,7 @@ return World
 </Properties>
 </Item>
 </Item>
-<Item class="TextButton" referent="RBX004647"><Properties>
+<Item class="TextButton" referent="RBX004644"><Properties>
 <string name="Name">ClaimButton</string>
 <Vector2 name="AnchorPoint"><X>0.5</X><Y>1</Y></Vector2>
 <Color3 name="BackgroundColor3"><R>0.23921568627450981</R><G>0.7843137254901961</G><B>0.43137254901960786</B></Color3>
@@ -88052,12 +88028,12 @@ return World
 <bool name="RichText">false</bool>
 <bool name="AutoButtonColor">true</bool>
 </Properties>
-<Item class="UICorner" referent="RBX004648"><Properties>
+<Item class="UICorner" referent="RBX004645"><Properties>
 <string name="Name">UICorner</string>
 <UDim name="CornerRadius"><S>0</S><O>12</O></UDim>
 </Properties>
 </Item>
-<Item class="UIStroke" referent="RBX004649"><Properties>
+<Item class="UIStroke" referent="RBX004646"><Properties>
 <string name="Name">UIStroke</string>
 <float name="Thickness">3</float>
 <Color3 name="Color"><R>0.10196078431372549</R><G>0.06274509803921569</G><B>0.2</B></Color3>
@@ -88065,7 +88041,7 @@ return World
 <float name="Transparency">0</float>
 </Properties>
 </Item>
-<Item class="UIPadding" referent="RBX004650"><Properties>
+<Item class="UIPadding" referent="RBX004647"><Properties>
 <string name="Name">UIPadding</string>
 <UDim name="PaddingTop"><S>0</S><O>4</O></UDim>
 <UDim name="PaddingBottom"><S>0</S><O>4</O></UDim>
@@ -88074,7 +88050,7 @@ return World
 </Properties>
 </Item>
 </Item>
-<Item class="ScrollingFrame" referent="RBX004651"><Properties>
+<Item class="ScrollingFrame" referent="RBX004648"><Properties>
 <string name="Name">Content</string>
 <Vector2 name="AnchorPoint"><X>0</X><Y>0</Y></Vector2>
 <Color3 name="BackgroundColor3"><R>1</R><G>1</G><B>1</B></Color3>
@@ -88092,7 +88068,7 @@ return World
 <int name="ScrollBarThickness">8</int>
 <token name="ScrollingDirection">2</token>
 </Properties>
-<Item class="UIPadding" referent="RBX004652"><Properties>
+<Item class="UIPadding" referent="RBX004649"><Properties>
 <string name="Name">UIPadding</string>
 <UDim name="PaddingTop"><S>0</S><O>6</O></UDim>
 <UDim name="PaddingBottom"><S>0</S><O>6</O></UDim>
@@ -88100,7 +88076,7 @@ return World
 <UDim name="PaddingRight"><S>0</S><O>6</O></UDim>
 </Properties>
 </Item>
-<Item class="UIGridLayout" referent="RBX004653"><Properties>
+<Item class="UIGridLayout" referent="RBX004650"><Properties>
 <string name="Name">UIGridLayout</string>
 <UDim2 name="CellSize"><XS>0</XS><XO>130</XO><YS>0</YS><YO>140</YO></UDim2>
 <UDim2 name="CellPadding"><XS>0</XS><XO>10</XO><YS>0</YS><YO>10</YO></UDim2>
@@ -88109,7 +88085,7 @@ return World
 </Properties>
 </Item>
 </Item>
-<Item class="Frame" referent="RBX004654"><Properties>
+<Item class="Frame" referent="RBX004651"><Properties>
 <string name="Name">Template</string>
 <Vector2 name="AnchorPoint"><X>0</X><Y>0</Y></Vector2>
 <Color3 name="BackgroundColor3"><R>0.27450980392156865</R><G>0.18823529411764706</G><B>0.5490196078431373</B></Color3>
@@ -88123,12 +88099,12 @@ return World
 <float name="Rotation">0</float>
 <bool name="ClipsDescendants">false</bool>
 </Properties>
-<Item class="UICorner" referent="RBX004655"><Properties>
+<Item class="UICorner" referent="RBX004652"><Properties>
 <string name="Name">UICorner</string>
 <UDim name="CornerRadius"><S>0</S><O>14</O></UDim>
 </Properties>
 </Item>
-<Item class="UIStroke" referent="RBX004656"><Properties>
+<Item class="UIStroke" referent="RBX004653"><Properties>
 <string name="Name">UIStroke</string>
 <float name="Thickness">3</float>
 <Color3 name="Color"><R>0.10196078431372549</R><G>0.06274509803921569</G><B>0.2</B></Color3>
@@ -88136,7 +88112,7 @@ return World
 <float name="Transparency">0</float>
 </Properties>
 </Item>
-<Item class="TextLabel" referent="RBX004657"><Properties>
+<Item class="TextLabel" referent="RBX004654"><Properties>
 <string name="Name">Fallback</string>
 <Vector2 name="AnchorPoint"><X>0.5</X><Y>0</Y></Vector2>
 <Color3 name="BackgroundColor3"><R>1</R><G>1</G><B>1</B></Color3>
@@ -88159,7 +88135,7 @@ return World
 <bool name="RichText">false</bool>
 </Properties>
 </Item>
-<Item class="ImageLabel" referent="RBX004658"><Properties>
+<Item class="ImageLabel" referent="RBX004655"><Properties>
 <string name="Name">Icon</string>
 <Vector2 name="AnchorPoint"><X>0.5</X><Y>0</Y></Vector2>
 <Color3 name="BackgroundColor3"><R>1</R><G>1</G><B>1</B></Color3>
@@ -88176,7 +88152,7 @@ return World
 <token name="ScaleType">3</token>
 </Properties>
 </Item>
-<Item class="TextLabel" referent="RBX004659"><Properties>
+<Item class="TextLabel" referent="RBX004656"><Properties>
 <string name="Name">NameLabel</string>
 <Vector2 name="AnchorPoint"><X>0</X><Y>0</Y></Vector2>
 <Color3 name="BackgroundColor3"><R>1</R><G>1</G><B>1</B></Color3>
@@ -88198,7 +88174,7 @@ return World
 <bool name="TextWrapped">true</bool>
 <bool name="RichText">false</bool>
 </Properties>
-<Item class="UIStroke" referent="RBX004660"><Properties>
+<Item class="UIStroke" referent="RBX004657"><Properties>
 <string name="Name">UIStroke</string>
 <float name="Thickness">2.5</float>
 <Color3 name="Color"><R>0.10196078431372549</R><G>0.06274509803921569</G><B>0.2</B></Color3>
@@ -88207,7 +88183,7 @@ return World
 </Properties>
 </Item>
 </Item>
-<Item class="TextLabel" referent="RBX004661"><Properties>
+<Item class="TextLabel" referent="RBX004658"><Properties>
 <string name="Name">InfoLabel</string>
 <Vector2 name="AnchorPoint"><X>0</X><Y>0</Y></Vector2>
 <Color3 name="BackgroundColor3"><R>1</R><G>1</G><B>1</B></Color3>
@@ -88229,7 +88205,7 @@ return World
 <bool name="TextWrapped">true</bool>
 <bool name="RichText">false</bool>
 </Properties>
-<Item class="UIStroke" referent="RBX004662"><Properties>
+<Item class="UIStroke" referent="RBX004659"><Properties>
 <string name="Name">UIStroke</string>
 <float name="Thickness">2</float>
 <Color3 name="Color"><R>0.10196078431372549</R><G>0.06274509803921569</G><B>0.2</B></Color3>
@@ -88238,7 +88214,7 @@ return World
 </Properties>
 </Item>
 </Item>
-<Item class="TextButton" referent="RBX004663"><Properties>
+<Item class="TextButton" referent="RBX004660"><Properties>
 <string name="Name">ActionButton</string>
 <Vector2 name="AnchorPoint"><X>0</X><Y>0</Y></Vector2>
 <Color3 name="BackgroundColor3"><R>0.23921568627450981</R><G>0.7843137254901961</G><B>0.43137254901960786</B></Color3>
@@ -88261,12 +88237,12 @@ return World
 <bool name="RichText">false</bool>
 <bool name="AutoButtonColor">true</bool>
 </Properties>
-<Item class="UICorner" referent="RBX004664"><Properties>
+<Item class="UICorner" referent="RBX004661"><Properties>
 <string name="Name">UICorner</string>
 <UDim name="CornerRadius"><S>0</S><O>12</O></UDim>
 </Properties>
 </Item>
-<Item class="UIStroke" referent="RBX004665"><Properties>
+<Item class="UIStroke" referent="RBX004662"><Properties>
 <string name="Name">UIStroke</string>
 <float name="Thickness">3</float>
 <Color3 name="Color"><R>0.10196078431372549</R><G>0.06274509803921569</G><B>0.2</B></Color3>
@@ -88274,7 +88250,7 @@ return World
 <float name="Transparency">0</float>
 </Properties>
 </Item>
-<Item class="UIPadding" referent="RBX004666"><Properties>
+<Item class="UIPadding" referent="RBX004663"><Properties>
 <string name="Name">UIPadding</string>
 <UDim name="PaddingTop"><S>0</S><O>4</O></UDim>
 <UDim name="PaddingBottom"><S>0</S><O>4</O></UDim>
@@ -88285,7 +88261,7 @@ return World
 </Item>
 </Item>
 </Item>
-<Item class="Frame" referent="RBX004667"><Properties>
+<Item class="Frame" referent="RBX004664"><Properties>
 <string name="Name">QuestsPanel</string>
 <Vector2 name="AnchorPoint"><X>0.5</X><Y>0.5</Y></Vector2>
 <Color3 name="BackgroundColor3"><R>0.16862745098039217</R><G>0.10196078431372549</G><B>0.3686274509803922</B></Color3>
@@ -88299,12 +88275,12 @@ return World
 <float name="Rotation">0</float>
 <bool name="ClipsDescendants">false</bool>
 </Properties>
-<Item class="UICorner" referent="RBX004668"><Properties>
+<Item class="UICorner" referent="RBX004665"><Properties>
 <string name="Name">UICorner</string>
 <UDim name="CornerRadius"><S>0</S><O>22</O></UDim>
 </Properties>
 </Item>
-<Item class="UIStroke" referent="RBX004669"><Properties>
+<Item class="UIStroke" referent="RBX004666"><Properties>
 <string name="Name">UIStroke</string>
 <float name="Thickness">5</float>
 <Color3 name="Color"><R>0.10196078431372549</R><G>0.06274509803921569</G><B>0.2</B></Color3>
@@ -88312,12 +88288,12 @@ return World
 <float name="Transparency">0</float>
 </Properties>
 </Item>
-<Item class="UIScale" referent="RBX004670"><Properties>
+<Item class="UIScale" referent="RBX004667"><Properties>
 <string name="Name">UIScale</string>
 <float name="Scale">1</float>
 </Properties>
 </Item>
-<Item class="TextLabel" referent="RBX004671"><Properties>
+<Item class="TextLabel" referent="RBX004668"><Properties>
 <string name="Name">Title</string>
 <Vector2 name="AnchorPoint"><X>0</X><Y>0</Y></Vector2>
 <Color3 name="BackgroundColor3"><R>1</R><G>1</G><B>1</B></Color3>
@@ -88339,7 +88315,7 @@ return World
 <bool name="TextWrapped">true</bool>
 <bool name="RichText">false</bool>
 </Properties>
-<Item class="UIStroke" referent="RBX004672"><Properties>
+<Item class="UIStroke" referent="RBX004669"><Properties>
 <string name="Name">UIStroke</string>
 <float name="Thickness">4</float>
 <Color3 name="Color"><R>0.10196078431372549</R><G>0.06274509803921569</G><B>0.2</B></Color3>
@@ -88348,7 +88324,7 @@ return World
 </Properties>
 </Item>
 </Item>
-<Item class="TextButton" referent="RBX004673"><Properties>
+<Item class="TextButton" referent="RBX004670"><Properties>
 <string name="Name">CloseButton</string>
 <Vector2 name="AnchorPoint"><X>1</X><Y>0</Y></Vector2>
 <Color3 name="BackgroundColor3"><R>0.9019607843137255</R><G>0.23529411764705882</G><B>0.23529411764705882</B></Color3>
@@ -88371,12 +88347,12 @@ return World
 <bool name="RichText">false</bool>
 <bool name="AutoButtonColor">true</bool>
 </Properties>
-<Item class="UICorner" referent="RBX004674"><Properties>
+<Item class="UICorner" referent="RBX004671"><Properties>
 <string name="Name">UICorner</string>
 <UDim name="CornerRadius"><S>0</S><O>12</O></UDim>
 </Properties>
 </Item>
-<Item class="UIStroke" referent="RBX004675"><Properties>
+<Item class="UIStroke" referent="RBX004672"><Properties>
 <string name="Name">UIStroke</string>
 <float name="Thickness">3</float>
 <Color3 name="Color"><R>0.10196078431372549</R><G>0.06274509803921569</G><B>0.2</B></Color3>
@@ -88384,7 +88360,7 @@ return World
 <float name="Transparency">0</float>
 </Properties>
 </Item>
-<Item class="UIPadding" referent="RBX004676"><Properties>
+<Item class="UIPadding" referent="RBX004673"><Properties>
 <string name="Name">UIPadding</string>
 <UDim name="PaddingTop"><S>0</S><O>4</O></UDim>
 <UDim name="PaddingBottom"><S>0</S><O>4</O></UDim>
@@ -88393,7 +88369,7 @@ return World
 </Properties>
 </Item>
 </Item>
-<Item class="ScrollingFrame" referent="RBX004677"><Properties>
+<Item class="ScrollingFrame" referent="RBX004674"><Properties>
 <string name="Name">Content</string>
 <Vector2 name="AnchorPoint"><X>0</X><Y>0</Y></Vector2>
 <Color3 name="BackgroundColor3"><R>1</R><G>1</G><B>1</B></Color3>
@@ -88411,7 +88387,7 @@ return World
 <int name="ScrollBarThickness">8</int>
 <token name="ScrollingDirection">2</token>
 </Properties>
-<Item class="UIPadding" referent="RBX004678"><Properties>
+<Item class="UIPadding" referent="RBX004675"><Properties>
 <string name="Name">UIPadding</string>
 <UDim name="PaddingTop"><S>0</S><O>6</O></UDim>
 <UDim name="PaddingBottom"><S>0</S><O>6</O></UDim>
@@ -88419,7 +88395,7 @@ return World
 <UDim name="PaddingRight"><S>0</S><O>6</O></UDim>
 </Properties>
 </Item>
-<Item class="UIListLayout" referent="RBX004679"><Properties>
+<Item class="UIListLayout" referent="RBX004676"><Properties>
 <string name="Name">UIListLayout</string>
 <token name="FillDirection">1</token>
 <UDim name="Padding"><S>0</S><O>8</O></UDim>
@@ -88429,7 +88405,7 @@ return World
 </Properties>
 </Item>
 </Item>
-<Item class="Frame" referent="RBX004680"><Properties>
+<Item class="Frame" referent="RBX004677"><Properties>
 <string name="Name">Template</string>
 <Vector2 name="AnchorPoint"><X>0</X><Y>0</Y></Vector2>
 <Color3 name="BackgroundColor3"><R>0.27450980392156865</R><G>0.18823529411764706</G><B>0.5490196078431373</B></Color3>
@@ -88443,12 +88419,12 @@ return World
 <float name="Rotation">0</float>
 <bool name="ClipsDescendants">false</bool>
 </Properties>
-<Item class="UICorner" referent="RBX004681"><Properties>
+<Item class="UICorner" referent="RBX004678"><Properties>
 <string name="Name">UICorner</string>
 <UDim name="CornerRadius"><S>0</S><O>14</O></UDim>
 </Properties>
 </Item>
-<Item class="UIStroke" referent="RBX004682"><Properties>
+<Item class="UIStroke" referent="RBX004679"><Properties>
 <string name="Name">UIStroke</string>
 <float name="Thickness">3</float>
 <Color3 name="Color"><R>0.10196078431372549</R><G>0.06274509803921569</G><B>0.2</B></Color3>
@@ -88456,7 +88432,7 @@ return World
 <float name="Transparency">0</float>
 </Properties>
 </Item>
-<Item class="ImageLabel" referent="RBX004683"><Properties>
+<Item class="ImageLabel" referent="RBX004680"><Properties>
 <string name="Name">Icon</string>
 <Vector2 name="AnchorPoint"><X>0</X><Y>0.5</Y></Vector2>
 <Color3 name="BackgroundColor3"><R>1</R><G>1</G><B>1</B></Color3>
@@ -88473,7 +88449,7 @@ return World
 <token name="ScaleType">3</token>
 </Properties>
 </Item>
-<Item class="TextLabel" referent="RBX004684"><Properties>
+<Item class="TextLabel" referent="RBX004681"><Properties>
 <string name="Name">Fallback</string>
 <Vector2 name="AnchorPoint"><X>0</X><Y>0.5</Y></Vector2>
 <Color3 name="BackgroundColor3"><R>1</R><G>1</G><B>1</B></Color3>
@@ -88496,7 +88472,7 @@ return World
 <bool name="RichText">false</bool>
 </Properties>
 </Item>
-<Item class="TextLabel" referent="RBX004685"><Properties>
+<Item class="TextLabel" referent="RBX004682"><Properties>
 <string name="Name">NameLabel</string>
 <Vector2 name="AnchorPoint"><X>0</X><Y>0</Y></Vector2>
 <Color3 name="BackgroundColor3"><R>1</R><G>1</G><B>1</B></Color3>
@@ -88518,7 +88494,7 @@ return World
 <bool name="TextWrapped">true</bool>
 <bool name="RichText">false</bool>
 </Properties>
-<Item class="UIStroke" referent="RBX004686"><Properties>
+<Item class="UIStroke" referent="RBX004683"><Properties>
 <string name="Name">UIStroke</string>
 <float name="Thickness">2.5</float>
 <Color3 name="Color"><R>0.10196078431372549</R><G>0.06274509803921569</G><B>0.2</B></Color3>
@@ -88527,7 +88503,7 @@ return World
 </Properties>
 </Item>
 </Item>
-<Item class="TextLabel" referent="RBX004687"><Properties>
+<Item class="TextLabel" referent="RBX004684"><Properties>
 <string name="Name">InfoLabel</string>
 <Vector2 name="AnchorPoint"><X>0</X><Y>0</Y></Vector2>
 <Color3 name="BackgroundColor3"><R>1</R><G>1</G><B>1</B></Color3>
@@ -88549,7 +88525,7 @@ return World
 <bool name="TextWrapped">true</bool>
 <bool name="RichText">false</bool>
 </Properties>
-<Item class="UIStroke" referent="RBX004688"><Properties>
+<Item class="UIStroke" referent="RBX004685"><Properties>
 <string name="Name">UIStroke</string>
 <float name="Thickness">1.5</float>
 <Color3 name="Color"><R>0.10196078431372549</R><G>0.06274509803921569</G><B>0.2</B></Color3>
@@ -88558,7 +88534,7 @@ return World
 </Properties>
 </Item>
 </Item>
-<Item class="TextButton" referent="RBX004689"><Properties>
+<Item class="TextButton" referent="RBX004686"><Properties>
 <string name="Name">ActionButton</string>
 <Vector2 name="AnchorPoint"><X>1</X><Y>0.5</Y></Vector2>
 <Color3 name="BackgroundColor3"><R>0.23921568627450981</R><G>0.7843137254901961</G><B>0.43137254901960786</B></Color3>
@@ -88581,12 +88557,12 @@ return World
 <bool name="RichText">false</bool>
 <bool name="AutoButtonColor">true</bool>
 </Properties>
-<Item class="UICorner" referent="RBX004690"><Properties>
+<Item class="UICorner" referent="RBX004687"><Properties>
 <string name="Name">UICorner</string>
 <UDim name="CornerRadius"><S>0</S><O>12</O></UDim>
 </Properties>
 </Item>
-<Item class="UIStroke" referent="RBX004691"><Properties>
+<Item class="UIStroke" referent="RBX004688"><Properties>
 <string name="Name">UIStroke</string>
 <float name="Thickness">3</float>
 <Color3 name="Color"><R>0.10196078431372549</R><G>0.06274509803921569</G><B>0.2</B></Color3>
@@ -88594,7 +88570,7 @@ return World
 <float name="Transparency">0</float>
 </Properties>
 </Item>
-<Item class="UIPadding" referent="RBX004692"><Properties>
+<Item class="UIPadding" referent="RBX004689"><Properties>
 <string name="Name">UIPadding</string>
 <UDim name="PaddingTop"><S>0</S><O>4</O></UDim>
 <UDim name="PaddingBottom"><S>0</S><O>4</O></UDim>
@@ -88604,7 +88580,7 @@ return World
 </Item>
 </Item>
 </Item>
-<Item class="TextLabel" referent="RBX004693"><Properties>
+<Item class="TextLabel" referent="RBX004690"><Properties>
 <string name="Name">Info</string>
 <Vector2 name="AnchorPoint"><X>0</X><Y>0</Y></Vector2>
 <Color3 name="BackgroundColor3"><R>1</R><G>1</G><B>1</B></Color3>
@@ -88626,7 +88602,7 @@ return World
 <bool name="TextWrapped">true</bool>
 <bool name="RichText">false</bool>
 </Properties>
-<Item class="UIStroke" referent="RBX004694"><Properties>
+<Item class="UIStroke" referent="RBX004691"><Properties>
 <string name="Name">UIStroke</string>
 <float name="Thickness">2</float>
 <Color3 name="Color"><R>0.10196078431372549</R><G>0.06274509803921569</G><B>0.2</B></Color3>
@@ -88636,7 +88612,7 @@ return World
 </Item>
 </Item>
 </Item>
-<Item class="Frame" referent="RBX004695"><Properties>
+<Item class="Frame" referent="RBX004692"><Properties>
 <string name="Name">AchievementsPanel</string>
 <Vector2 name="AnchorPoint"><X>0.5</X><Y>0.5</Y></Vector2>
 <Color3 name="BackgroundColor3"><R>0.16862745098039217</R><G>0.10196078431372549</G><B>0.3686274509803922</B></Color3>
@@ -88650,12 +88626,12 @@ return World
 <float name="Rotation">0</float>
 <bool name="ClipsDescendants">false</bool>
 </Properties>
-<Item class="UICorner" referent="RBX004696"><Properties>
+<Item class="UICorner" referent="RBX004693"><Properties>
 <string name="Name">UICorner</string>
 <UDim name="CornerRadius"><S>0</S><O>22</O></UDim>
 </Properties>
 </Item>
-<Item class="UIStroke" referent="RBX004697"><Properties>
+<Item class="UIStroke" referent="RBX004694"><Properties>
 <string name="Name">UIStroke</string>
 <float name="Thickness">5</float>
 <Color3 name="Color"><R>0.10196078431372549</R><G>0.06274509803921569</G><B>0.2</B></Color3>
@@ -88663,12 +88639,12 @@ return World
 <float name="Transparency">0</float>
 </Properties>
 </Item>
-<Item class="UIScale" referent="RBX004698"><Properties>
+<Item class="UIScale" referent="RBX004695"><Properties>
 <string name="Name">UIScale</string>
 <float name="Scale">1</float>
 </Properties>
 </Item>
-<Item class="TextLabel" referent="RBX004699"><Properties>
+<Item class="TextLabel" referent="RBX004696"><Properties>
 <string name="Name">Title</string>
 <Vector2 name="AnchorPoint"><X>0</X><Y>0</Y></Vector2>
 <Color3 name="BackgroundColor3"><R>1</R><G>1</G><B>1</B></Color3>
@@ -88690,7 +88666,7 @@ return World
 <bool name="TextWrapped">true</bool>
 <bool name="RichText">false</bool>
 </Properties>
-<Item class="UIStroke" referent="RBX004700"><Properties>
+<Item class="UIStroke" referent="RBX004697"><Properties>
 <string name="Name">UIStroke</string>
 <float name="Thickness">4</float>
 <Color3 name="Color"><R>0.10196078431372549</R><G>0.06274509803921569</G><B>0.2</B></Color3>
@@ -88699,7 +88675,7 @@ return World
 </Properties>
 </Item>
 </Item>
-<Item class="TextButton" referent="RBX004701"><Properties>
+<Item class="TextButton" referent="RBX004698"><Properties>
 <string name="Name">CloseButton</string>
 <Vector2 name="AnchorPoint"><X>1</X><Y>0</Y></Vector2>
 <Color3 name="BackgroundColor3"><R>0.9019607843137255</R><G>0.23529411764705882</G><B>0.23529411764705882</B></Color3>
@@ -88722,12 +88698,12 @@ return World
 <bool name="RichText">false</bool>
 <bool name="AutoButtonColor">true</bool>
 </Properties>
-<Item class="UICorner" referent="RBX004702"><Properties>
+<Item class="UICorner" referent="RBX004699"><Properties>
 <string name="Name">UICorner</string>
 <UDim name="CornerRadius"><S>0</S><O>12</O></UDim>
 </Properties>
 </Item>
-<Item class="UIStroke" referent="RBX004703"><Properties>
+<Item class="UIStroke" referent="RBX004700"><Properties>
 <string name="Name">UIStroke</string>
 <float name="Thickness">3</float>
 <Color3 name="Color"><R>0.10196078431372549</R><G>0.06274509803921569</G><B>0.2</B></Color3>
@@ -88735,7 +88711,7 @@ return World
 <float name="Transparency">0</float>
 </Properties>
 </Item>
-<Item class="UIPadding" referent="RBX004704"><Properties>
+<Item class="UIPadding" referent="RBX004701"><Properties>
 <string name="Name">UIPadding</string>
 <UDim name="PaddingTop"><S>0</S><O>4</O></UDim>
 <UDim name="PaddingBottom"><S>0</S><O>4</O></UDim>
@@ -88744,7 +88720,7 @@ return World
 </Properties>
 </Item>
 </Item>
-<Item class="ScrollingFrame" referent="RBX004705"><Properties>
+<Item class="ScrollingFrame" referent="RBX004702"><Properties>
 <string name="Name">Content</string>
 <Vector2 name="AnchorPoint"><X>0</X><Y>0</Y></Vector2>
 <Color3 name="BackgroundColor3"><R>1</R><G>1</G><B>1</B></Color3>
@@ -88762,7 +88738,7 @@ return World
 <int name="ScrollBarThickness">8</int>
 <token name="ScrollingDirection">2</token>
 </Properties>
-<Item class="UIPadding" referent="RBX004706"><Properties>
+<Item class="UIPadding" referent="RBX004703"><Properties>
 <string name="Name">UIPadding</string>
 <UDim name="PaddingTop"><S>0</S><O>6</O></UDim>
 <UDim name="PaddingBottom"><S>0</S><O>6</O></UDim>
@@ -88770,7 +88746,7 @@ return World
 <UDim name="PaddingRight"><S>0</S><O>6</O></UDim>
 </Properties>
 </Item>
-<Item class="UIListLayout" referent="RBX004707"><Properties>
+<Item class="UIListLayout" referent="RBX004704"><Properties>
 <string name="Name">UIListLayout</string>
 <token name="FillDirection">1</token>
 <UDim name="Padding"><S>0</S><O>8</O></UDim>
@@ -88780,7 +88756,7 @@ return World
 </Properties>
 </Item>
 </Item>
-<Item class="Frame" referent="RBX004708"><Properties>
+<Item class="Frame" referent="RBX004705"><Properties>
 <string name="Name">Template</string>
 <Vector2 name="AnchorPoint"><X>0</X><Y>0</Y></Vector2>
 <Color3 name="BackgroundColor3"><R>0.27450980392156865</R><G>0.18823529411764706</G><B>0.5490196078431373</B></Color3>
@@ -88794,12 +88770,12 @@ return World
 <float name="Rotation">0</float>
 <bool name="ClipsDescendants">false</bool>
 </Properties>
-<Item class="UICorner" referent="RBX004709"><Properties>
+<Item class="UICorner" referent="RBX004706"><Properties>
 <string name="Name">UICorner</string>
 <UDim name="CornerRadius"><S>0</S><O>14</O></UDim>
 </Properties>
 </Item>
-<Item class="UIStroke" referent="RBX004710"><Properties>
+<Item class="UIStroke" referent="RBX004707"><Properties>
 <string name="Name">UIStroke</string>
 <float name="Thickness">3</float>
 <Color3 name="Color"><R>0.10196078431372549</R><G>0.06274509803921569</G><B>0.2</B></Color3>
@@ -88807,7 +88783,7 @@ return World
 <float name="Transparency">0</float>
 </Properties>
 </Item>
-<Item class="ImageLabel" referent="RBX004711"><Properties>
+<Item class="ImageLabel" referent="RBX004708"><Properties>
 <string name="Name">Icon</string>
 <Vector2 name="AnchorPoint"><X>0</X><Y>0.5</Y></Vector2>
 <Color3 name="BackgroundColor3"><R>1</R><G>1</G><B>1</B></Color3>
@@ -88824,7 +88800,7 @@ return World
 <token name="ScaleType">3</token>
 </Properties>
 </Item>
-<Item class="TextLabel" referent="RBX004712"><Properties>
+<Item class="TextLabel" referent="RBX004709"><Properties>
 <string name="Name">Fallback</string>
 <Vector2 name="AnchorPoint"><X>0</X><Y>0.5</Y></Vector2>
 <Color3 name="BackgroundColor3"><R>1</R><G>1</G><B>1</B></Color3>
@@ -88847,7 +88823,7 @@ return World
 <bool name="RichText">false</bool>
 </Properties>
 </Item>
-<Item class="TextLabel" referent="RBX004713"><Properties>
+<Item class="TextLabel" referent="RBX004710"><Properties>
 <string name="Name">NameLabel</string>
 <Vector2 name="AnchorPoint"><X>0</X><Y>0</Y></Vector2>
 <Color3 name="BackgroundColor3"><R>1</R><G>1</G><B>1</B></Color3>
@@ -88869,7 +88845,7 @@ return World
 <bool name="TextWrapped">true</bool>
 <bool name="RichText">false</bool>
 </Properties>
-<Item class="UIStroke" referent="RBX004714"><Properties>
+<Item class="UIStroke" referent="RBX004711"><Properties>
 <string name="Name">UIStroke</string>
 <float name="Thickness">2.5</float>
 <Color3 name="Color"><R>0.10196078431372549</R><G>0.06274509803921569</G><B>0.2</B></Color3>
@@ -88878,7 +88854,7 @@ return World
 </Properties>
 </Item>
 </Item>
-<Item class="TextLabel" referent="RBX004715"><Properties>
+<Item class="TextLabel" referent="RBX004712"><Properties>
 <string name="Name">InfoLabel</string>
 <Vector2 name="AnchorPoint"><X>0</X><Y>0</Y></Vector2>
 <Color3 name="BackgroundColor3"><R>1</R><G>1</G><B>1</B></Color3>
@@ -88900,7 +88876,7 @@ return World
 <bool name="TextWrapped">true</bool>
 <bool name="RichText">false</bool>
 </Properties>
-<Item class="UIStroke" referent="RBX004716"><Properties>
+<Item class="UIStroke" referent="RBX004713"><Properties>
 <string name="Name">UIStroke</string>
 <float name="Thickness">1.5</float>
 <Color3 name="Color"><R>0.10196078431372549</R><G>0.06274509803921569</G><B>0.2</B></Color3>
@@ -88909,7 +88885,7 @@ return World
 </Properties>
 </Item>
 </Item>
-<Item class="TextButton" referent="RBX004717"><Properties>
+<Item class="TextButton" referent="RBX004714"><Properties>
 <string name="Name">ActionButton</string>
 <Vector2 name="AnchorPoint"><X>1</X><Y>0.5</Y></Vector2>
 <Color3 name="BackgroundColor3"><R>0.23921568627450981</R><G>0.7843137254901961</G><B>0.43137254901960786</B></Color3>
@@ -88932,12 +88908,12 @@ return World
 <bool name="RichText">false</bool>
 <bool name="AutoButtonColor">true</bool>
 </Properties>
-<Item class="UICorner" referent="RBX004718"><Properties>
+<Item class="UICorner" referent="RBX004715"><Properties>
 <string name="Name">UICorner</string>
 <UDim name="CornerRadius"><S>0</S><O>12</O></UDim>
 </Properties>
 </Item>
-<Item class="UIStroke" referent="RBX004719"><Properties>
+<Item class="UIStroke" referent="RBX004716"><Properties>
 <string name="Name">UIStroke</string>
 <float name="Thickness">3</float>
 <Color3 name="Color"><R>0.10196078431372549</R><G>0.06274509803921569</G><B>0.2</B></Color3>
@@ -88945,7 +88921,7 @@ return World
 <float name="Transparency">0</float>
 </Properties>
 </Item>
-<Item class="UIPadding" referent="RBX004720"><Properties>
+<Item class="UIPadding" referent="RBX004717"><Properties>
 <string name="Name">UIPadding</string>
 <UDim name="PaddingTop"><S>0</S><O>4</O></UDim>
 <UDim name="PaddingBottom"><S>0</S><O>4</O></UDim>
@@ -88956,7 +88932,7 @@ return World
 </Item>
 </Item>
 </Item>
-<Item class="Frame" referent="RBX004721"><Properties>
+<Item class="Frame" referent="RBX004718"><Properties>
 <string name="Name">SettingsPanel</string>
 <Vector2 name="AnchorPoint"><X>0.5</X><Y>0.5</Y></Vector2>
 <Color3 name="BackgroundColor3"><R>0.16862745098039217</R><G>0.10196078431372549</G><B>0.3686274509803922</B></Color3>
@@ -88970,12 +88946,12 @@ return World
 <float name="Rotation">0</float>
 <bool name="ClipsDescendants">false</bool>
 </Properties>
-<Item class="UICorner" referent="RBX004722"><Properties>
+<Item class="UICorner" referent="RBX004719"><Properties>
 <string name="Name">UICorner</string>
 <UDim name="CornerRadius"><S>0</S><O>22</O></UDim>
 </Properties>
 </Item>
-<Item class="UIStroke" referent="RBX004723"><Properties>
+<Item class="UIStroke" referent="RBX004720"><Properties>
 <string name="Name">UIStroke</string>
 <float name="Thickness">5</float>
 <Color3 name="Color"><R>0.10196078431372549</R><G>0.06274509803921569</G><B>0.2</B></Color3>
@@ -88983,12 +88959,12 @@ return World
 <float name="Transparency">0</float>
 </Properties>
 </Item>
-<Item class="UIScale" referent="RBX004724"><Properties>
+<Item class="UIScale" referent="RBX004721"><Properties>
 <string name="Name">UIScale</string>
 <float name="Scale">1</float>
 </Properties>
 </Item>
-<Item class="TextLabel" referent="RBX004725"><Properties>
+<Item class="TextLabel" referent="RBX004722"><Properties>
 <string name="Name">Title</string>
 <Vector2 name="AnchorPoint"><X>0</X><Y>0</Y></Vector2>
 <Color3 name="BackgroundColor3"><R>1</R><G>1</G><B>1</B></Color3>
@@ -89010,7 +88986,7 @@ return World
 <bool name="TextWrapped">true</bool>
 <bool name="RichText">false</bool>
 </Properties>
-<Item class="UIStroke" referent="RBX004726"><Properties>
+<Item class="UIStroke" referent="RBX004723"><Properties>
 <string name="Name">UIStroke</string>
 <float name="Thickness">4</float>
 <Color3 name="Color"><R>0.10196078431372549</R><G>0.06274509803921569</G><B>0.2</B></Color3>
@@ -89019,7 +88995,7 @@ return World
 </Properties>
 </Item>
 </Item>
-<Item class="TextButton" referent="RBX004727"><Properties>
+<Item class="TextButton" referent="RBX004724"><Properties>
 <string name="Name">CloseButton</string>
 <Vector2 name="AnchorPoint"><X>1</X><Y>0</Y></Vector2>
 <Color3 name="BackgroundColor3"><R>0.9019607843137255</R><G>0.23529411764705882</G><B>0.23529411764705882</B></Color3>
@@ -89042,12 +89018,12 @@ return World
 <bool name="RichText">false</bool>
 <bool name="AutoButtonColor">true</bool>
 </Properties>
-<Item class="UICorner" referent="RBX004728"><Properties>
+<Item class="UICorner" referent="RBX004725"><Properties>
 <string name="Name">UICorner</string>
 <UDim name="CornerRadius"><S>0</S><O>12</O></UDim>
 </Properties>
 </Item>
-<Item class="UIStroke" referent="RBX004729"><Properties>
+<Item class="UIStroke" referent="RBX004726"><Properties>
 <string name="Name">UIStroke</string>
 <float name="Thickness">3</float>
 <Color3 name="Color"><R>0.10196078431372549</R><G>0.06274509803921569</G><B>0.2</B></Color3>
@@ -89055,7 +89031,7 @@ return World
 <float name="Transparency">0</float>
 </Properties>
 </Item>
-<Item class="UIPadding" referent="RBX004730"><Properties>
+<Item class="UIPadding" referent="RBX004727"><Properties>
 <string name="Name">UIPadding</string>
 <UDim name="PaddingTop"><S>0</S><O>4</O></UDim>
 <UDim name="PaddingBottom"><S>0</S><O>4</O></UDim>
@@ -89064,7 +89040,7 @@ return World
 </Properties>
 </Item>
 </Item>
-<Item class="ScrollingFrame" referent="RBX004731"><Properties>
+<Item class="ScrollingFrame" referent="RBX004728"><Properties>
 <string name="Name">Content</string>
 <Vector2 name="AnchorPoint"><X>0</X><Y>0</Y></Vector2>
 <Color3 name="BackgroundColor3"><R>1</R><G>1</G><B>1</B></Color3>
@@ -89082,7 +89058,7 @@ return World
 <int name="ScrollBarThickness">8</int>
 <token name="ScrollingDirection">2</token>
 </Properties>
-<Item class="UIPadding" referent="RBX004732"><Properties>
+<Item class="UIPadding" referent="RBX004729"><Properties>
 <string name="Name">UIPadding</string>
 <UDim name="PaddingTop"><S>0</S><O>6</O></UDim>
 <UDim name="PaddingBottom"><S>0</S><O>6</O></UDim>
@@ -89090,7 +89066,7 @@ return World
 <UDim name="PaddingRight"><S>0</S><O>6</O></UDim>
 </Properties>
 </Item>
-<Item class="UIListLayout" referent="RBX004733"><Properties>
+<Item class="UIListLayout" referent="RBX004730"><Properties>
 <string name="Name">UIListLayout</string>
 <token name="FillDirection">1</token>
 <UDim name="Padding"><S>0</S><O>8</O></UDim>
@@ -89100,7 +89076,7 @@ return World
 </Properties>
 </Item>
 </Item>
-<Item class="Frame" referent="RBX004734"><Properties>
+<Item class="Frame" referent="RBX004731"><Properties>
 <string name="Name">Template</string>
 <Vector2 name="AnchorPoint"><X>0</X><Y>0</Y></Vector2>
 <Color3 name="BackgroundColor3"><R>0.27450980392156865</R><G>0.18823529411764706</G><B>0.5490196078431373</B></Color3>
@@ -89114,12 +89090,12 @@ return World
 <float name="Rotation">0</float>
 <bool name="ClipsDescendants">false</bool>
 </Properties>
-<Item class="UICorner" referent="RBX004735"><Properties>
+<Item class="UICorner" referent="RBX004732"><Properties>
 <string name="Name">UICorner</string>
 <UDim name="CornerRadius"><S>0</S><O>14</O></UDim>
 </Properties>
 </Item>
-<Item class="UIStroke" referent="RBX004736"><Properties>
+<Item class="UIStroke" referent="RBX004733"><Properties>
 <string name="Name">UIStroke</string>
 <float name="Thickness">3</float>
 <Color3 name="Color"><R>0.10196078431372549</R><G>0.06274509803921569</G><B>0.2</B></Color3>
@@ -89127,7 +89103,7 @@ return World
 <float name="Transparency">0</float>
 </Properties>
 </Item>
-<Item class="ImageLabel" referent="RBX004737"><Properties>
+<Item class="ImageLabel" referent="RBX004734"><Properties>
 <string name="Name">Icon</string>
 <Vector2 name="AnchorPoint"><X>0</X><Y>0.5</Y></Vector2>
 <Color3 name="BackgroundColor3"><R>1</R><G>1</G><B>1</B></Color3>
@@ -89144,7 +89120,7 @@ return World
 <token name="ScaleType">3</token>
 </Properties>
 </Item>
-<Item class="TextLabel" referent="RBX004738"><Properties>
+<Item class="TextLabel" referent="RBX004735"><Properties>
 <string name="Name">Fallback</string>
 <Vector2 name="AnchorPoint"><X>0</X><Y>0.5</Y></Vector2>
 <Color3 name="BackgroundColor3"><R>1</R><G>1</G><B>1</B></Color3>
@@ -89167,7 +89143,7 @@ return World
 <bool name="RichText">false</bool>
 </Properties>
 </Item>
-<Item class="TextLabel" referent="RBX004739"><Properties>
+<Item class="TextLabel" referent="RBX004736"><Properties>
 <string name="Name">NameLabel</string>
 <Vector2 name="AnchorPoint"><X>0</X><Y>0</Y></Vector2>
 <Color3 name="BackgroundColor3"><R>1</R><G>1</G><B>1</B></Color3>
@@ -89189,7 +89165,7 @@ return World
 <bool name="TextWrapped">true</bool>
 <bool name="RichText">false</bool>
 </Properties>
-<Item class="UIStroke" referent="RBX004740"><Properties>
+<Item class="UIStroke" referent="RBX004737"><Properties>
 <string name="Name">UIStroke</string>
 <float name="Thickness">2.5</float>
 <Color3 name="Color"><R>0.10196078431372549</R><G>0.06274509803921569</G><B>0.2</B></Color3>
@@ -89198,7 +89174,7 @@ return World
 </Properties>
 </Item>
 </Item>
-<Item class="TextLabel" referent="RBX004741"><Properties>
+<Item class="TextLabel" referent="RBX004738"><Properties>
 <string name="Name">InfoLabel</string>
 <Vector2 name="AnchorPoint"><X>0</X><Y>0</Y></Vector2>
 <Color3 name="BackgroundColor3"><R>1</R><G>1</G><B>1</B></Color3>
@@ -89220,7 +89196,7 @@ return World
 <bool name="TextWrapped">true</bool>
 <bool name="RichText">false</bool>
 </Properties>
-<Item class="UIStroke" referent="RBX004742"><Properties>
+<Item class="UIStroke" referent="RBX004739"><Properties>
 <string name="Name">UIStroke</string>
 <float name="Thickness">1.5</float>
 <Color3 name="Color"><R>0.10196078431372549</R><G>0.06274509803921569</G><B>0.2</B></Color3>
@@ -89229,7 +89205,7 @@ return World
 </Properties>
 </Item>
 </Item>
-<Item class="TextButton" referent="RBX004743"><Properties>
+<Item class="TextButton" referent="RBX004740"><Properties>
 <string name="Name">ActionButton</string>
 <Vector2 name="AnchorPoint"><X>1</X><Y>0.5</Y></Vector2>
 <Color3 name="BackgroundColor3"><R>0.23921568627450981</R><G>0.7843137254901961</G><B>0.43137254901960786</B></Color3>
@@ -89252,12 +89228,12 @@ return World
 <bool name="RichText">false</bool>
 <bool name="AutoButtonColor">true</bool>
 </Properties>
-<Item class="UICorner" referent="RBX004744"><Properties>
+<Item class="UICorner" referent="RBX004741"><Properties>
 <string name="Name">UICorner</string>
 <UDim name="CornerRadius"><S>0</S><O>12</O></UDim>
 </Properties>
 </Item>
-<Item class="UIStroke" referent="RBX004745"><Properties>
+<Item class="UIStroke" referent="RBX004742"><Properties>
 <string name="Name">UIStroke</string>
 <float name="Thickness">3</float>
 <Color3 name="Color"><R>0.10196078431372549</R><G>0.06274509803921569</G><B>0.2</B></Color3>
@@ -89265,7 +89241,7 @@ return World
 <float name="Transparency">0</float>
 </Properties>
 </Item>
-<Item class="UIPadding" referent="RBX004746"><Properties>
+<Item class="UIPadding" referent="RBX004743"><Properties>
 <string name="Name">UIPadding</string>
 <UDim name="PaddingTop"><S>0</S><O>4</O></UDim>
 <UDim name="PaddingBottom"><S>0</S><O>4</O></UDim>
