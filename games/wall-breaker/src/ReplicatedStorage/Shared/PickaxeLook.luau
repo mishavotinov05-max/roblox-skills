@@ -11,7 +11,7 @@ local PickaxeLook = {}
 PickaxeLook.HANDLE_LENGTH = 4.6
 local L = PickaxeLook.HANDLE_LENGTH
 local R = 3.2 -- радиус изгиба головки
-local SEGMENTS = 11
+local SEGMENTS = 21
 local SPAN = 50 -- градусов в каждую сторону
 
 local function darker(c: Color3, k: number): Color3
@@ -72,16 +72,20 @@ function PickaxeLook.Build(cfg, origin: CFrame?): Model
 	end
 
 	-- рукоять, обмотка, навершие
-	local handle = add("Handle", Vector3.new(0.42, L, 0.42), CFrame.new(0, L / 2, 0), handleColor, Enum.Material.Wood)
-	for i, y in ipairs({ 0.55, 0.95, 1.35 }) do
-		add("Wrap" .. i, Vector3.new(0.5, 0.16, 0.5), CFrame.new(0, y, 0), darker(handleColor, 0.6), Enum.Material.Fabric)
+	-- рукоять — круглая (Cylinder лежит вдоль X, поворачиваем вдоль Y)
+	local UP = CFrame.Angles(0, 0, math.rad(90))
+	local handle = add("Handle", Vector3.new(L, 0.46, 0.46), CFrame.new(0, L / 2, 0) * UP, handleColor, Enum.Material.Wood, Enum.PartType.Cylinder)
+	add("HandleShine", Vector3.new(L * 0.9, 0.12, 0.12), CFrame.new(-0.12, L / 2, -0.12) * UP, handleColor:Lerp(Color3.new(1, 1, 1), 0.35),
+		Enum.Material.SmoothPlastic, Enum.PartType.Cylinder)
+	for i, y in ipairs({ 0.5, 0.85, 1.2, 1.55 }) do
+		add("Wrap" .. i, Vector3.new(0.2, 0.56, 0.56), CFrame.new(0, y, 0) * UP, darker(handleColor, 0.55), Enum.Material.Fabric, Enum.PartType.Cylinder)
 	end
 	add("Pommel", Vector3.new(0.7, 0.7, 0.7), CFrame.new(0, 0.05, 0), rare and accent or darker(handleColor, 0.8), Enum.Material.Metal, Enum.PartType.Ball)
-	add("Collar", Vector3.new(0.72, 0.95, 0.95), CFrame.new(0, L - 0.25, 0), darker(head, 0.75), Enum.Material.Metal)
+	add("Collar", Vector3.new(1.0, 0.8, 0.8), CFrame.new(0, L - 0.2, 0) * CFrame.Angles(0, math.rad(90), 0), darker(head, 0.75), Enum.Material.Metal, Enum.PartType.Cylinder)
 
 	-- головка-полумесяц: сегменты по дуге, к концам тоньше
 	local top = L + 0.3
-	local seg = R * math.rad(SPAN * 2 / (SEGMENTS - 1)) * 1.3
+	local seg = R * math.rad(SPAN * 2 / (SEGMENTS - 1)) * 1.15
 	for i = 0, SEGMENTS - 1 do
 		local deg = -SPAN + i * (SPAN * 2 / (SEGMENTS - 1))
 		local t = math.rad(deg)
@@ -89,10 +93,11 @@ function PickaxeLook.Build(cfg, origin: CFrame?): Model
 		local h = 1.0 * (1 - 0.65 * k) + 0.2
 		local cf = CFrame.new(0, top - R * (1 - math.cos(t)), R * math.sin(t)) * CFrame.Angles(t, 0, 0)
 		add("Head" .. i, Vector3.new(0.5, h, seg), cf, head, headMat)
+		-- объём: светлая грань сверху, тёмная снизу
+		add("Top" .. i, Vector3.new(0.52, math.max(0.06, h * 0.18), seg), cf * CFrame.new(0, h * 0.41, 0), head:Lerp(Color3.new(1, 1, 1), 0.45), headMat)
+		add("Bottom" .. i, Vector3.new(0.52, math.max(0.06, h * 0.18), seg), cf * CFrame.new(0, -h * 0.41, 0), darker(head, 0.6), headMat)
 		if rare then -- светящаяся жилка по головке
 			add("Vein" .. i, Vector3.new(0.54, math.max(0.08, h * 0.22), seg * 0.95), cf * CFrame.new(0, -h * 0.1, 0), accent, Enum.Material.Neon)
-		elseif effect == "shine" then
-			add("Shine" .. i, Vector3.new(0.52, 0.08, seg * 0.9), cf * CFrame.new(0, h / 2 - 0.05, 0), Color3.new(1, 1, 1), Enum.Material.SmoothPlastic)
 		end
 	end
 	-- острые кончики
