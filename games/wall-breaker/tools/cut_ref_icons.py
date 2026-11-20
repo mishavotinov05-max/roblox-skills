@@ -122,6 +122,129 @@ def draw_wheel(size=256):
     return img.resize((size, size), Image.LANCZOS)
 
 
+def drop_caption(img, text_y):
+    """Убирает буквы подписи: светлые куски, которые начинаются ниже строки text_y
+    (сам значок начинается выше и остаётся целиком)."""
+    w, h = img.size
+    px = img.load()
+    light = lambda c: c[3] > 0 and 0.3 * c[0] + 0.59 * c[1] + 0.11 * c[2] >= 70
+    seen = [[False] * h for _ in range(w)]
+    for sx in range(w):
+        for sy in range(h):
+            if seen[sx][sy] or not light(px[sx, sy]):
+                continue
+            comp, q = [], deque([(sx, sy)])
+            seen[sx][sy] = True
+            while q:
+                x, y = q.popleft()
+                comp.append((x, y))
+                for nx, ny in ((x + 1, y), (x - 1, y), (x, y + 1), (x, y - 1)):
+                    if 0 <= nx < w and 0 <= ny < h and not seen[nx][ny] and light(px[nx, ny]):
+                        seen[nx][ny] = True
+                        q.append((nx, ny))
+            if min(y for _, y in comp) >= text_y:
+                for x, y in comp:
+                    px[x, y] = (0, 0, 0, 0)
+    return img
+
+
+def trim_outline(img, thick=7):
+    """Оставляет тёмную обводку только вокруг самого значка (в пределах thick пикселей от цветной части),
+    а обводку подписи, которая касалась значка снизу, убирает."""
+    w, h = img.size
+    px = img.load()
+    body = [[False] * h for _ in range(w)]
+    for x in range(w):
+        for y in range(h):
+            c = px[x, y]
+            if c[3] > 0 and 0.3 * c[0] + 0.59 * c[1] + 0.11 * c[2] >= 70:
+                body[x][y] = True
+    near = [[False] * h for _ in range(w)]
+    for x in range(w):
+        for y in range(h):
+            if body[x][y]:
+                for dx in range(-thick, thick + 1):
+                    for dy in range(-thick, thick + 1):
+                        if dx * dx + dy * dy <= thick * thick and 0 <= x + dx < w and 0 <= y + dy < h:
+                            near[x + dx][y + dy] = True
+    for x in range(w):
+        for y in range(h):
+            if px[x, y][3] > 0 and not near[x][y]:
+                px[x, y] = (0, 0, 0, 0)
+    return img
+
+
+def wheel_from_ref(cx=1428, cy=66, r=50, hidden_from=95):
+    """Колесо из референса. Его низ закрыт подписью — недостающие пиксели достраиваем
+    по кругу из соседних видимых (тот же радиус, ближайшие углы слева и справа)."""
+    import math
+    size = (2 * r + 2) * 4
+    out = Image.new("RGBA", (size, size), (0, 0, 0, 0))
+    o = out.load()
+    def ref(x, y):
+        x0, y0 = int(math.floor(x)), int(math.floor(y))
+        fx, fy = x - x0, y - y0
+        a, b = src.getpixel((x0, y0)), src.getpixel((x0 + 1, y0))
+        c, d = src.getpixel((x0, y0 + 1)), src.getpixel((x0 + 1, y0 + 1))
+        return tuple(int(a[i] * (1 - fx) * (1 - fy) + b[i] * fx * (1 - fy) + c[i] * (1 - fx) * fy + d[i] * fx * fy) for i in range(3)) + (255,)
+    SS = 4
+    r_px = r
+    for y in range(size):
+        for x in range(size):
+            dx, dy = (x + 0.5) / SS - r - 1, (y + 0.5) / SS - r - 1
+            d = math.hypot(dx, dy)
+            if d > r:
+                continue
+            sy = cy + dy
+            if sy < hidden_from:
+                o[x, y] = ref(cx + dx, sy)
+                continue
+            if d > r - 6:
+                o[x, y] = (24, 18, 34, 255)  # чёрная обводка круга
+                continue
+            ang = math.atan2(dy, dx)
+            # ищем ближайшие видимые точки на той же окружности по обе стороны
+            def walk(step):
+                a = ang
+                for _ in range(400):
+                    a += step
+                    if cy + math.sin(a) * d < hidden_from - 1:
+                        return a
+                return ang
+            a1, a2 = walk(0.01), walk(-0.01)
+            span = abs(a1 - ang) + abs(ang - a2) or 1
+            t = abs(ang - a2) / span
+            c1 = ref(cx + math.cos(a1) * d, cy + math.sin(a1) * d)
+            c2 = ref(cx + math.cos(a2) * d, cy + math.sin(a2) * d)
+            o[x, y] = tuple(int(c2[i] * (1 - t) + c1[i] * t) for i in range(3)) + (255,)
+    return out.resize((2 * r + 2, 2 * r + 2), Image.LANCZOS)
+
+
+def drop_specks(img, min_size=80):
+    """Убирает мелкие отдельные кусочки (обрывки обводки подписи и фона)."""
+    w, h = img.size
+    px = img.load()
+    seen = [[False] * h for _ in range(w)]
+    for sx in range(w):
+        for sy in range(h):
+            if seen[sx][sy] or px[sx, sy][3] == 0:
+                continue
+            comp, q = [], deque([(sx, sy)])
+            seen[sx][sy] = True
+            while q:
+                x, y = q.popleft()
+                comp.append((x, y))
+                for nx in (x - 1, x, x + 1):
+                    for ny in (y - 1, y, y + 1):
+                        if 0 <= nx < w and 0 <= ny < h and not seen[nx][ny] and px[nx, ny][3] > 0:
+                            seen[nx][ny] = True
+                            q.append((nx, ny))
+            if len(comp) < min_size:
+                for x, y in comp:
+                    px[x, y] = (0, 0, 0, 0)
+    return img
+
+
 def round_tile(img, radius):
     mask = Image.new("L", img.size, 0)
     ImageDraw.Draw(mask).rounded_rectangle([0, 0, img.size[0] - 1, img.size[1] - 1], radius=radius, fill=255)
@@ -154,7 +277,15 @@ for name, box in {"ref_shop": (6, 230, 162, 398), "ref_pets": (152, 252, 310, 39
                   "ref_rebirth": (152, 398, 310, 548)}.items():
     save(name, key_bg(src.crop(box), FLOOR + colors_at([(8, 300), (150, 250), (8, 560), (315, 300)])), 300)
 
-# Значки справа сверху (Настройки, Задания, Колесо, Награды) рисуются в icons.js — целиком, без обрезки
+# Значки справа сверху — из референса: фон убран, обводка подписи убрана, колесо достроено
+gear = trim_outline(drop_caption(largest_part(key_bg(src.crop((1070, 14, 1176, 112)), FLOOR, 48, 0)), 88))
+gm = Image.new("L", gear.size, 0)
+ImageDraw.Draw(gm).ellipse([53 - 42, 46 - 42, 53 + 42, 46 + 42], fill=255)  # шестерёнка круглая: убираем синий кусок фона сверху
+gear.putalpha(Image.composite(gear.getchannel("A"), Image.new("L", gear.size, 0), gm))
+save("ref_settings", drop_specks(gear))
+save("ref_quests", drop_specks(trim_outline(drop_caption(largest_part(key_bg(src.crop((1214, 6, 1338, 112)), FLOOR, 48, 0)), 92), 5)))
+save("ref_rewards", drop_specks(trim_outline(drop_caption(largest_part(key_bg(src.crop((1520, 2, 1666, 112)), FLOOR, 48, 0)), 99), 6)))
+save("ref_wheel", wheel_from_ref())
 # Значки на карточках показателей
 save("ref_wins", key_bg(src.crop((25, 583, 109, 667)), YELLOW))
 save("ref_strength", key_bg(src.crop((27, 683, 109, 761)), RED))

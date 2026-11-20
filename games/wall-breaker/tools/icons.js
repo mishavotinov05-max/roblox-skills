@@ -657,6 +657,4 @@ function refGift() {
     <text x="206" y="64" text-anchor="middle" font-family="Russo One" font-size="44" fill="#fff">1</text>`;
 }
 
-for (const [name, fn] of [['ref_settings', refGear], ['ref_quests', refScroll], ['ref_wheel', refWheel], ['ref_rewards', refGift]]) {
-  ICONS.push({ group: 'ref', name, label: name, svg: fn, dir: 'icons_ref' });
-}
+// (значки справа сверху теперь вырезаются из референса скриптом cut_ref_icons.py)
