@@ -70,6 +70,9 @@ def round_tile(img, radius):
 
 
 def save(name, img, size=256):
+    bb = img.getbbox()  # обрезаем только пустые прозрачные поля
+    if bb:
+        img = img.crop(bb)
     w, h = img.size
     s = size / max(w, h)
     img = img.resize((max(1, round(w * s)), max(1, round(h * s))), Image.LANCZOS)
@@ -78,10 +81,6 @@ def save(name, img, size=256):
     canvas.save(os.path.join(OUT, name + ".png"))
 
 
-# Плитки слева (с подписью, как на референсе)
-for name, box in {"ref_shop": (14, 264, 156, 392), "ref_pets": (162, 264, 304, 392), "ref_auras": (14, 407, 156, 540),
-                  "ref_rebirth": (162, 407, 304, 540)}.items():
-    save(name, round_tile(src.crop(box), 24))
 # Цвета фона, взятые из пустых мест референса
 FLOOR = colors_at([(1050, 60), (1200, 60), (1350, 110), (1480, 60), (1600, 130), (1180, 125), (1300, 20), (1440, 115)])
 YELLOW = colors_at([(30, 600), (220, 600), (60, 650)])
@@ -90,16 +89,21 @@ GREEN = colors_at([(30, 800), (220, 800), (60, 845)])
 BAR = colors_at([(470, 560), (520, 600), (600, 545), (440, 600)])
 BUTTON = colors_at([(1500, 440), (1460, 455), (1620, 450), (1350, 455), (1345, 395), (1360, 375), (1350, 430), (1440, 380)])
 
+# Плитки слева: берём с запасом (ручка корзины выходит за плитку), фон-пол убираем
+for name, box in {"ref_shop": (6, 230, 162, 398), "ref_pets": (152, 252, 310, 398), "ref_auras": (6, 398, 162, 548),
+                  "ref_rebirth": (152, 398, 310, 548)}.items():
+    save(name, key_bg(src.crop(box), FLOOR + colors_at([(8, 300), (150, 250), (8, 560), (315, 300)])), 300)
+
 # Значки справа сверху (фон — пол)
-save("ref_settings", key_bg(src.crop((1076, 10, 1176, 104)), FLOOR))
-save("ref_quests", key_bg(src.crop((1226, 8, 1330, 104)), FLOOR))
-save("ref_wheel", circle(src.crop((1381, 18, 1469, 106))))
-save("ref_rewards", key_bg(src.crop((1500, 10, 1586, 104)), FLOOR))
+save("ref_settings", key_bg(src.crop((1068, 6, 1184, 102)), FLOOR))
+save("ref_quests", key_bg(src.crop((1218, 4, 1338, 101)), FLOOR))
+save("ref_wheel", circle(src.crop((1377, 14, 1473, 110))))
+save("ref_rewards", key_bg(src.crop((1494, 4, 1596, 101)), FLOOR))
 # Значки на карточках показателей
-save("ref_wins", key_bg(src.crop((26, 584, 108, 666)), YELLOW))
-save("ref_strength", key_bg(src.crop((28, 684, 108, 760)), RED))
-save("ref_luck", key_bg(src.crop((28, 778, 108, 858)), GREEN))
+save("ref_wins", key_bg(src.crop((25, 583, 109, 667)), YELLOW))
+save("ref_strength", key_bg(src.crop((27, 683, 109, 761)), RED))
+save("ref_luck", key_bg(src.crop((27, 777, 109, 859)), GREEN))
 # Мечи
-save("ref_level_sword", src.crop((326, 528, 414, 626)))  # лежит на жёлтой полосе — фон совпадает
-save("ref_power_sword", src.crop((1338, 372, 1446, 470)))  # лежит на жёлтой кнопке — фон совпадает
+save("ref_level_sword", src.crop((322, 496, 432, 630)))  # лежит на жёлтой полосе — фон совпадает
+save("ref_power_sword", src.crop((1338, 352, 1450, 470)))  # лежит на жёлтой кнопке — фон совпадает
 print("готово:", sorted(os.listdir(OUT)))
