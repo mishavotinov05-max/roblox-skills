@@ -16,13 +16,14 @@
 return {
 	StudsPerTile = 6,
 	Textures = {
-		brick = "rbxassetid://0", -- brick.png (стены)
+		brick = "rbxassetid://0", -- brick.png (стены — рыжие блоки с пупырышками)
 		grass_top = "rbxassetid://0", -- grass_top.png
 		grass_side = "rbxassetid://0", -- grass_side.png
-		floor_tiles = "rbxassetid://0", -- floor_tiles.png (пол лобби)
+		floor_tiles = "rbxassetid://0", -- floor_tiles.png (пол лобби — трава с пупырышками)
 		floor_dark = "rbxassetid://0", -- floor_dark.png (пол уровней)
 		stone_brick = "rbxassetid://0", -- stone_brick.png (арка, ступени магазина)
 		dirt = "rbxassetid://0", -- dirt.png (Землянка)
+		sand = "rbxassetid://0", -- sand.png (дорожки)
 	},
 	-- Текстуры слоёв стен по номеру уровня
 	Levels = {

@@ -196,7 +196,8 @@ const MAT_TEX = { Brick: 'brick', Grass: 'grass_top', Cobblestone: 'stone_brick'
 function texFor(pathStr, pr) {
   const mat = pr.material;
   if (pathStr.includes('Hub.Floor')) return ['floor_tiles', 8];
-  if (pathStr.includes('.Structure.Floor') || pathStr.includes('NicheFloor')) return ['floor_dark', 8];
+  if (/Decor\.Path/.test(pathStr)) return ['sand', 8];
+  if (pathStr.includes('.Structure.Floor') || pathStr.includes('NicheFloor')) return ['sand', 8];
   if (/\.Grass\w*$/.test(pathStr) || pathStr.includes('Ground.') && mat === 'Grass') return ['grass_top', 4];
   if (pathStr.includes('Steps.Row1')) return ['floor_tiles', 8];
   if (mat === 'Slate' && /Wall\.Layer_03|Level_03\.Wall/.test(pathStr)) return ['level_coal', 6];
@@ -204,7 +205,7 @@ function texFor(pathStr, pr) {
   if (pathStr.includes('Pits.Pit_01') && /PitFloor|Wall[NSWE]$/.test(pathStr)) return ['dirt', 4];
   if (pathStr.includes('Pits.Pit_02') && /PitFloor|Wall[NSWE]$/.test(pathStr)) return ['level_coal', 4];
   if (/\.Wall\.Layer_/.test(pathStr) && pathStr.includes('Level_03')) return ['level_coal', 6];
-  if (MAT_TEX[mat] && !pathStr.includes('Display') && !pathStr.includes('Props') && !pathStr.includes('Rim')) return [MAT_TEX[mat], mat === 'Brick' ? 6 : 4];
+  if (MAT_TEX[mat] && !pathStr.includes('Display') && !pathStr.includes('Props') && !pathStr.includes('Rim')) return [MAT_TEX[mat], mat === 'Brick' ? 12 : 4];
   return null;
 }
 
@@ -310,7 +311,7 @@ function avatar(x, z, rotY, pickColor) {
 
 window.setup = async (opts) => {
   TREE = await (await fetch('http://p.local/tree.json')).json();
-  for (const n of ['brick', 'grass_top', 'floor_tiles', 'floor_dark', 'stone_brick', 'dirt', 'level_hay', 'level_wood', 'level_coal', 'level_stone',
+  for (const n of ['sand', 'brick', 'grass_top', 'floor_tiles', 'floor_dark', 'stone_brick', 'dirt', 'level_hay', 'level_wood', 'level_coal', 'level_stone',
     'level_copper', 'level_iron', 'level_gold', 'level_obsidian', 'level_diamond', 'level_netherite']) {
     const img = await loadImg(`http://p.local/textures/${n}.png`);
     if (img) { const t = new THREE.Texture(img); t.needsUpdate = true; t.colorSpace = THREE.SRGBColorSpace; t.wrapS = t.wrapT = THREE.RepeatWrapping; t.magFilter = THREE.NearestFilter; TEX[n] = t; }
@@ -322,7 +323,7 @@ window.setup = async (opts) => {
   renderer.toneMapping = THREE.ACESFilmicToneMapping; renderer.toneMappingExposure = 1.05;
   renderer.domElement.id = 'gl'; document.body.prepend(renderer.domElement);
   scene = new THREE.Scene();
-  scene.background = new THREE.Color(0x8fcfff); scene.fog = new THREE.Fog(0xbfe0ff, 220, 900);
+  scene.background = new THREE.Color(0x7cc8ff); scene.fog = new THREE.Fog(0xbfe0ff, 220, 900);
   scene.add(new THREE.HemisphereLight(0xe6f0ff, 0x6a5a9a, 1.25));
   const sun = new THREE.DirectionalLight(0xfff0d8, 2.0); sun.position.set(60, 140, 50); sun.castShadow = true; sun.shadow.mapSize.set(2048, 2048);
   Object.assign(sun.shadow.camera, { left: -130, right: 130, top: 130, bottom: -130, far: 500 }); sun.shadow.bias = -0.0005; scene.add(sun);

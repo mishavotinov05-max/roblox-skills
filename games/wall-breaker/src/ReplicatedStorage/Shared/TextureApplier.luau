@@ -65,11 +65,16 @@ function TextureApplier.Apply()
 		each(hub:FindFirstChild("Floor"), function(p)
 			add(p, tex("floor_tiles"), TOP, 8, 8)
 		end)
+		each(hub:FindFirstChild("Decor"), function(p)
+			if p.Name:match("^Path") then
+				add(p, tex("sand"), TOP, 8, 8)
+			end
+		end)
 		each(hub:FindFirstChild("Walls"), function(p)
 			if p.Name:sub(1, 5) == "Grass" then
 				grassCap(p)
 			else
-				add(p, tex("brick"), ALL)
+				add(p, tex("brick"), ALL, 12, 12)
 			end
 		end)
 		local entrance = hub:FindFirstChild("LevelEntrance")
@@ -104,9 +109,9 @@ function TextureApplier.Apply()
 			if p.Name:match("^Grass") then
 				grassCap(p)
 			elseif p.Name == "Floor" or p.Name == "NicheFloor" then
-				add(p, tex("floor_dark"), TOP, 8, 8)
+				add(p, tex("sand"), TOP, 8, 8)
 			elseif p.Name:match("^Wall") or p.Name:match("^Niche") or p.Name == "EndWall" then
-				add(p, tex("brick"), ALL)
+				add(p, tex("brick"), ALL, 12, 12)
 			end
 		end)
 		local id = n and TextureConfig.Levels[n]
@@ -122,7 +127,7 @@ function TextureApplier.Apply()
 		end
 	end)
 	each(ground and ground:FindFirstChild("Terraces"), function(block)
-		add(block:FindFirstChild("Brick"), tex("brick"), ALL)
+		add(block:FindFirstChild("Brick"), tex("brick"), ALL, 12, 12)
 		local g = block:FindFirstChild("Grass")
 		if g then
 			grassCap(g)

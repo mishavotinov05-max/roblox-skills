@@ -163,4 +163,34 @@ img, d, r = base(20, ["#3a2e30", "#43363a", "#33282a", "#4a3b3d"])
 cracks(d, r, "#ff5a1f")
 save("level_netherite", img)
 
+# ---------- Блоки с пупырышками (как на скриншоте Roblox) ----------
+def studs(name, base, light, dark, top_band=None):
+    S, cell = 256, 64
+    img = Image.new("RGB", (S, S), hexc(base))
+    d = ImageDraw.Draw(img)
+    for cy in range(0, S, cell):
+        for cx in range(0, S, cell):
+            # шов между блоками
+            d.rectangle([cx, cy, cx + cell - 1, cy + cell - 1], outline=hexc(dark), width=2)
+            d.line([cx + 2, cy + 2, cx + cell - 3, cy + 2], fill=hexc(light), width=2)
+            # пупырышек: тень, тело, блик
+            r = 17
+            mx, my = cx + cell // 2, cy + cell // 2
+            d.ellipse([mx - r + 3, my - r + 5, mx + r + 3, my + r + 5], fill=hexc(dark))
+            d.ellipse([mx - r, my - r, mx + r, my + r], fill=hexc(base), outline=hexc(dark), width=2)
+            d.ellipse([mx - r + 5, my - r + 4, mx + 3, my - 2], fill=hexc(light))
+    if top_band:
+        d.rectangle([0, 0, S, S // 3], fill=hexc(top_band[0]))
+        for x in range(0, S, 16):
+            d.rectangle([x, S // 3, x + 15, S // 3 + (6 if (x // 16) % 2 else 12)], fill=hexc(top_band[0]))
+        d.line([0, S // 3 - 2, S, S // 3 - 2], fill=hexc(top_band[1]), width=3)
+    img.save(os.path.join(OUT, name + ".png"))
+
+
+studs("brick", "#f08a45", "#ffb27a", "#c45f28")            # стены — рыжие блоки
+studs("grass_top", "#7fd34a", "#a8ee74", "#5aa832")        # трава сверху
+studs("grass_side", "#e8773a", "#ffa66b", "#b4521f", ("#7fd34a", "#5aa832"))
+studs("floor_tiles", "#8fdc5a", "#b7f285", "#67b53a")      # пол лобби — светлая трава
+studs("sand", "#f0c98a", "#fde3b4", "#c99a57")             # дорожки
+
 print("Текстуры:", len(os.listdir(OUT)), "→", OUT)

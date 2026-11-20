@@ -22,9 +22,9 @@ LVL_LEN, LVL_COUNT = 96, 10
 LVL0 = -HD - T                  # начало первого уровня (сразу за северной стеной)
 
 DARK = (26, 16, 51)
-BRICK = (201, 101, 47)
-GRASS = (76, 203, 58)
-FLOOR = (150, 135, 225)
+BRICK = (232, 119, 58)   # рыжие блоки, как на скриншоте
+GRASS = (127, 211, 74)
+FLOOR = (143, 220, 90)   # пол лобби — светлая трава
 STONE = (143, 147, 157)
 WOOD = (122, 74, 36)
 GOLD = (255, 200, 40)
@@ -86,7 +86,7 @@ def build_hub():
             z0, z1 = zs[j], zs[j + 1]
             if is_pit_col and any(abs((z0 + z1) / 2 - r) < 1 for r in pit_rows):
                 continue  # здесь яма
-            floor_f.add(part(f"Floor_{i}_{j}", (x1 - x0, 1, z1 - z0), ((x0 + x1) / 2, -0.5, (z0 + z1) / 2), FLOOR, "Slate"))
+            floor_f.add(part(f"Floor_{i}_{j}", (x1 - x0, 1, z1 - z0), ((x0 + x1) / 2, -0.5, (z0 + z1) / 2), FLOOR, "SmoothPlastic"))
     hub.add(floor_f)
 
     # --- Стены ---
@@ -106,9 +106,8 @@ def build_hub():
 
     # --- Декор: светящиеся линии прохода и фонари ---
     decor = folder("Decor")
-    for x in (-7, 7):
-        decor.add(part(f"AisleLine_{'L' if x < 0 else 'R'}", (0.5, 0.1, 2 * HD - 14), (x, 0.05, -5), (192, 107, 255), "Neon",
-                       collide=False, cast_shadow=False))
+    # песчаная дорожка по центральному проходу (как на скриншоте)
+    decor.add(part("Path_Center", (14, 0.12, 2 * HD - 2), (0, 0.06, 0), (240, 201, 138), "SmoothPlastic", cast_shadow=False))
     decor.add(part("PitZoneLine", (0.5, 0.1, 2 * HD - 10), (-20.5, 0.05, 0), (198, 107, 255), "Neon", collide=False, cast_shadow=False))
     n = 0
     for z in (-26, 0, 26):
@@ -123,8 +122,8 @@ def build_hub():
         n += 1
         decor.add(lantern(f"Lantern_{n}", (HW - 0.9, 11, z), light=(z == 42)))
     for k, z in enumerate((-52.5, -31.5, -10.5, 10.5, 31.5, 52.5)):
-        decor.add(part(f"Path_{k + 1}", (-20.5 - XL, 0.12, 5), ((XL - 20.5) / 2, 0.06, z), (225, 200, 160), "Cobblestone"))
-    decor.add(part("PathWest", (8, 0.12, 2 * HD - 2), (XL + 4, 0.06, 0), (225, 200, 160), "Cobblestone"))
+        decor.add(part(f"Path_{k + 1}", (-20.5 - XL, 0.12, 5), ((XL - 20.5) / 2, 0.06, z), (240, 201, 138), "SmoothPlastic"))
+    decor.add(part("PathWest", (8, 0.12, 2 * HD - 2), (XL + 4, 0.06, 0), (240, 201, 138), "SmoothPlastic"))
     hub.add(decor)
 
     # --- Точка появления ---
@@ -543,7 +542,7 @@ def build_levels():
         z0 = LVL0 - i * LVL_LEN
         f = folder(f"Level_{lid:02d}")
         st = folder("Structure")
-        st.add(part("Floor", (24, 1, LVL_LEN), (0, -0.5, z0 - LVL_LEN / 2), (90, 79, 134), "Slate"))
+        st.add(part("Floor", (24, 1, LVL_LEN), (0, -0.5, z0 - LVL_LEN / 2), (240, 201, 138), "SmoothPlastic"))
         for x in (-10.5, 10.5):
             st.add(part(f"Line{'L' if x < 0 else 'R'}", (0.4, 0.1, LVL_LEN), (x, 0.05, z0 - LVL_LEN / 2), (255, 158, 31), "Neon",
                         collide=False, cast_shadow=False))
@@ -556,7 +555,7 @@ def build_levels():
         st.add(wall_box("NicheSideA", 16, 18, 3, 23, niche_z + niche_l / 2 + 1.5))
         st.add(wall_box("NicheSideB", 16, 18, 3, 23, niche_z - niche_l / 2 - 1.5))
         st.add(wall_box("NicheBack", 3, 18, niche_l + 6, 32.5, niche_z))
-        st.add(part("NicheFloor", (20, 1, niche_l), (22, -0.5, niche_z), (90, 79, 134), "Slate"))
+        st.add(part("NicheFloor", (20, 1, niche_l), (22, -0.5, niche_z), (240, 201, 138), "SmoothPlastic"))
         for nm, x, w, zc, l in [("GrassLeft", -13.5, 3.4, z0 - LVL_LEN / 2, LVL_LEN), ("GrassRightA", 13.5, 3.4, z0 + seg1 / 2, -seg1),
                                 ("GrassRightB", 13.5, 3.4, niche_z - niche_l / 2 - seg2 / 2, seg2), ("GrassNiche", 32.5, 3.4, niche_z, niche_l + 6),
                                 ("GrassNicheA", 23, 16, niche_z + niche_l / 2 + 1.5, 3.4), ("GrassNicheB", 23, 16, niche_z - niche_l / 2 - 1.5, 3.4)]:
