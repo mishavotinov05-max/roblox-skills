@@ -74,102 +74,18 @@ def frac(box, im):
 
 
 # Карточки: Победы / Сила / Удача — число во второй строке справа от значка
-for src, name in (("wins.webp", "card_wins"), ("strength.webp", "card_strength"), ("luck.webp", "card_luck")):
+for src, name in (("wins.webp", "card_wins"), ("strength.webp", "card_strength"), ("luck.webp", "card_luck"),
+                  ("rebirth_card.webp", "card_rebirth")):
     im = load(src)
     w, h = im.size
     tx0 = int(w * 0.38)
     top = text_box(im, tx0, int(w * 0.97), int(h * 0.1), int(h * 0.48))
     num = text_box(im, tx0, int(w * 0.97), int(h * 0.5), int(h * 0.92))
-    area = erase(im, num, 30, top_limit=top[3] + 10)
+    if name == "card_rebirth":  # «0» узкий — место для числа делаем во всю ширину заголовка
+        num = (top[0] + 40, num[1], top[2] - 40, num[3])
+    area = erase(im, num, 30, top_limit=top[3] + 4)
     im.save(os.path.join(OUT, name + ".png"))
     meta[name] = {"ratio": round(w / h, 4), "value": frac(area, im), "title": frac(top, im)}
-
-# Перерождения: карточка того же размера и формы, что Сила/Победы/Удача.
-# Основа — красная карточка «Сила» (оттенок сдвигаем в оранжевый), на неё кладём стрелки и надпись
-# из присланной картинки перерождений.
-src_r = load("rebirth.webp")
-rw, rh = src_r.size
-rp = src_r.load()
-base = Image.open(os.path.join(OUT, "card_strength.png")).convert("RGBA")
-bw, bh = base.size
-st = meta["card_strength"]
-# заливаем всю внутреннюю часть карточки цветом фона (столбец у правого края — без текста)
-bp = base.load()
-cx = int(bw * 0.955)
-for y in range(bh):
-    xr = bw - 1
-    while xr > 0 and (bp[xr, y][3] < 200 or lum(bp[xr, y]) < 60):
-        xr -= 1
-    xl = 0
-    while xl < bw - 1 and (bp[xl, y][3] < 200 or lum(bp[xl, y]) < 60):
-        xl += 1
-    if xr - xl < bw * 0.5:
-        continue
-    c = bp[min(cx, xr - 6), y]
-    if c[3] < 200 or lum(c) < 60:
-        continue
-    for x in range(xl + 2, xr - 1):
-        bp[x, y] = c
-# оранжевее (как картинка перерождений)
-bp = base.load()
-for y in range(bh):
-    for x in range(bw):
-        c = bp[x, y]
-        if c[3] > 0 and lum(c) >= 60:
-            bp[x, y] = (c[0], min(255, c[1] + 55), c[2], c[3])
-
-
-def largest_part(img):
-    from collections import deque
-    w, h = img.size
-    px = img.load()
-    seen, best = set(), []
-    for sx in range(w):
-        for sy in range(h):
-            if (sx, sy) in seen or px[sx, sy][3] == 0:
-                continue
-            comp, q = [], deque([(sx, sy)])
-            seen.add((sx, sy))
-            while q:
-                x, y = q.popleft()
-                comp.append((x, y))
-                for nx, ny in ((x + 1, y), (x - 1, y), (x, y + 1), (x, y - 1)):
-                    if 0 <= nx < w and 0 <= ny < h and (nx, ny) not in seen and px[nx, ny][3] > 0:
-                        seen.add((nx, ny))
-                        q.append((nx, ny))
-            if len(comp) > len(best):
-                best = comp
-    keepset = set(best)
-    for x in range(w):
-        for y in range(h):
-            if (x, y) not in keepset:
-                px[x, y] = (0, 0, 0, 0)
-    return img.crop(img.getbbox())
-
-
-def keep(img, test):
-    px = img.load()
-    for y in range(img.size[1]):
-        for x in range(img.size[0]):
-            c = px[x, y]
-            if c[3] > 0 and not test(c):
-                px[x, y] = (0, 0, 0, 0)
-    return img.crop(img.getbbox())
-
-
-arrows = largest_part(keep(src_r.crop((0, 0, int(rw * 0.282), rh)),
-              lambda c: (lum(c) < 70 and c[0] < 90) or (c[1] > 140 and c[0] > 180)))
-title_box = text_box(src_r, int(rw * 0.28), rw - 1, 0, int(rh * 0.45))
-title = keep(src_r.crop((title_box[0] - 14, max(0, title_box[1] - 14), title_box[2] + 14, title_box[3] + 14)),
-             lambda c: lum(c) < 70 or min(c[:3]) > 200)
-ih = int(bh * 0.78)
-arrows = arrows.resize((int(arrows.width * ih / arrows.height), ih), Image.LANCZOS)
-base.alpha_composite(arrows, (int(bw * 0.05), int(bh * 0.11)))
-tw = int(bw * 0.56)
-title = title.resize((tw, int(title.height * tw / title.width)), Image.LANCZOS)
-base.alpha_composite(title, (int(bw * 0.385), int(bh * 0.13)))
-base.save(os.path.join(OUT, "card_rebirth.png"))
-meta["card_rebirth"] = dict(meta["card_strength"])
 
 # Мощный удар: картинка целиком (меч + надпись)
 pw = load("power.webp")

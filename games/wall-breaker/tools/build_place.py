@@ -743,8 +743,6 @@ def stat_card(name, emoji, title, color, order, skin):
     r.add(image("Icon", "", ((0, h - 16), (0, h - 16)), ((0, 8), (0.5, 0)), anchor=(0, 0.5), visible=False, z=2))
     r.add(label("Fallback", emoji, ((0, h - 20), (0, h - 20)), ((0, 10), (0.5, 0)), anchor=(0, 0.5), stroke=0, z=2))
     vx, vy, vw, vh = meta["value"]
-    if skin == "card_rebirth":
-        vx, vy, vw, vh = 0.36, 0.5, 0.44, 0.36  # число по центру тёмной «таблетки»
     if "title" in meta:
         tx, ty, tw, th = meta["title"]
         r.add(label("Title", title, ((tw, 0), (th, 0)), ((tx, 0), (ty, 0)), stroke=2.5, z=3))
