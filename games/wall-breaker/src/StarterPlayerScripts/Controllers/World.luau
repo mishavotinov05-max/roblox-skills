@@ -5,6 +5,7 @@
 	• прогресс на табличках уровней;
 	• эффекты: обломки стены, «+сила».
 ]]
+local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local Workspace = game:GetService("Workspace")
 local Debris = game:GetService("Debris")
@@ -121,7 +122,85 @@ local function breakEffect(levelId: number, layerIndex: number)
 	end
 end
 
+-- ===== Эффекты ударов =====
+local Graphics = require(Controllers:WaitForChild("Graphics"))
+local TweenService = game:GetService("TweenService")
+local lastHP: { [number]: number } = {}
+local shaking: { [BasePart]: boolean } = {}
+
+local function burst(pos: Vector3, color: Color3, count: number)
+	count = math.max(1, math.floor(count * Graphics.ParticleScale))
+	local p = Instance.new("Part")
+	p.Anchored, p.CanCollide, p.CanQuery, p.CanTouch, p.Transparency = true, false, false, false, 1
+	p.Size = Vector3.new(1, 1, 1)
+	p.Position = pos
+	local e = Instance.new("ParticleEmitter")
+	e.Color = ColorSequence.new(color)
+	e.LightEmission = 0.3
+	e.Size = NumberSequence.new({ NumberSequenceKeypoint.new(0, 0.5), NumberSequenceKeypoint.new(1, 0) })
+	e.Speed = NumberRange.new(10, 18)
+	e.SpreadAngle = Vector2.new(60, 60)
+	e.Lifetime = NumberRange.new(0.3, 0.6)
+	e.Acceleration = Vector3.new(0, -40, 0)
+	e.Rate = 0
+	e.Parent = p
+	p.Parent = Workspace
+	e:Emit(count)
+	Debris:AddItem(p, 1)
+end
+
+-- лёгкая тряска слоя (только у этого игрока)
+local function shake(layer: BasePart)
+	if shaking[layer] then
+		return
+	end
+	shaking[layer] = true
+	local base = layer.CFrame
+	task.spawn(function()
+		for i = 1, 4 do
+			layer.CFrame = base * CFrame.new((i % 2 == 0 and 1 or -1) * 0.18, 0, 0)
+			task.wait(0.03)
+		end
+		layer.CFrame = base
+		shaking[layer] = nil
+	end)
+end
+
+local function onLevelState(info)
+	if not info then
+		return
+	end
+	local prev = lastHP[info.Level]
+	lastHP[info.Level] = info.HP
+	if prev and info.HP < prev then
+		local level = levels[info.Level]
+		local layer = level and level.Layers[info.Layer + 1]
+		if layer then
+			shake(layer)
+			local root = Players.LocalPlayer.Character and Players.LocalPlayer.Character:FindFirstChild("HumanoidRootPart")
+			local pos = layer.Position
+			if root then
+				local rel = layer.CFrame:PointToObjectSpace(root.Position)
+				pos = (layer.CFrame * CFrame.new(math.clamp(rel.X, -6, 6), 2, math.sign(rel.Z) * (layer.Size.Z / 2 + 0.3))).Position
+			end
+			burst(pos, layer.Color, 8)
+		end
+	end
+end
+
+-- конфетти при получении побед
+local function confetti()
+	local root = Players.LocalPlayer.Character and Players.LocalPlayer.Character:FindFirstChild("HumanoidRootPart")
+	if not root then
+		return
+	end
+	for _, c in ipairs({ Color3.fromRGB(255, 210, 60), Color3.fromRGB(255, 90, 120), Color3.fromRGB(90, 200, 255), Color3.fromRGB(120, 230, 110) }) do
+		burst(root.Position + Vector3.new(0, 4, 0), c, 10)
+	end
+end
+
 function World.Init()
+	Remotes.Event("LevelState").OnClientEvent:Connect(onLevelState)
 	-- пиксельные текстуры карты (если ID указаны в TextureConfig)
 	local ok, err = pcall(function()
 		require(Shared:WaitForChild("TextureApplier")).Apply()
@@ -139,6 +218,7 @@ function World.Init()
 		elseif kind == "LevelUp" then
 			Toasts.Show("Новый уровень: " .. tostring(a) .. "!", "success")
 		elseif kind == "Reward" then
+			confetti()
 			Toasts.Popup("+" .. Format.Short(b) .. " 🏆", Color3.fromRGB(255, 225, 77))
 		end
 	end)

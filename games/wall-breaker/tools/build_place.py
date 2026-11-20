@@ -24,7 +24,7 @@ LVL0 = -HD - T                  # начало первого уровня (ср
 DARK = (26, 16, 51)
 BRICK = (232, 119, 58)   # рыжие блоки, как на скриншоте
 GRASS = (127, 211, 74)
-FLOOR = (143, 220, 90)   # пол лобби — светлая трава
+FLOOR = (120, 214, 96)   # пол лобби — чистая сочная трава (меняется у деталей Hub › Floor)
 STONE = (143, 147, 157)
 WOOD = (122, 74, 36)
 GOLD = (255, 200, 40)
@@ -172,8 +172,15 @@ def build_hub():
 
     # --- Декор: светящиеся линии прохода и фонари ---
     decor = folder("Decor")
-    # песчаная дорожка по центральному проходу (как на скриншоте)
-    decor.add(part("Path_Center", (14, 0.12, 2 * HD - 2), (0, 0.06, 0), (240, 201, 138), "SmoothPlastic", cast_shadow=False))
+    # песчаная дорожка по центральному проходу с белыми бортиками
+    decor.add(part("Path_Center", (14, 0.12, 2 * HD - 2), (0, 0.06, 0), (246, 214, 158), "SmoothPlastic", cast_shadow=False))
+    for x in (-7.4, 7.4):
+        decor.add(part(f"PathTrim_{'L' if x < 0 else 'R'}", (0.8, 0.3, 2 * HD - 2), (x, 0.15, 0), (255, 255, 255), "SmoothPlastic",
+                       cast_shadow=False))
+    # бордюр по периметру зала
+    for nm, sx, sz, px, pz in (("BorderS", HW - XL, 1.4, (XL + HW) / 2, HD - 0.7), ("BorderN", HW - XL, 1.4, (XL + HW) / 2, -HD + 0.7),
+                               ("BorderW", 1.4, 2 * HD, XL + 0.7, 0), ("BorderE", 1.4, 2 * HD, HW - 0.7, 0)):
+        decor.add(part(nm, (sx, 0.5, sz), (px, 0.25, pz), (255, 236, 200), "SmoothPlastic", cast_shadow=False))
     n = 0
     for z in (-26, 0, 26):
         n += 1
@@ -1005,15 +1012,23 @@ def build():
         Inst("StarterCharacterScripts", "StarterCharacterScripts"),
     ])
     starter_gui = Inst("StarterGui", "StarterGui", [], [build_gui()])
-    lighting = Inst("Lighting", "Lighting", [P("float", "ClockTime", 14.5), P("float", "Brightness", 2.5),
-                                             P("bool", "GlobalShadows", True), P("color3", "Ambient", (95, 90, 120)),
-                                             P("color3", "OutdoorAmbient", (150, 145, 175))], [
-        Inst("Atmosphere", "Atmosphere", [P("float", "Density", 0.28), P("float", "Offset", 0.2), P("color3", "Color", (205, 225, 255)),
-                                          P("color3", "Decay", (140, 120, 200)), P("float", "Glare", 0.2), P("float", "Haze", 0.8)]),
-        Inst("BloomEffect", "Bloom", [P("float", "Intensity", 0.6), P("float", "Size", 24), P("float", "Threshold", 1.4)]),
-        Inst("ColorCorrectionEffect", "ColorCorrection", [P("float", "Saturation", 0.18), P("float", "Contrast", 0.08),
-                                                          P("float", "Brightness", 0.02)]),
-        Inst("SunRaysEffect", "SunRays", [P("float", "Intensity", 0.06), P("float", "Spread", 0.7)]),
+    # Освещение: яркий мультяшный день. Все значения можно менять в Studio: Explorer › Lighting.
+    # Technology: 3 = ShadowMap (мягкие тени, быстро на телефонах); 4 = Future (красивее, тяжелее).
+    lighting = Inst("Lighting", "Lighting", [
+        P("token", "Technology", 3), P("float", "ClockTime", 14), P("float", "GeographicLatitude", 30),
+        P("float", "Brightness", 3), P("float", "ExposureCompensation", 0.1),
+        P("bool", "GlobalShadows", True), P("float", "ShadowSoftness", 0.35),
+        P("float", "EnvironmentDiffuseScale", 1), P("float", "EnvironmentSpecularScale", 0.6),
+        P("color3", "Ambient", (110, 110, 125)), P("color3", "OutdoorAmbient", (160, 165, 180)),
+        P("color3", "ColorShift_Top", (255, 245, 225))], [
+        Inst("Sky", "Sky", [P("float", "SunAngularSize", 18), P("float", "MoonAngularSize", 9), P("int", "StarCount", 0),
+                            P("bool", "CelestialBodiesShown", True)]),
+        Inst("Atmosphere", "Atmosphere", [P("float", "Density", 0.22), P("float", "Offset", 0.1), P("color3", "Color", (199, 226, 255)),
+                                          P("color3", "Decay", (120, 170, 255)), P("float", "Glare", 0.15), P("float", "Haze", 0.4)]),
+        Inst("BloomEffect", "Bloom", [P("float", "Intensity", 0.45), P("float", "Size", 22), P("float", "Threshold", 1.6)]),
+        Inst("ColorCorrectionEffect", "ColorCorrection", [P("float", "Saturation", 0.15), P("float", "Contrast", 0.07),
+                                                          P("float", "Brightness", 0.02), P("color3", "TintColor", (255, 252, 245))]),
+        Inst("SunRaysEffect", "SunRays", [P("float", "Intensity", 0.04), P("float", "Spread", 0.6)]),
     ])
     write_place(OUT, [workspace, lighting, replicated, server, storage, starter_player, starter_gui])
     print("Готово:", OUT, f"({os.path.getsize(OUT) // 1024} КБ)")

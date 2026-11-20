@@ -471,6 +471,20 @@ end
 
 local function fillSettings(p: Frame)
 	local data = State.Data
+	local NAMES = { Low = "Низкая", Medium = "Средняя", High = "Высокая" }
+	local NEXT = { Low = "Medium", Medium = "High", High = "Low" }
+	local g = data.Settings.Graphics or "High"
+	addCard(p, {
+		name = "Графика: " .. NAMES[g],
+		info = "Низкая — для слабых телефонов (без теней и эффектов)",
+		fallback = "🎨",
+		button = "Сменить",
+		buttonColor = COLOR_EQUIP,
+		onClick = function()
+			act("SetSetting", "Graphics", NEXT[g])
+		end,
+		order = 0,
+	})
 	local hasAuto = State.HasPass("AutoClick")
 	addCard(p, {
 		name = "Автоклик",

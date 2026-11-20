@@ -62,7 +62,7 @@ local function makeTemplate()
 		Achievements = {}, -- { [id] = true }
 		Wheel = { LastFree = 0, ExtraSpins = 0 },
 		Purchases = {}, -- { [PurchaseId] = время }
-		Settings = { AutoClick = true, ShowPets = true },
+		Settings = { AutoClick = true, ShowPets = true, Graphics = "High" },
 	}
 end
 

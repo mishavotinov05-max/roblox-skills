@@ -60,6 +60,11 @@ function RequestService.Init()
 	-- Настройки игрока (автоклик, показ питомцев)
 	RequestService.Register("SetSetting", function(player, key, value)
 		local data = DataService.Get(player)
+		if key == "Graphics" and (value == "Low" or value == "Medium" or value == "High") then
+			data.Settings.Graphics = value
+			DataService.MarkDirty(player)
+			return { ok = true }
+		end
 		if (key == "AutoClick" or key == "ShowPets") and type(value) == "boolean" then
 			data.Settings[key] = value
 			DataService.MarkDirty(player)
