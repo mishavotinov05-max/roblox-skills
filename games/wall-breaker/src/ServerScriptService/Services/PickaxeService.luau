@@ -24,7 +24,57 @@ local RequestService = require(Services:WaitForChild("RequestService"))
 local MapService = require(Services:WaitForChild("MapService"))
 
 local PickaxeService = {}
+local hasImage, buildImageTool
 local TOOL_NAME = "Pickaxe"
+
+-- ===== Кирка-картинка (точь-в-точь как нарисована): PickaxeConfig → Image =====
+function hasImage(cfg): boolean
+	return type(cfg.Image) == "string" and cfg.Image ~= "" and cfg.Image ~= "rbxassetid://0"
+end
+
+-- плоская пластина с картинкой с двух сторон; низ-лево картинки = конец рукояти
+local function imagePlate(cfg, size: number): Part
+	local plate = Instance.new("Part")
+	plate.Name = "PickImage"
+	plate.Size = Vector3.new(0.05, size, size)
+	plate.Transparency = 1
+	plate.CanCollide, plate.CanQuery, plate.CanTouch, plate.Massless = false, false, false, true
+	for _, face in ipairs({ Enum.NormalId.Right, Enum.NormalId.Left }) do
+		local d = Instance.new("Decal")
+		d.Texture = cfg.Image
+		d.Face = face
+		d.Parent = plate
+	end
+	return plate
+end
+
+function buildImageTool(cfg): Tool
+	local size = Settings.PickaxeImageSize or 5
+	local tool = Instance.new("Tool")
+	tool.Name = TOOL_NAME
+	tool.ToolTip = cfg.Name
+	tool.CanBeDropped = false
+	local tilt = math.rad(Settings.PickaxeGripTilt or 25)
+	tool.GripPos = Vector3.new(0, 0, 0)
+	tool.GripForward = Vector3.new(-1, 0, 0)
+	tool.GripRight = Vector3.new(0, math.cos(tilt), math.sin(tilt))
+	tool.GripUp = Vector3.new(0, -math.sin(tilt), math.cos(tilt))
+	local root = Instance.new("Part")
+	root.Name = "Handle"
+	root.Size = Vector3.new(0.4, 0.4, 0.4)
+	root.Transparency = 1
+	root.CanCollide, root.Massless = false, true
+	root.Parent = tool
+	-- картинка «вверх» = ось Z инструмента; кладём так, чтобы её нижний-левый угол (конец рукояти) был в руке
+	local mirror = Settings.PickaxeImageMirror and -1 or 1
+	local plate = imagePlate(cfg, size)
+	plate.CFrame = CFrame.new(0, mirror * size * 0.38, size * 0.38) * CFrame.Angles(math.rad(-90), 0, 0)
+	local w = Instance.new("WeldConstraint")
+	w.Part0, w.Part1 = root, plate
+	w.Parent = plate
+	plate.Parent = tool
+	return tool
+end
 
 local function buildTool(cfg): Tool
 	local custom = ServerStorage:FindFirstChild("PickaxeModels")
@@ -33,6 +83,10 @@ local function buildTool(cfg): Tool
 		local tool = model:Clone()
 		tool.Name = TOOL_NAME
 		return tool
+	end
+
+	if hasImage(cfg) then
+		return buildImageTool(cfg)
 	end
 
 	local tool = Instance.new("Tool")
@@ -88,7 +142,20 @@ local function updateBack(player: Player, show: boolean)
 	if not show or not data or not torso or not torso:IsA("BasePart") then
 		return
 	end
-	local look = PickaxeLook.Build(Catalog.Pickaxe(data.EquippedPickaxe))
+	local cfg = Catalog.Pickaxe(data.EquippedPickaxe)
+	if hasImage(cfg) then
+		local holder = Instance.new("Model")
+		holder.Name = "BackPickaxe"
+		local plate = imagePlate(cfg, (Settings.PickaxeImageSize or 5) * 0.9)
+		plate.CFrame = torso.CFrame * CFrame.new(0, 0, 0.7) * CFrame.Angles(0, math.rad(90), 0)
+		local wc = Instance.new("WeldConstraint")
+		wc.Part0, wc.Part1 = torso, plate
+		wc.Parent = plate
+		plate.Parent = holder
+		holder.Parent = character
+		return
+	end
+	local look = PickaxeLook.Build(cfg)
 	look.Name = "BackPickaxe"
 	local L = PickaxeLook.HANDLE_LENGTH
 	look:PivotTo(torso.CFrame * CFrame.new(0, 0, 0.75) * CFrame.Angles(0, 0, math.rad(40)) * CFrame.new(0, -L / 2 - 0.4, 0)
@@ -208,6 +275,19 @@ local function setupSlots()
 			MapService.SetText(slot.BuyPad, "Price", priceText)
 			MapService.SetText(slot.Model, "PickName", cfg.Name)
 			MapService.SetText(slot.Model, "PickInfo", ("%s · x%s Силы"):format(cfg.Rarity or "", Format.Short(cfg.Power)))
+			local board = slot.Model:FindFirstChild("ImageBoard")
+			if hasImage(cfg) and board then
+				for _, img in ipairs(board:GetDescendants()) do
+					if img:IsA("ImageLabel") then
+						img.Image = cfg.Image
+						img.Visible = true
+					end
+				end
+				local display = slot.Model:FindFirstChild("Display")
+				if display then
+					display:Destroy() -- 3D-кирка не нужна, показываем картинку
+				end
+			end
 			if prompt then
 				prompt.ObjectText = ("%s · сила ×%s"):format(cfg.Name, Format.Short(cfg.Power))
 				prompt.ActionText = cfg.Price == 0 and "Взять" or ("Купить за " .. priceText)

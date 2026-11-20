@@ -381,6 +381,11 @@ def build_pickaxe_shop():
             s.add(part("Glow", (0.25, 2.5, 2.5), (px, y + 1.45, z), rc, "Neon", shape="Cylinder", r=rot(0, 0, 90), collide=False,
                        cast_shadow=False, children=[point_light(rc, 0.8, 7)]))
             s.add(display_pickaxe(name, px, y + 1.7, z, head, handle))
+            # место под кирку-картинку (PickaxeConfig → Image); пока пусто — видна 3D-кирка
+            s.add(part("ImageBoard", (0.1, 6.5, 6.5), (px, y + 4.9, z), (255, 255, 255), "SmoothPlastic", transparency=1, collide=False,
+                       query=False, touch=False, cast_shadow=False, children=[
+                           surface_gui(f"PickGui{fc}", fc, 60, [image("PickImage", "", ((1, 0), (1, 0)), ((0, 0), (0, 0)), visible=False)])
+                           for fc in ("Left", "Right")]))
             pad = part("BuyPad", (3.6, 0.3, 3.6), (x0 + 2.2, y + 0.15, z), lighten(rc, 0.55), "SmoothPlastic",
                        children=[prompt("Купить", name),
                                  billboard("PriceGui", (150, 46), (0, 2.4, 0), max_dist=30, children=[
