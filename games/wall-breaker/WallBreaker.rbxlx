@@ -36162,7 +36162,8 @@ return {
 
 	ИКОНКИ «КАК НА РЕФЕРЕНСЕ» лежат в папке art/icons_ref (вырезаны из вашей картинки):
 	  ref_shop/pets/auras/rebirth — целые плитки (с подписью) → вставьте их ID в *Tile, а *Symbol оставьте 0;
-	  ref_settings, ref_quests, ref_wheel, ref_rewards → Settings, Quests, WheelDisc (Base/Top оставьте 0), Rewards;
+	  ref_settings, ref_quests, ref_wheel, ref_rewards → Settings, Quests, WheelDisc (Base/Top оставьте 0), Rewards
+	    (на этих значках уже есть подпись — своя подпись кнопки скрывается автоматически);
 	  ref_wins, ref_strength, ref_luck → Wins, Strength, Luck;
 	  ref_level_sword, ref_power_sword → LevelSword, PowerSword.
 	Как поставить настоящие иконки (из папки art/icons):
@@ -40131,6 +40132,13 @@ local function setIcon(holder: Instance?, childName: string, key: string)
 		if fallback and fallback:IsA("GuiObject") then
 			fallback.Visible = false
 		end
+		-- значки справа сверху уже с подписью — свою подпись прячем
+		if (childName == "Icon" or childName == "Disc") and holder.Parent and holder.Parent.Name == "TopRight" then
+			local lbl = holder:FindFirstChild("Label")
+			if lbl and lbl:IsA("GuiObject") then
+				lbl.Visible = false
+			end
+		end
 		-- если загружена картинка-плитка, убираем цветной фон кнопки
 		-- (плитки с референса уже содержат подпись — свою подпись прячем, если символа нет)
 		if childName == "Tile" and (IconConfig[key:gsub("Tile$", "Symbol")] or "rbxassetid://0") == "rbxassetid://0" then
@@ -40287,7 +40295,12 @@ local function animate(t: number)
 	-- колесо фортуны и значок «!»
 	local wheel = find("TopRight.WheelButton")
 	if wheel then
-		for _, child in ipairs({ "Disc", "Fallback" }) do
+		-- вращаем только эмодзи-заглушку; картинка с подписью покачивается
+		local disc = wheel:FindFirstChild("Disc")
+		if disc and disc:IsA("GuiObject") then
+			disc.Rotation = 6 * math.sin(t * 2)
+		end
+		for _, child in ipairs({ "Fallback" }) do
 			local d = wheel:FindFirstChild(child)
 			if d and d:IsA("GuiObject") then
 				d.Rotation = (t * 50) % 360

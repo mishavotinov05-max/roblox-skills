@@ -31,6 +31,7 @@ for (const p of Object.keys(IMG)) {
 }
 SHOW['TopRight.RewardsButton.Badge'] = true;
 for (const b of ['ShopButton', 'PetsButton', 'AurasButton', 'RebirthButton']) SHOW[`LeftMenu.${b}.Label`] = false;
+for (const b of ['SettingsButton', 'QuestsButton', 'WheelButton', 'RewardsButton']) SHOW[`TopRight.${b}.Label`] = false;
 
 const HUD_TEXT = {
   'Stats.WinsRow.Value': '7.45K', 'Stats.StrengthRow.Value': '360M', 'Stats.LuckRow.Value': '12.5%', 'Stats.RebirthRow.Value': '3',

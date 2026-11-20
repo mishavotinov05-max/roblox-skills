@@ -5,7 +5,8 @@
 
 	ИКОНКИ «КАК НА РЕФЕРЕНСЕ» лежат в папке art/icons_ref (вырезаны из вашей картинки):
 	  ref_shop/pets/auras/rebirth — целые плитки (с подписью) → вставьте их ID в *Tile, а *Symbol оставьте 0;
-	  ref_settings, ref_quests, ref_wheel, ref_rewards → Settings, Quests, WheelDisc (Base/Top оставьте 0), Rewards;
+	  ref_settings, ref_quests, ref_wheel, ref_rewards → Settings, Quests, WheelDisc (Base/Top оставьте 0), Rewards
+	    (на этих значках уже есть подпись — своя подпись кнопки скрывается автоматически);
 	  ref_wins, ref_strength, ref_luck → Wins, Strength, Luck;
 	  ref_level_sword, ref_power_sword → LevelSword, PowerSword.
 	Как поставить настоящие иконки (из папки art/icons):

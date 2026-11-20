@@ -44,6 +44,13 @@ local function setIcon(holder: Instance?, childName: string, key: string)
 		if fallback and fallback:IsA("GuiObject") then
 			fallback.Visible = false
 		end
+		-- значки справа сверху уже с подписью — свою подпись прячем
+		if (childName == "Icon" or childName == "Disc") and holder.Parent and holder.Parent.Name == "TopRight" then
+			local lbl = holder:FindFirstChild("Label")
+			if lbl and lbl:IsA("GuiObject") then
+				lbl.Visible = false
+			end
+		end
 		-- если загружена картинка-плитка, убираем цветной фон кнопки
 		-- (плитки с референса уже содержат подпись — свою подпись прячем, если символа нет)
 		if childName == "Tile" and (IconConfig[key:gsub("Tile$", "Symbol")] or "rbxassetid://0") == "rbxassetid://0" then
@@ -200,7 +207,12 @@ local function animate(t: number)
 	-- колесо фортуны и значок «!»
 	local wheel = find("TopRight.WheelButton")
 	if wheel then
-		for _, child in ipairs({ "Disc", "Fallback" }) do
+		-- вращаем только эмодзи-заглушку; картинка с подписью покачивается
+		local disc = wheel:FindFirstChild("Disc")
+		if disc and disc:IsA("GuiObject") then
+			disc.Rotation = 6 * math.sin(t * 2)
+		end
+		for _, child in ipairs({ "Fallback" }) do
 			local d = wheel:FindFirstChild(child)
 			if d and d:IsA("GuiObject") then
 				d.Rotation = (t * 50) % 360
