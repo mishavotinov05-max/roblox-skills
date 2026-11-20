@@ -146,10 +146,12 @@ def write_place(path, services):
 # ---------- Детали ----------
 
 def part(name, size, pos, color, material="SmoothPlastic", r=None, anchored=True, collide=True,
-         transparency=0, shape=None, cls="Part", query=True, touch=True, cast_shadow=True, children=None):
+         transparency=0, shape=None, cls="Part", query=True, touch=True, cast_shadow=True, children=None, studs=False):
+    sf = 3 if studs else 0  # SurfaceType: Smooth = 0, Studs = 3 — классические «пупырышки» Roblox
     props = [
         P("bool", "Anchored", anchored),
-        P("token", "BottomSurface", 0), P("token", "TopSurface", 0),
+        P("token", "BottomSurface", 0), P("token", "TopSurface", sf),
+        P("token", "FrontSurface", sf), P("token", "BackSurface", sf), P("token", "LeftSurface", sf), P("token", "RightSurface", sf),
         P("cf", "CFrame", (pos, r or IDENT)),
         P("bool", "CanCollide", collide),
         P("bool", "CanQuery", query),
@@ -229,9 +231,10 @@ def text_button(name, text, size, pos, bg, color=(255, 255, 255), radius=12, str
     return inst
 
 
-def image(name, img, size, pos, visible=True, **kw):
+def image(name, img, size, pos, visible=True, stretch=False, **kw):
+    # ScaleType: Stretch = 0, Fit = 3
     return Inst("ImageLabel", name, gui_base(name, size, pos, visible=visible, **kw)
-                + [P("content", "Image", img), P("token", "ScaleType", 3)])  # ScaleType.Fit = 3
+                + [P("content", "Image", img), P("token", "ScaleType", 0 if stretch else 3)])
 
 
 def image_button(name, size, pos, children=None, **kw):

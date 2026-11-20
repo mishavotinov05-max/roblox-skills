@@ -3,6 +3,7 @@
 Запуск:  python3 tools/build_place.py
 Результат: games/wall-breaker/WallBreaker.rbxlx — открыть двойным щелчком в Roblox Studio.
 """
+import json
 import math
 import os
 import random
@@ -102,10 +103,11 @@ def build_hub():
         n[0] += 1
         tops.append((min(x0, x1), max(x0, x1), min(z0, z1), max(z0, z1), h + 1.6))
         col = cr.choice(((236, 128, 72), (226, 112, 60), (245, 145, 85)))
-        walls.add(part(f"Cliff_{n[0]}", (x1 - x0, h, z1 - z0), ((x0 + x1) / 2, h / 2, (z0 + z1) / 2), col, "SmoothPlastic"))
+        walls.add(part(f"Cliff_{n[0]}", (x1 - x0, h, z1 - z0), ((x0 + x1) / 2, h / 2, (z0 + z1) / 2), col, "Plastic", studs=True))
         walls.add(part(f"Trim_{n[0]}", (x1 - x0 + 0.2, 0.8, z1 - z0 + 0.2), ((x0 + x1) / 2, h - 0.4, (z0 + z1) / 2), (255, 190, 120),
                        "SmoothPlastic", collide=False))
-        walls.add(part(f"GrassCliff_{n[0]}", (x1 - x0 + 0.4, 1.6, z1 - z0 + 0.4), ((x0 + x1) / 2, h + 0.8, (z0 + z1) / 2), GRASS, "Grass"))
+        walls.add(part(f"GrassCliff_{n[0]}", (x1 - x0 + 0.4, 1.6, z1 - z0 + 0.4), ((x0 + x1) / 2, h + 0.8, (z0 + z1) / 2), GRASS, "Plastic",
+                       studs=True))
         return h
 
     def side(a0, a1, place, skip=None):
@@ -726,14 +728,29 @@ def top_button(name, text, emoji, order):
     return b
 
 
-def stat_card(name, emoji, title, color, order):
-    """Цветная карточка показателя: значок слева, название и значение справа."""
-    r = frame(name, ((0, 150), (0, 60)), ((0, 0), (0, 0)), bg=color, bgt=0, order=order)
+SKINS = json.load(open(os.path.join(ROOT, "art", "ui_ref", "skins.json")))
+
+
+def stat_card(name, emoji, title, color, order, skin):
+    """Карточка показателя. Skin — картинка карточки (UI-скин из art/ui_ref); пока её ID не вставлен,
+    видна простая цветная карточка. Число пишется в Value — на месте, где число на картинке."""
+    meta = SKINS[skin]
+    w = 200
+    h = round(w / meta["ratio"])
+    r = frame(name, ((0, w), (0, h)), ((0, 0), (0, 0)), bg=color, bgt=0, order=order)
     r.add(ui_corner(0, 14), ui_stroke(4, DARK))
-    r.add(image("Icon", "", ((0, 46), (0, 46)), ((0, 6), (0.5, 0)), anchor=(0, 0.5), visible=False, z=2))
-    r.add(label("Fallback", emoji, ((0, 40), (0, 40)), ((0, 8), (0.5, 0)), anchor=(0, 0.5), stroke=0))
-    r.add(label("Title", title, ((1, -60), (0, 20)), ((0, 56), (0, 6)), stroke=2.5))
-    r.add(label("Value", "0", ((1, -60), (0, 28)), ((0, 56), (0, 26)), stroke=3))
+    r.add(image("Skin", "", ((1, 0), (1, 0)), ((0, 0), (0, 0)), visible=False, stretch=True, z=1))
+    r.add(image("Icon", "", ((0, h - 16), (0, h - 16)), ((0, 8), (0.5, 0)), anchor=(0, 0.5), visible=False, z=2))
+    r.add(label("Fallback", emoji, ((0, h - 20), (0, h - 20)), ((0, 10), (0.5, 0)), anchor=(0, 0.5), stroke=0, z=2))
+    vx, vy, vw, vh = meta["value"]
+    if skin == "card_rebirth":
+        vx, vy, vw, vh = 0.36, 0.5, 0.44, 0.36  # число по центру тёмной «таблетки»
+    if "title" in meta:
+        tx, ty, tw, th = meta["title"]
+        r.add(label("Title", title, ((tw, 0), (th, 0)), ((tx, 0), (ty, 0)), stroke=2.5, z=3))
+    else:  # перерождения: название над «таблеткой»
+        r.add(label("Title", title, ((0.6, 0), (0.36, 0)), ((0.36, 0), (0.05, 0)), stroke=2.5, z=3))
+    r.add(label("Value", "0", ((vw, 0), (vh * 0.9, 0)), ((vx + vw / 2, 0), (vy + vh / 2, 0)), anchor=(0.5, 0.5), stroke=3, z=3))
     return r
 
 
@@ -791,12 +808,12 @@ def build_gui():
 
     # ===== Слева снизу: цветные карточки показателей =====
     # размер: UIScale "Size" (Scale = 0.6) — поменяйте число, чтобы сделать крупнее/мельче
-    stats = frame("Stats", ((0, 150), (0, 264)), ((0, 3), (1, -3)), anchor=(0, 1))
-    stats.add(ui_list(padding=6), ui_scale("Size", 0.7))
-    stats.add(stat_card("WinsRow", "🏆", "Победы", (255, 196, 40), 1))
-    stats.add(stat_card("StrengthRow", "💪", "Сила", (235, 55, 55), 2))
-    stats.add(stat_card("LuckRow", "🍀", "Удача", (60, 200, 70), 3))
-    stats.add(stat_card("RebirthRow", "🔄", "Перерожд.", (150, 70, 235), 4))
+    stats = frame("Stats", ((0, 200), (0, 330)), ((0, 3), (1, -3)), anchor=(0, 1))
+    stats.add(ui_list(padding=4, valign=2), ui_scale("Size", 0.7))
+    stats.add(stat_card("WinsRow", "🏆", "Победы", (255, 196, 40), 1, "card_wins"))
+    stats.add(stat_card("StrengthRow", "💪", "Сила", (235, 55, 55), 2, "card_strength"))
+    stats.add(stat_card("LuckRow", "🍀", "Удача", (60, 200, 70), 3, "card_luck"))
+    stats.add(stat_card("RebirthRow", "🔄", "Перерождения", (230, 70, 30), 4, "card_rebirth"))
     hud.add(stats)
 
     # ===== Справа сверху: Настройки, Задания, Колесо, Награды =====
@@ -820,25 +837,32 @@ def build_gui():
 
     # ===== Снизу: большая «N Сила», «Мощный удар», полоса уровня и кнопки опыта =====
     # размер: UIScale "Size" (Scale = 0.6)
-    power = frame("PowerPanel", ((0, 1030), (0, 286)), ((0.5, 0), (1, -8)), anchor=(0.5, 1))
+    power = frame("PowerPanel", ((0, 1030), (0, 306)), ((0.5, 0), (1, -8)), anchor=(0.5, 1))
     power.add(ui_scale("Size", 0.6))
     power.add(label("StrengthBig", "0 Сила", ((0.7, 0), (0, 86)), ((0.02, 0), (0, 0)), stroke=6, z=2))
     strike = text_button("PowerStrikeButton", "", ((0.27, 0), (0, 76)), ((1, 0), (0, 6)), (255, 200, 40), anchor=(1, 0), stroke=0)
     strike.add(image("Icon", "", ((0, 64), (0, 64)), ((0, 4), (0.5, 0)), anchor=(0, 0.5), visible=False, z=3),
                label("Fallback", "🗡️", ((0, 60), (0, 60)), ((0, 6), (0.5, 0)), anchor=(0, 0.5), stroke=0, z=3),
-               label("Text", "Мощный\nудар", ((1, -76), (1, -10)), ((0, 70), (0, 5)), stroke=3.5, z=3))
+               label("Text", "Мощный\nудар", ((1, -76), (1, -10)), ((0, 70), (0, 5)), stroke=3.5, z=3),
+               image("Skin", "", ((1, 0), (1, 0)), ((0, 0), (0, 0)), visible=False, stretch=True, z=2))
     power.add(strike)
-    lbar = frame("LevelBar", ((1, 0), (0, 80)), ((0, 0), (0, 96)), bg=(60, 60, 80), bgt=0, clip=False)
+    # полоса уровня: Skin — пустая (тёмная) картинка, Fill/Skin — полная (жёлтая), обрезается по проценту
+    lb = SKINS["levelbar"]
+    bh = lb["barBottom"] - lb["barTop"]
+    skin_size, skin_pos = ((1, 0), (1 / bh, 0)), ((0, 0), (-lb["barTop"] / bh, 0))
+    lbar = frame("LevelBar", ((1, 0), (0, 110)), ((0, 0), (0, 90)), bg=(60, 60, 80), bgt=0, clip=False)
     lbar.add(ui_corner(0, 18), ui_stroke(5, DARK))
-    lfill = frame("Fill", ((0.5, 0), (1, 0)), ((0, 0), (0, 0)), bg=(255, 196, 40), bgt=0)
+    lbar.add(image("Skin", "", skin_size, skin_pos, visible=False, stretch=True, z=1))
+    lfill = frame("Fill", ((0.5, 0), (1, 0)), ((0, 0), (0, 0)), bg=(255, 196, 40), bgt=0, clip=True, z=2)
     lfill.add(ui_corner(0, 18))
+    lfill.add(image("Skin", "", skin_size, skin_pos, visible=False, stretch=True, z=2))
     lbar.add(lfill)
     lbar.add(image("Icon", "", ((0, 84), (0, 84)), ((0, 4), (0.5, 0)), anchor=(0, 0.5), visible=False, z=3))
     lbar.add(label("Fallback", "🗡️", ((0, 76), (0, 76)), ((0, 8), (0.5, 0)), anchor=(0, 0.5), stroke=0, z=3))
     lbar.add(label("Level", "Уровень 1", ((0.5, 0), (0, 60)), ((0, 96), (0.5, 0)), anchor=(0, 0.5), xalign=0, stroke=5, z=3))
     lbar.add(label("Xp", "0 / 10", ((0.4, 0), (0, 52)), ((1, -16), (0.5, 0)), anchor=(1, 0.5), xalign=1, stroke=5, z=3))
     power.add(lbar)
-    xpb = frame("XpButtons", ((1, 0), (0, 94)), ((0, 0), (0, 190)))
+    xpb = frame("XpButtons", ((1, 0), (0, 94)), ((0, 0), (0, 210)))
     xpb.add(ui_list(horizontal=True, padding=10, halign=0, valign=1))
     for k, (nm, col) in enumerate((("XpSmallButton", (255, 196, 40)), ("XpMediumButton", (150, 60, 235)), ("XpBigButton", (235, 55, 70)))):
         xpb.add(text_button(nm, "+0 очков опыта", ((0.32, 0), (1, 0)), ((0, 0), (0, 0)), col, order=k + 1, radius=16))

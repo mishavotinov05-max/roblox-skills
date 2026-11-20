@@ -10,7 +10,7 @@ const [NM, TREE, OUT] = process.argv.slice(2);
 const ART = path.resolve(here, '../../art');
 fs.mkdirSync(OUT, { recursive: true });
 
-const ICON_LIST = ['ref_shop', 'ref_pets', 'ref_auras', 'ref_rebirth', 'ref_wheel', 'ref_settings', 'ref_quests', 'ref_rewards', 'ref_wins', 'ref_strength', 'ref_luck', 'ref_level_sword', 'ref_power_sword', 'layer_tile_shop', 'layer_sym_shop', 'layer_tile_pets', 'layer_sym_pets', 'layer_tile_auras', 'layer_sym_auras',
+const ICON_LIST = ['ui_card_wins', 'ui_card_strength', 'ui_card_luck', 'ui_card_rebirth', 'ui_levelbar_empty', 'ui_levelbar_full', 'ui_power_button', 'ref_shop', 'ref_pets', 'ref_auras', 'ref_rebirth', 'ref_wheel', 'ref_settings', 'ref_quests', 'ref_rewards', 'ref_wins', 'ref_strength', 'ref_luck', 'ref_level_sword', 'ref_power_sword', 'layer_tile_shop', 'layer_sym_shop', 'layer_tile_pets', 'layer_sym_pets', 'layer_tile_auras', 'layer_sym_auras',
   'layer_tile_rebirth', 'layer_sym_rebirth', 'layer_wheel_base', 'layer_wheel_disc', 'layer_wheel_top', 'bar_settings', 'bar_daily',
   'bar_rewards', 'stat_wins', 'stat_strength', 'stat_luck', 'icon_sword', 'icon_sword_dark'];
 
@@ -22,19 +22,23 @@ const IMG = {
   'TopRight.SettingsButton.Icon': 'ref_settings', 'TopRight.QuestsButton.Icon': 'ref_quests', 'TopRight.RewardsButton.Icon': 'ref_rewards',
   'Stats.WinsRow.Icon': 'ref_wins', 'Stats.StrengthRow.Icon': 'ref_strength', 'Stats.LuckRow.Icon': 'ref_luck', 'Stats.RebirthRow.Icon': 'layer_sym_rebirth',
   'PowerPanel.LevelBar.Icon': 'ref_level_sword', 'PowerPanel.PowerStrikeButton.Icon': 'ref_power_sword',
+  'Stats.WinsRow.Skin': 'ui_card_wins', 'Stats.StrengthRow.Skin': 'ui_card_strength', 'Stats.LuckRow.Skin': 'ui_card_luck', 'Stats.RebirthRow.Skin': 'ui_card_rebirth',
+  'PowerPanel.LevelBar.Skin': 'ui_levelbar_empty', 'PowerPanel.LevelBar.Fill.Skin': 'ui_levelbar_full', 'PowerPanel.PowerStrikeButton.Skin': 'ui_power_button',
 };
 const SHOW = {}, BG = {}, NOSTROKE = {};
 for (const p of Object.keys(IMG)) {
   SHOW[p] = true;
-  SHOW[p.replace(/\.(Tile|Symbol|Icon|Base|Disc|Top)$/, '.Fallback')] = false;
-  if (p.endsWith('.Tile')) { const b = p.replace(/\.Tile$/, ''); BG[b] = 1; NOSTROKE[b] = true; }
+  SHOW[p.replace(/\.(Tile|Symbol|Icon|Base|Disc|Top|Skin)$/, '.Fallback')] = false;
+  if (p.endsWith('.Tile') || p.endsWith('.Skin')) { const b = p.replace(/\.(Tile|Skin)$/, ''); BG[b] = 1; NOSTROKE[b] = true; }
 }
 SHOW['TopRight.RewardsButton.Badge'] = true;
+for (const r of ['WinsRow', 'StrengthRow', 'LuckRow', 'RebirthRow']) { SHOW[`Stats.${r}.Title`] = false; SHOW[`Stats.${r}.Fallback`] = false; SHOW[`Stats.${r}.Icon`] = false; }
+SHOW['PowerPanel.LevelBar.Icon'] = false; SHOW['PowerPanel.LevelBar.Fallback'] = false;
 for (const b of ['ShopButton', 'PetsButton', 'AurasButton', 'RebirthButton']) SHOW[`LeftMenu.${b}.Label`] = false;
 for (const b of ['SettingsButton', 'QuestsButton', 'WheelButton', 'RewardsButton']) SHOW[`TopRight.${b}.Label`] = false;
 
 const HUD_TEXT = {
-  'Stats.WinsRow.Value': '7.45K', 'Stats.StrengthRow.Value': '360M', 'Stats.LuckRow.Value': '12.5%', 'Stats.RebirthRow.Value': '3',
+  'Stats.WinsRow.Value': '7.45K', 'Stats.StrengthRow.Value': '360M', 'Stats.LuckRow.Value': '12.5%', 'Stats.RebirthRow.Value': '0',
   'PowerPanel.StrengthBig': '360M Сила', 'PowerPanel.LevelBar.Level': 'Уровень 272', 'PowerPanel.LevelBar.Xp': '3.82M / 4.99M',
   'PowerPanel.XpButtons.XpSmallButton': '+2.5M очков\nопыта', 'PowerPanel.XpButtons.XpMediumButton': '+15M очков\nопыта',
   'PowerPanel.XpButtons.XpBigButton': '+74.9M очков\nопыта', 'PowerPanel.PowerStrikeButton.Text': 'Мощный\nудар',
@@ -67,6 +71,7 @@ page.on('console', (m) => { if (m.type() === 'error') console.log('console:', m.
 await page.route('http://p.local/**', (route) => {
   const p = new URL(route.request().url()).pathname;
   let f = files[p];
+  if (!f && p.startsWith('/icons/ui_')) f = [path.join(ART, 'ui_ref', path.basename(p).slice(3)), 'image/png'];
   if (!f && p.startsWith('/icons/ref_')) f = [path.join(ART, 'icons_ref', path.basename(p)), 'image/png'];
   if (!f && p.startsWith('/icons/')) f = [path.join(ART, 'icons', path.basename(p)), 'image/png'];
   if (!f && p.startsWith('/textures/')) f = [path.join(ART, 'textures', path.basename(p)), 'image/png'];

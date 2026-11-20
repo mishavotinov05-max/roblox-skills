@@ -41,6 +41,16 @@ return {
 	LevelSword = "rbxassetid://0", -- icon_sword.png
 	PowerSword = "rbxassetid://0", -- icon_sword_dark.png
 
+	-- Карточки слева внизу и полоса уровня — целые картинки (папка art/ui_ref).
+	-- Число игра пишет сама поверх картинки.
+	WinsCard = "rbxassetid://0", -- card_wins.png
+	StrengthCard = "rbxassetid://0", -- card_strength.png
+	LuckCard = "rbxassetid://0", -- card_luck.png
+	RebirthCard = "rbxassetid://0", -- card_rebirth.png
+	LevelBarEmpty = "rbxassetid://0", -- levelbar_empty.png
+	LevelBarFull = "rbxassetid://0", -- levelbar_full.png
+	PowerButton = "rbxassetid://0", -- power_button.png
+
 	-- Показатели
 	Strength = "rbxassetid://0", -- stat_strength.png (рука)
 	Luck = "rbxassetid://0", -- stat_luck.png

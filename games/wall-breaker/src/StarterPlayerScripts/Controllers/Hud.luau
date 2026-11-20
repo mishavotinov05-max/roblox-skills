@@ -69,6 +69,48 @@ local function setIcon(holder: Instance?, childName: string, key: string)
 	end
 end
 
+-- Картинка-скин вместо простой цветной плашки: фон и обводку прячем, лишние подписи тоже
+local function setSkin(holder: Instance?, key: string, hide: { string })
+	if not holder then
+		return false
+	end
+	local id = IconConfig[key]
+	local img = holder:FindFirstChild("Skin")
+	if not img or not img:IsA("ImageLabel") or not id or id == "" or id == "rbxassetid://0" then
+		return false
+	end
+	img.Image = id
+	img.Visible = true
+	if holder:IsA("GuiObject") then
+		holder.BackgroundTransparency = 1
+	end
+	local stroke = holder:FindFirstChildOfClass("UIStroke")
+	if stroke then
+		stroke.Enabled = false
+	end
+	for _, n in ipairs(hide) do
+		local o = holder:FindFirstChild(n)
+		if o and o:IsA("GuiObject") then
+			o.Visible = false
+		end
+	end
+	return true
+end
+
+local levelSkin = false
+local LEVEL_START = 0.122 -- где на картинке полосы кончается меч (из art/ui_ref/skins.json)
+
+local function applySkins()
+	setSkin(find("Stats.WinsRow"), "WinsCard", { "Icon", "Fallback", "Title" })
+	setSkin(find("Stats.StrengthRow"), "StrengthCard", { "Icon", "Fallback", "Title" })
+	setSkin(find("Stats.LuckRow"), "LuckCard", { "Icon", "Fallback", "Title" })
+	setSkin(find("Stats.RebirthRow"), "RebirthCard", { "Icon", "Fallback", "Title" })
+	setSkin(find("PowerPanel.PowerStrikeButton"), "PowerButton", {})
+	if setSkin(find("PowerPanel.LevelBar"), "LevelBarEmpty", { "Icon", "Fallback" }) then
+		levelSkin = setSkin(find("PowerPanel.LevelBar.Fill"), "LevelBarFull", {})
+	end
+end
+
 local function applyIcons()
 	setIcon(find("LeftMenu.ShopButton"), "Tile", "ShopTile")
 	setIcon(find("LeftMenu.ShopButton"), "Symbol", "ShopSymbol")
@@ -137,7 +179,18 @@ local function refreshStats()
 	setText("PowerPanel.LevelBar.Xp", ("%s / %s"):format(Format.Short(data.Xp or 0), Format.Short(need)))
 	local fill = find("PowerPanel.LevelBar.Fill")
 	if fill and fill:IsA("GuiObject") then
-		fill.Size = UDim2.new(math.clamp((data.Xp or 0) / need, 0.02, 1), 0, 1, 0)
+		local pct = math.clamp((data.Xp or 0) / need, 0.02, 1)
+		if levelSkin then
+			-- жёлтая картинка начинается под мечом и растягивается до процента; внутри — на всю длину полосы
+			local w = LEVEL_START + pct * (1 - LEVEL_START)
+			fill.Size = UDim2.new(w, 0, 1, 0)
+			local inner = fill:FindFirstChild("Skin")
+			if inner and inner:IsA("GuiObject") then
+				inner.Size = UDim2.new(1 / w, 0, inner.Size.Y.Scale, 0)
+			end
+		else
+			fill.Size = UDim2.new(pct, 0, 1, 0)
+		end
 	end
 	for buttonName, key in pairs(XP_BUTTONS) do
 		setText("PowerPanel.XpButtons." .. buttonName, ("+%s очков\nопыта"):format(Format.Short(need * productFactor(key))))
@@ -292,6 +345,7 @@ end
 function Hud.Init()
 	gui = Players.LocalPlayer:WaitForChild("PlayerGui"):WaitForChild("MainHud") :: ScreenGui
 	applyIcons()
+	applySkins()
 	bindButton("LeftMenu.ShopButton", "ShopPanel")
 	bindButton("LeftMenu.PetsButton", "PetsPanel")
 	bindButton("LeftMenu.AurasButton", "AurasPanel")
