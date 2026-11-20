@@ -71,7 +71,9 @@ function TextureApplier.Apply()
 			end
 		end)
 		each(hub:FindFirstChild("Walls"), function(p)
-			if p.Name:sub(1, 5) == "Grass" then
+			if p.Name:match("^Cliff") or p.Name:match("^Trim") then
+				return -- гладкие стены без текстуры
+			elseif p.Name:sub(1, 5) == "Grass" then
 				grassCap(p)
 			else
 				add(p, tex("brick"), ALL, 12, 12)

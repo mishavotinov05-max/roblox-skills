@@ -98,7 +98,10 @@ def build_hub():
 
     def cliff(x0, x1, z0, z1, h):
         n[0] += 1
-        walls.add(part(f"Cliff_{n[0]}", (x1 - x0, h, z1 - z0), ((x0 + x1) / 2, h / 2, (z0 + z1) / 2), BRICK, "Brick"))
+        col = cr.choice(((236, 128, 72), (226, 112, 60), (245, 145, 85)))
+        walls.add(part(f"Cliff_{n[0]}", (x1 - x0, h, z1 - z0), ((x0 + x1) / 2, h / 2, (z0 + z1) / 2), col, "SmoothPlastic"))
+        walls.add(part(f"Trim_{n[0]}", (x1 - x0 + 0.2, 0.8, z1 - z0 + 0.2), ((x0 + x1) / 2, h - 0.4, (z0 + z1) / 2), (255, 190, 120),
+                       "SmoothPlastic", collide=False))
         walls.add(part(f"GrassCliff_{n[0]}", (x1 - x0 + 0.4, 1.6, z1 - z0 + 0.4), ((x0 + x1) / 2, h + 0.8, (z0 + z1) / 2), GRASS, "Grass"))
         return h
 
@@ -109,8 +112,11 @@ def build_hub():
             w = cr.choice((8, 12, 12, 16, 20))
             w = min(w, a1 - a)
             if skip and a < skip[1] and a + w > skip[0]:
-                a = skip[1]
-                continue
+                if a < skip[0]:
+                    w = skip[0] - a  # дотягиваем блок вплотную к арке — без дырки
+                else:
+                    a = skip[1]
+                    continue
             h = cr.choice((12, 14, 16, 18, 20))
             d0 = 0
             for tier in range(cr.choice((2, 3, 3))):
@@ -127,8 +133,8 @@ def build_hub():
     side(-HD - 10, HD + 10, lambda a0, a1, d0, d1, h: cliff(HW + d0, HW + d1, a0, a1, h))
     side(XL - 10, HW + 10, lambda a0, a1, d0, d1, h: cliff(a0, a1, -HD - d1, -HD - d0, h), skip=(-14, 14))
     # над аркой — перемычка, по бокам арки — блоки
-    cliff(-14, -13.2, -HD - 6, -HD, 23)
-    cliff(13.2, 14, -HD - 6, -HD, 23)
+    cliff(-14, -13, -HD - 30, -HD, 23)
+    cliff(13, 14, -HD - 30, -HD, 23)
     walls.add(wall_box("WallNorthTop", 28, 6, 6, 0, -HD - 3, y0=23))
     walls.add(grass_cap("GrassNorthTop", 28.4, 6.4, 0, -HD - 3, 29))
 
@@ -695,8 +701,8 @@ def left_button(name, text, emoji, color, order, label_size=19):
 
 def top_button(name, text, emoji, order):
     """Кнопка справа сверху: большой значок без фона + подпись снизу (как на референсе)."""
-    b = image_button(name, ((0, 88), (0, 92)), ((0, 0), (0, 0)), bgt=1, order=order)
-    b.add(image("Icon", "", ((0, 64), (0, 64)), ((0.5, 0), (0, 2)), anchor=(0.5, 0), visible=False, z=2))
+    b = image_button(name, ((0, 100), (0, 102)), ((0, 0), (0, 0)), bgt=1, order=order)
+    b.add(image("Icon", "", ((0, 100), (0, 100)), ((0.5, 0), (0, 0)), anchor=(0.5, 0), visible=False, z=2))
     b.add(label("Fallback", emoji, ((0, 58), (0, 58)), ((0.5, 0), (0, 4)), anchor=(0.5, 0), stroke=0, z=2))
     b.add(label("Label", text, ((1.05, 0), (0, 19)), ((0.5, 0), (1, 0)), anchor=(0.5, 1), z=3, stroke=2.5))
     return b
@@ -776,13 +782,13 @@ def build_gui():
     hud.add(stats)
 
     # ===== Справа сверху: Настройки, Задания, Колесо, Награды =====
-    top = frame("TopRight", ((0, 400), (0, 96)), ((1, -8), (0, 4)), anchor=(1, 0))
-    top.add(ui_list(horizontal=True, padding=10, halign=2, valign=1))
+    top = frame("TopRight", ((0, 420), (0, 104)), ((1, -6), (0, 2)), anchor=(1, 0))
+    top.add(ui_list(horizontal=True, padding=0, halign=2, valign=1))
     top.add(top_button("SettingsButton", "Настройки", "⚙️", 1))
     top.add(top_button("QuestsButton", "Задания", "📜", 2))
-    wheel = image_button("WheelButton", ((0, 88), (0, 92)), ((0, 0), (0, 0)), bgt=1, order=3)
+    wheel = image_button("WheelButton", ((0, 100), (0, 102)), ((0, 0), (0, 0)), bgt=1, order=3)
     for nm, z in (("Base", 3), ("Disc", 4), ("Top", 5)):
-        wheel.add(image(nm, "", ((0, 64), (0, 64)), ((0.5, 0), (0, 2)), anchor=(0.5, 0), visible=False, z=z))
+        wheel.add(image(nm, "", ((0, 100), (0, 100)), ((0.5, 0), (0, 0)), anchor=(0.5, 0), visible=False, z=z))
     wheel.add(label("Fallback", "🎡", ((0, 58), (0, 58)), ((0.5, 0), (0, 4)), anchor=(0.5, 0), stroke=0, z=3))
     wheel.add(label("Label", "Колесо", ((1.05, 0), (0, 19)), ((0.5, 0), (1, 0)), anchor=(0.5, 1), z=6, stroke=2.5))
     top.add(wheel)
