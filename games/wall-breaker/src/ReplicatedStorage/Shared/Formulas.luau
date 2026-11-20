@@ -8,8 +8,9 @@ local Catalog = require(script.Parent:WaitForChild("Catalog"))
 
 local Formulas = {}
 
+-- Надетые питомцы складываются: x1.2 + x1.5 = x2.7 (без питомцев — x1)
 function Formulas.PetMultiplier(data): number
-	local m = 1
+	local m = 0
 	local byUid = {}
 	for _, pet in ipairs(data.Pets or {}) do
 		byUid[pet.Uid] = pet
@@ -18,10 +19,10 @@ function Formulas.PetMultiplier(data): number
 		local pet = byUid[uid]
 		local def = pet and Catalog.Pets[pet.Id]
 		if def then
-			m += def.Bonus
+			m += def.Multiplier or 0
 		end
 	end
-	return m
+	return math.max(1, m)
 end
 
 function Formulas.AuraMultiplier(data): number

@@ -173,6 +173,7 @@ local function setupSlots()
 			local priceText = cfg.Price == 0 and "Бесплатно" or Format.Short(cfg.Price)
 			MapService.SetText(slot.BuyPad, "Price", priceText)
 			MapService.SetText(slot.Model, "PickName", cfg.Name)
+			MapService.SetText(slot.Model, "PickInfo", ("%s · x%s Силы"):format(cfg.Rarity or "", Format.Short(cfg.Power)))
 			if prompt then
 				prompt.ObjectText = ("%s · сила ×%s"):format(cfg.Name, Format.Short(cfg.Power))
 				prompt.ActionText = cfg.Price == 0 and "Взять" or ("Купить за " .. priceText)

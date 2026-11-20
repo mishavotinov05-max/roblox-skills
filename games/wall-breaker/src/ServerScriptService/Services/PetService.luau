@@ -10,12 +10,16 @@ local Settings = require(Config:WaitForChild("GameSettings"))
 local Shared = ReplicatedStorage:WaitForChild("Shared")
 local Catalog = require(Shared:WaitForChild("Catalog"))
 local Format = require(Shared:WaitForChild("Format"))
+local PetConfig = require(Config:WaitForChild("PetConfig"))
+local ShopConfig = require(Config:WaitForChild("ShopConfig"))
+local MarketplaceService = game:GetService("MarketplaceService")
 local Remotes = require(Shared:WaitForChild("Remotes"))
 
 local Services = script.Parent
 local DataService = require(Services:WaitForChild("DataService"))
 local RequestService = require(Services:WaitForChild("RequestService"))
 local MapService = require(Services:WaitForChild("MapService"))
+local MonetizationService = require(Services:WaitForChild("MonetizationService"))
 
 local PetService = {}
 local rng = Random.new()
@@ -63,19 +67,8 @@ local function rollPet(egg): string
 	return egg.Pets[#egg.Pets][1]
 end
 
-function PetService.OpenEgg(player: Player, eggId: string)
-	local data = DataService.Get(player)
-	local egg = type(eggId) == "string" and Catalog.Eggs[eggId]
-	if not data or not egg then
-		return { ok = false }
-	end
-	if #data.Pets >= Settings.MaxPetsInInventory then
-		return { ok = false, msg = "Инвентарь питомцев полон — удалите лишних" }
-	end
-	if data.Wins < egg.Price then
-		return { ok = false, msg = ("Нужно %s побед"):format(Format.Short(egg.Price)) }
-	end
-	data.Wins -= egg.Price
+-- Выдать питомца из яйца (после оплаты победами или Robux)
+local function hatch(player: Player, data, egg)
 	local petId = rollPet(egg)
 	local uid = data.NextPetUid
 	data.NextPetUid += 1
@@ -86,9 +79,57 @@ function PetService.OpenEgg(player: Player, eggId: string)
 	end
 	PetService.UpdateAttribute(player)
 	DataService.MarkDirty(player)
-	-- клиент показывает анимацию открытия, а после неё — сообщение
+	-- клиент показывает анимацию-рулетку, а после неё — сообщение
 	Remotes.Event("Effect"):FireClient(player, "Egg", egg.Id, petId)
-	return { ok = true, pet = petId }
+	return petId
+end
+
+-- Игрок должен стоять рядом с яйцом на карте
+local function nearEgg(player: Player, eggId: string): boolean
+	local character = player.Character
+	local root = character and character:FindFirstChild("HumanoidRootPart") :: BasePart?
+	if not root then
+		return false
+	end
+	for _, egg in ipairs(MapService.Eggs()) do
+		if egg.Id == eggId then
+			local pivot = egg.Model:GetPivot().Position
+			return (Vector3.new(pivot.X, root.Position.Y, pivot.Z) - root.Position).Magnitude < 25
+		end
+	end
+	return false
+end
+
+function PetService.OpenEgg(player: Player, eggId: string)
+	local data = DataService.Get(player)
+	local egg = type(eggId) == "string" and Catalog.Eggs[eggId]
+	if not data or not egg then
+		return { ok = false }
+	end
+	if not nearEgg(player, egg.Id) then
+		return { ok = false, msg = "Подойди к яйцу" }
+	end
+	if #data.Pets >= Settings.MaxPetsInInventory then
+		return { ok = false, msg = "Инвентарь питомцев полон — удалите лишних" }
+	end
+	if egg.RobuxProduct then
+		local id = 0
+		for _, p in ipairs(ShopConfig.Products) do
+			if p.Key == egg.RobuxProduct then
+				id = p.Id
+			end
+		end
+		if id == 0 then
+			return { ok = false, msg = "Покупка ещё не настроена (товар " .. egg.RobuxProduct .. " в ShopConfig)" }
+		end
+		MarketplaceService:PromptProductPurchase(player, id)
+		return { ok = true, prompted = true }
+	end
+	if data.Wins < egg.Price then
+		return { ok = false, msg = ("Нужно %s побед"):format(Format.Short(egg.Price)) }
+	end
+	data.Wins -= egg.Price
+	return { ok = true, pet = hatch(player, data, egg) }
 end
 
 function PetService.Equip(player: Player, uid: number)
@@ -121,7 +162,7 @@ function PetService.EquipBest(player: Player)
 	local sorted = table.clone(data.Pets)
 	table.sort(sorted, function(a, b)
 		local da, db = Catalog.Pets[a.Id], Catalog.Pets[b.Id]
-		return (da and da.Bonus or 0) > (db and db.Bonus or 0)
+		return (da and da.Multiplier or 0) > (db and db.Multiplier or 0)
 	end)
 	data.EquippedPets = {}
 	for i = 1, math.min(Settings.MaxEquippedPets, #sorted) do
@@ -155,25 +196,24 @@ function PetService.Init()
 		PetService.UpdateAttribute(player)
 	end)
 
+	-- Яйца за Robux: после оплаты сразу открываем
+	for _, egg in ipairs(PetConfig.Eggs) do
+		if egg.RobuxProduct then
+			MonetizationService.RegisterProductHandler(egg.RobuxProduct, function(player, data)
+				hatch(player, data, egg)
+				return true
+			end)
+		end
+	end
+
+	-- Подписи на карточках яиц
 	task.spawn(function()
 		for _, egg in ipairs(MapService.Eggs()) do
 			local cfg = Catalog.Eggs[egg.Id]
-			local prompt = MapService.FindPrompt(egg.Model)
 			if cfg then
 				MapService.SetText(egg.Model, "Title", cfg.Name)
-				MapService.SetText(egg.Model, "Price", Format.Short(cfg.Price))
-				if prompt then
-					prompt.ObjectText = cfg.Name
-					prompt.ActionText = "Открыть за " .. Format.Short(cfg.Price)
-					prompt.Triggered:Connect(function(player)
-						local res = PetService.OpenEgg(player, cfg.Id)
-						if res and res.msg then
-							RequestService.Notify(player, res.msg, "error")
-						end
-					end)
-				end
-			elseif prompt then
-				prompt.Enabled = false
+				MapService.SetText(egg.Model, "Tag", cfg.Tag or "")
+				MapService.SetText(egg.Model, "Price", cfg.RobuxProduct and (tostring(cfg.RobuxPrice) .. " Robux") or (Format.Short(cfg.Price) .. " Побед"))
 			end
 		end
 	end)

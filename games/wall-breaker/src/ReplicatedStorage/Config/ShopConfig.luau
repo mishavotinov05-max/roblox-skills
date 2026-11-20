@@ -40,5 +40,13 @@ return {
 		{ Key = "luck_robux", Id = 0, Name = "+50% удачи", LuckPercent = 50 },
 		{ Key = "spin", Id = 0, Name = "Вращение колеса", Spins = 1 },
 		{ Key = "level_x3", Id = 0, Name = "×3 награда за уровень", Hidden = true },
+		-- Пакеты опыта (кнопки под полосой уровня). XpFactor — сколько «уровней» опыта:
+		-- опыт = опыт, нужный для текущего уровня × XpFactor
+		{ Key = "xp_small", Id = 0, Name = "Опыт: малый", XpFactor = 0.5, Hidden = true },
+		{ Key = "xp_medium", Id = 0, Name = "Опыт: средний", XpFactor = 3, Hidden = true },
+		{ Key = "xp_big", Id = 0, Name = "Опыт: большой", XpFactor = 15, Hidden = true },
+		-- Яйца за Robux (PetConfig → RobuxProduct)
+		{ Key = "egg_divine", Id = 0, Name = "Божественное яйцо", Hidden = true },
+		{ Key = "egg_devil", Id = 0, Name = "Дьявольское яйцо", Hidden = true },
 	},
 }

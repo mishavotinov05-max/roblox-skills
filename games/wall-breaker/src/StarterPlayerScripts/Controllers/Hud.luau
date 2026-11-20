@@ -9,6 +9,7 @@ local Workspace = game:GetService("Workspace")
 
 local Config = ReplicatedStorage:WaitForChild("Config")
 local IconConfig = require(Config:WaitForChild("IconConfig"))
+local ShopConfig = require(Config:WaitForChild("ShopConfig"))
 local Shared = ReplicatedStorage:WaitForChild("Shared")
 local Format = require(Shared:WaitForChild("Format"))
 local Formulas = require(Shared:WaitForChild("Formulas"))
@@ -17,6 +18,7 @@ local Remotes = require(Shared:WaitForChild("Remotes"))
 local Controllers = script.Parent
 local State = require(Controllers:WaitForChild("State"))
 local Panels = require(Controllers:WaitForChild("Panels"))
+local Toasts = require(Controllers:WaitForChild("Toasts"))
 
 local Hud = {}
 local gui: ScreenGui
@@ -70,6 +72,8 @@ local function applyIcons()
 	setIcon(find("TopRight.QuestsButton"), "Icon", "Quests")
 	setIcon(find("TopRight.SettingsButton"), "Icon", "Settings")
 	setIcon(find("Stats.StrengthRow"), "Icon", "Strength")
+	setIcon(find("PowerPanel.LevelBar"), "Icon", "LevelSword")
+	setIcon(find("PowerPanel.PowerStrikeButton"), "Icon", "PowerSword")
 	setIcon(find("Stats.LuckRow"), "Icon", "Luck")
 	setIcon(find("Stats.WinsRow"), "Icon", "Wins")
 end
@@ -90,23 +94,60 @@ local function setText(path: string, text: string)
 	end
 end
 
+local XP_BUTTONS = { XpSmallButton = "xp_small", XpMediumButton = "xp_medium", XpBigButton = "xp_big" }
+
+local function productFactor(key: string): number
+	for _, p in ipairs(ShopConfig.Products) do
+		if p.Key == key then
+			return p.XpFactor or 1
+		end
+	end
+	return 1
+end
+
 local function refreshStats()
 	local data = State.Data
 	if not data then
 		return
 	end
 	local infinite = Players.LocalPlayer:GetAttribute("Infinite") == true
-	setText("Stats.StrengthRow.Value", "Сила: " .. (infinite and "∞" or Format.Comma(data.Strength)))
-	setText("Stats.LuckRow.Value", ("Удача: %s%%"):format(Format.Short(Formulas.LuckPercent(data, State.HasPass("LuckX2")))))
-	setText("Stats.WinsRow.Value", "Победы: " .. (infinite and "∞" or Format.Comma(data.Wins)))
-	setText("Stats.RebirthRow.Value", "Перерождения: " .. tostring(data.Rebirths))
-	-- полоса уровня игрока
-	local need = Formulas.XpForLevel(data.PlayerLevel or 1)
-	setText("XpBar.Level", "Уровень " .. tostring(data.PlayerLevel or 1))
-	setText("XpBar.Bar.Text", ("%s / %s"):format(Format.Short(data.Xp or 0), Format.Short(need)))
-	local fill = find("XpBar.Bar.Fill")
+	setText("Stats.WinsRow.Value", infinite and "∞" or Format.Short(data.Wins))
+	setText("Stats.StrengthRow.Value", infinite and "∞" or Format.Short(data.Strength))
+	setText("Stats.LuckRow.Value", Format.Short(Formulas.LuckPercent(data, State.HasPass("LuckX2"))) .. "%")
+	setText("Stats.RebirthRow.Value", tostring(data.Rebirths))
+	-- большая надпись силы и полоса уровня
+	setText("PowerPanel.StrengthBig", (infinite and "∞" or Format.Short(data.Strength)) .. " Сила")
+	local level = data.PlayerLevel or 1
+	local need = Formulas.XpForLevel(level)
+	setText("PowerPanel.LevelBar.Level", "Уровень " .. tostring(level))
+	setText("PowerPanel.LevelBar.Xp", ("%s / %s"):format(Format.Short(data.Xp or 0), Format.Short(need)))
+	local fill = find("PowerPanel.LevelBar.Fill")
 	if fill and fill:IsA("GuiObject") then
-		fill.Size = UDim2.new(math.clamp((data.Xp or 0) / need, 0, 1), 0, 1, 0)
+		fill.Size = UDim2.new(math.clamp((data.Xp or 0) / need, 0.02, 1), 0, 1, 0)
+	end
+	for buttonName, key in pairs(XP_BUTTONS) do
+		setText("PowerPanel.XpButtons." .. buttonName, ("+%s очков\nопыта"):format(Format.Short(need * productFactor(key))))
+	end
+end
+
+local function refreshTimers()
+	-- «Мощный удар»: активен / перезарядка / готов
+	local strikeText = find("PowerPanel.PowerStrikeButton.Text")
+	if strikeText and strikeText:IsA("TextLabel") then
+		local active = State.Countdown("PowerStrikeActiveFor")
+		local ready = State.Countdown("PowerStrikeReadyIn")
+		if active > 0 then
+			strikeText.Text = ("Активен\n%d сек"):format(math.ceil(active))
+		elseif ready > 0 then
+			strikeText.Text = ("Готов через\n%d сек"):format(math.ceil(ready))
+		else
+			strikeText.Text = "Мощный\nудар"
+		end
+	end
+	-- значок «1» на наградах, когда ежедневная награда готова
+	local badge = find("TopRight.RewardsButton.Badge")
+	if badge and badge:IsA("GuiObject") then
+		badge.Visible = State.Data ~= nil and State.Countdown("DailyReadyIn") <= 0
 	end
 end
 
@@ -167,7 +208,7 @@ local function animate(t: number)
 	-- маленькие кнопки справа сверху покачиваются
 	local small = find("TopRight")
 	if small then
-		for i, name in ipairs({ "AchievementsButton", "RewardsButton", "QuestsButton", "SettingsButton" }) do
+		for i, name in ipairs({ "SettingsButton", "QuestsButton", "RewardsButton" }) do
 			local btn = small:FindFirstChild(name)
 			if btn then
 				for _, child in ipairs({ "Icon", "Fallback" }) do
@@ -244,8 +285,31 @@ function Hud.Init()
 
 	State.Changed:Connect(function()
 		refreshStats()
+		refreshTimers()
 		updateWheelBadge()
 	end)
+
+	-- Кнопки опыта (Robux) и «Мощный удар»
+	local function request(action: string, ...)
+		local res = State.Request(action, ...)
+		if res and res.msg then
+			Toasts.Show(res.msg, res.ok and "info" or "error")
+		end
+	end
+	for buttonName, key in pairs(XP_BUTTONS) do
+		local b = find("PowerPanel.XpButtons." .. buttonName)
+		if b and b:IsA("GuiButton") then
+			b.Activated:Connect(function()
+				request("BuyProduct", key)
+			end)
+		end
+	end
+	local strike = find("PowerPanel.PowerStrikeButton")
+	if strike and strike:IsA("GuiButton") then
+		strike.Activated:Connect(function()
+			request("PowerStrike")
+		end)
+	end
 	Remotes.Event("LevelState").OnClientEvent:Connect(onLevelState)
 
 	fitScale()
@@ -261,6 +325,7 @@ function Hud.Init()
 		if acc > 1 then
 			acc = 0
 			updateWheelBadge()
+			refreshTimers()
 		end
 	end)
 end

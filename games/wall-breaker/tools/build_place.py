@@ -3,6 +3,7 @@
 Запуск:  python3 tools/build_place.py
 Результат: games/wall-breaker/WallBreaker.rbxlx — открыть двойным щелчком в Roblox Studio.
 """
+import math
 import os
 import random
 from rbxlx import (Inst, P, Frame3, rot, part, model, folder, point_light, prompt, script, frame, label, text_button,
@@ -15,7 +16,7 @@ SRC = os.path.join(ROOT, "src")
 OUT = os.path.join(ROOT, "WallBreaker.rbxlx")
 
 # ---------- Размеры лобби ----------
-HW, XL, HD = 64, -58, 64       # восточная стена x=HW, западная x=XL, север/юг z=∓HD
+HW, XL, HD = 64, -58, 76       # восточная стена x=HW, западная x=XL, север/юг z=∓HD
 WALLH, T = 24, 4
 LVL_LEN, LVL_COUNT = 96, 10
 LVL0 = -HD - T                  # начало первого уровня (сразу за северной стеной)
@@ -70,9 +71,9 @@ def build_hub():
     hub = folder("Hub")
 
     # --- Пол с отверстиями под ямы ---
-    pit_cols = [-36]
-    pit_rows = [-55, -33, -11, 11, 33, 55]
-    hole = 6.5
+    pit_cols = [PIT_X]
+    pit_rows = PIT_ROWS
+    hole = PIT_HOLE
     xs = sorted({XL, HW} | {c + s * hole for c in pit_cols for s in (-1, 1)})
     floor_f = folder("Floor")
     for i in range(len(xs) - 1):
@@ -121,7 +122,7 @@ def build_hub():
     for z in (-42, 42):
         n += 1
         decor.add(lantern(f"Lantern_{n}", (HW - 0.9, 11, z), light=(z == 42)))
-    for k, z in enumerate((-44, -22, 0, 22, 44)):
+    for k, z in enumerate((-52.5, -31.5, -10.5, 10.5, 31.5, 52.5)):
         decor.add(part(f"Path_{k + 1}", (-20.5 - XL, 0.12, 5), ((XL - 20.5) / 2, 0.06, z), (225, 200, 160), "Cobblestone"))
     decor.add(part("PathWest", (8, 0.12, 2 * HD - 2), (XL + 4, 0.06, 0), (225, 200, 160), "Cobblestone"))
     hub.add(decor)
@@ -132,7 +133,7 @@ def build_hub():
 
     hub.add(build_entrance())
     hub.add(build_pickaxe_shop())
-    hub.add(build_pits(pit_cols, pit_rows, hole))
+    hub.add(build_pits())
     hub.add(build_eggs())
     hub.add(build_trader())
     return hub
@@ -154,176 +155,323 @@ def build_entrance():
     return m
 
 
-PICKAXES = [  # (цвет головки, цвет рукояти, неон) — как в PickaxeConfig
-    ((217, 160, 102), (107, 63, 29), False), ((195, 200, 210), (168, 106, 60), False), ((255, 178, 122), (168, 106, 60), False),
-    ((241, 244, 250), (168, 106, 60), False), ((255, 216, 77), (168, 106, 60), False), ((109, 255, 168), (168, 106, 60), True),
-    ((255, 122, 140), (168, 106, 60), True), ((159, 248, 255), (168, 106, 60), True), ((138, 92, 255), (59, 42, 85), True),
-    ((106, 80, 84), (59, 42, 46), False), ((255, 176, 240), (138, 92, 255), True), ((255, 225, 77), (94, 231, 255), True),
+# ---------- Кирки: 16 штук, 4 ряда-ступени (как PickaxeConfig) ----------
+PICKS = [  # имя, редкость, цена (текст), множитель, цвет головки, цвет рукояти
+    ("Деревянная", "Обычная", "Бесплатно", "x1", (205, 140, 80), (107, 63, 29)),
+    ("Каменная", "Обычная", "5", "x1.3", (190, 195, 205), (140, 90, 50)),
+    ("Медная", "Обычная", "15", "x1.7", (230, 130, 70), (140, 90, 50)),
+    ("Железная", "Редкая", "40", "x2.5", (235, 240, 250), (140, 90, 50)),
+    ("Стальная", "Редкая", "100", "x3.5", (150, 165, 185), (90, 60, 40)),
+    ("Золотая", "Эпическая", "250", "x5", (255, 210, 60), (140, 90, 50)),
+    ("Алмазная", "Эпическая", "600", "x7.5", (110, 240, 255), (140, 90, 50)),
+    ("Изумрудная", "Эпическая", "1.5K", "x10", (70, 230, 120), (140, 90, 50)),
+    ("Обсидиановая", "Легендарная", "4K", "x15", (130, 70, 220), (60, 40, 80)),
+    ("Ледяная", "Легендарная", "10K", "x20", (160, 230, 255), (90, 130, 170)),
+    ("Огненная", "Легендарная", "25K", "x30", (255, 110, 30), (90, 40, 20)),
+    ("Электрическая", "Легендарная", "60K", "x40", (80, 200, 255), (40, 60, 110)),
+    ("Космическая", "Божественная", "150K", "x60", (150, 110, 255), (40, 30, 90)),
+    ("Ангельская", "Божественная", "400K", "x80", (255, 240, 200), (230, 190, 90)),
+    ("Теневая", "Божественная", "1M", "x100", (90, 40, 140), (30, 20, 40)),
+    ("Дьявольская", "Божественная", "2.5M", "x150", (220, 30, 40), (40, 15, 15)),
 ]
-PICK_NAMES = ["Деревянная", "Каменная", "Медная", "Железная", "Золотая", "Изумрудная", "Рубиновая", "Алмазная",
-              "Обсидиановая", "Незеритовая", "Кристальная", "Радужная"]
-PICK_PRICES = ["Бесплатно", "5", "15", "40", "100", "250", "600", "1.5K", "4K", "10K", "25K", "60K"]
+RARITY_COL = {"Обычная": (190, 195, 210), "Редкая": (70, 160, 255), "Эпическая": (170, 90, 255),
+              "Легендарная": (255, 190, 40), "Божественная": (255, 60, 80)}
 
 
-def display_pickaxe(x, y, z, head, handle, neon):
+def display_pickaxe(x, y, z, head, handle, glow):
+    """Кирка на витрине: рукоять + изогнутая головка из 5 сегментов."""
     m = model("Display")
-    m.add(part("Handle", (0.5, 5, 0.5), (x, y + 2.5, z), handle, "Wood", collide=False))
-    m.add(part("Head", (0.7, 0.7, 3.6), (x, y + 4.8, z), head, "Neon" if neon else "Metal", collide=False))
+    mat = "Neon" if glow else "Metal"
+    m.add(part("Handle", (0.5, 5.2, 0.5), (x, y + 2.6, z), handle, "Wood", collide=False))
+    m.add(part("Collar", (0.8, 0.8, 0.8), (x, y + 5.0, z), head, mat, collide=False))
+    for k, (dz, dy, ang) in enumerate(((0, 0, 0), (1.0, -0.12, -15), (1.9, -0.45, -32), (-1.0, -0.12, 15), (-1.9, -0.45, 32))):
+        m.add(part(f"Head{k + 1}", (0.6, 0.6, 1.15 if k else 1.2), (x, y + 5.3 + dy, z + dz), head, mat, r=rot(ang, 0, 0), collide=False))
     for s in (-1, 1):
-        m.add(part(f"Tip{'A' if s < 0 else 'B'}", (0.55, 0.55, 1.4), (x, y + 4.35, z + s * 2.2), head, "Neon" if neon else "Metal",
-                   r=rot(s * 35, 0, 0), collide=False))
+        m.add(part(f"Tip{'A' if s < 0 else 'B'}", (0.45, 0.45, 0.8), (x, y + 4.45, z + s * 2.6), head, mat, r=rot(s * 55, 0, 0),
+                   collide=False))
     return m
 
 
 def build_pickaxe_shop():
     shop = model("PickaxeShop")
-    SHOP_Z, ROW_D, STEP = 30, 8, 3
-    row_x = [HW - 3 * ROW_D, HW - 2 * ROW_D, HW - ROW_D]
-    row_col = [(255, 225, 77), (94, 231, 255), (255, 95, 210)]
+    SHOP_Z, ROW_D, STEP = 30, 7, 2.5
+    row_x = [HW - 4 * ROW_D + k * ROW_D for k in range(4)]
+    row_col = [(190, 195, 210), (70, 160, 255), (255, 190, 40), (255, 60, 80)]
     steps = folder("Steps")
     steps.add(part("Row1", (ROW_D, 0.4, 2 * SHOP_Z), (row_x[0] + ROW_D / 2, 0.2, 0), FLOOR, "Slate"))
-    steps.add(part("Row2", (HW - row_x[1], STEP, 2 * SHOP_Z), ((row_x[1] + HW) / 2, STEP / 2, 0), STONE, "Cobblestone"))
-    steps.add(part("Row3", (HW - row_x[2], 2 * STEP, 2 * SHOP_Z), ((row_x[2] + HW) / 2, STEP, 0), STONE, "Cobblestone"))
-    steps.add(part("Stair1", (3, STEP / 2, 5), (row_x[1] - 1.5, STEP / 4, 0), STONE, "Cobblestone"))
-    steps.add(part("Stair2", (3, STEP * 1.5, 5), (row_x[2] - 1.5, STEP * 0.75, 0), STONE, "Cobblestone"))
+    for k in range(1, 4):
+        steps.add(part(f"Row{k + 1}", (HW - row_x[k], STEP * k, 2 * SHOP_Z), ((row_x[k] + HW) / 2, STEP * k / 2, 0), STONE, "Cobblestone"))
+        steps.add(part(f"Stair{k}", (2.5, STEP * (k - 0.5), 5), (row_x[k] - 1.25, STEP * (k - 0.5) / 2, 0), STONE, "Cobblestone"))
     for r, x in enumerate(row_x):
         steps.add(part(f"Edge{r + 1}", (0.35, 0.35, 2 * SHOP_Z), (x + 0.2, r * STEP + 0.6, 0), row_col[r], "Neon",
                        collide=False, cast_shadow=False))
     shop.add(steps)
-    shop.add(part("BackWall", (1.2, 18, 2 * SHOP_Z + 4), (HW - 0.6, 2 * STEP + 9, 0), WOOD, "WoodPlanks"))
-    shop.add(sign_part("Sign", (22, 5, 0.6), (HW - 1.4, 21.5, 0), rot(0, 90, 0), "Магазин кирок", "3 ряда · подойди и купи"))
+    shop.add(part("BackWall", (1.2, 20, 2 * SHOP_Z + 4), (HW - 0.6, 3 * STEP + 10, 0), WOOD, "WoodPlanks"))
+    shop.add(sign_part("Sign", (24, 5.4, 0.6), (HW - 1.4, 24.5, 0), rot(0, 90, 0), "КИРКИ", "Коллекция: 16 кирок"))
 
     slots = folder("Slots")
-    slot_z = [-22, -9, 9, 22]
+    slot_z = [-21, -7, 7, 21]
     idx = 0
     for r, x0 in enumerate(row_x):
         y = r * STEP + (0.4 if r == 0 else 0)
         for z in slot_z:
-            head, handle, neon = PICKAXES[idx]
+            name, rarity, price, mult, head, handle = PICKS[idx]
+            rc = RARITY_COL[rarity]
             s = model(f"Slot_{idx + 1:02d}")
-            px = x0 + ROW_D - 2
-            ped = part("Pedestal", (2.6, 2.2, 2.6), (px, y + 1.1, z), STONE, "Cobblestone")
-            ped.add(billboard("NameGui", (200, 40), (0, 9.2, 0), [
-                label("PickName", PICK_NAMES[idx], ((1, 0), (1, 0)), ((0, 0), (0, 0)), stroke=3)]))
+            px = x0 + ROW_D - 1.8
+            ped = part("Pedestal", (2.4, 1.6, 2.4), (px, y + 0.8, z), (60, 50, 90), "Slate")
+            ped.add(billboard("NameGui", (210, 62), (0, 9.3, 0), max_dist=34, children=[
+                label("PickName", name, ((1, 0), (0.55, 0)), ((0, 0), (0, 0)), stroke=3),
+                frame("Tag", ((0.9, 0), (0.42, 0)), ((0.05, 0), (0.57, 0)), bg=(26, 16, 51), bgt=0.15, children=[
+                    ui_corner(1, 0), ui_stroke(2, rc),
+                    label("PickInfo", f"{rarity} · {mult} Силы", ((1, -8), (1, -4)), ((0, 4), (0, 2)), color=rc, stroke=2)])]))
             s.add(ped)
-            s.add(part("Glow", (2.8, 0.25, 2.8), (px, y + 2.3, z), row_col[r], "Neon", collide=False, cast_shadow=False))
-            s.add(display_pickaxe(px, y + 2.4, z, head, handle, neon))
-            pad = part("BuyPad", (4, 0.3, 4), (x0 + 2.6, y + 0.15, z), (42, 23, 87), "SmoothPlastic",
-                       children=[prompt("Купить", PICK_NAMES[idx]),
-                                 billboard("PriceGui", (160, 50), (0, 2.6, 0), [
+            s.add(part("Glow", (2.6, 0.2, 2.6), (px, y + 1.7, z), rc, "Neon", collide=False, cast_shadow=False))
+            s.add(display_pickaxe(px, y + 1.8, z, head, handle, rarity in ("Легендарная", "Божественная")))
+            pad = part("BuyPad", (3.6, 0.3, 3.6), (x0 + 2.2, y + 0.15, z), (42, 23, 87), "SmoothPlastic",
+                       children=[prompt("Купить", name),
+                                 billboard("PriceGui", (150, 46), (0, 2.4, 0), max_dist=30, children=[
                                      frame("Bg", ((1, 0), (1, 0)), ((0, 0), (0, 0)), bg=(42, 23, 87), bgt=0.15,
-                                           children=[ui_corner(0, 14), ui_stroke(3, row_col[r]),
-                                                     label("Icon", "🏆", ((0, 40), (1, 0)), ((0, 4), (0, 0)), stroke=0),
-                                                     label("Price", PICK_PRICES[idx], ((1, -50), (1, -8)), ((0, 46), (0, 4)),
+                                           children=[ui_corner(0, 14), ui_stroke(3, rc),
+                                                     label("Icon", "🏆", ((0, 38), (1, 0)), ((0, 4), (0, 0)), stroke=0),
+                                                     label("Price", price, ((1, -48), (1, -8)), ((0, 44), (0, 4)),
                                                            color=(255, 225, 77), stroke=2.5)])])])
             s.add(pad)
-            s.add(part("PadFrame", (4.4, 0.2, 4.4), (x0 + 2.6, y + 0.05, z), row_col[r], "Neon", collide=False, cast_shadow=False))
+            s.add(part("PadFrame", (4, 0.2, 4), (x0 + 2.2, y + 0.05, z), rc, "Neon", collide=False, cast_shadow=False))
             slots.add(s)
             idx += 1
     shop.add(slots)
     return shop
 
 
-PIT_LOOK = [  # материал и цвет ямы, цвет бортика — как в превью
-    ("Землянка", "Pebble", (122, 82, 51), (176, 122, 69)),
-    ("Угольная", "Slate", (50, 52, 60), (80, 84, 95)),
-    ("Каменная", "Cobblestone", (160, 165, 175), (195, 201, 212)),
-    ("Железная", "DiamondPlate", (215, 220, 230), (243, 230, 216)),
-    ("Золотая", "Foil", (255, 200, 40), (255, 199, 46)),
-    ("Алмазная", "Ice", (95, 227, 240), (94, 231, 255)),
+# ---------- Ямы: 7 штук, как на картинке ----------
+PIT_STYLE = [  # имя, перерождения, материал ямы, цвет ямы, цвет камня бортика, акцент (рамка/свет)
+    ("Обычная яма", 0, "Pebble", (110, 75, 50), (125, 112, 160), (150, 140, 190)),
+    ("Угольная яма", 3, "Slate", (40, 40, 46), (90, 86, 110), (255, 140, 40)),
+    ("Каменная яма", 9, "Cobblestone", (150, 152, 160), (160, 162, 172), (120, 200, 90)),
+    ("Железная яма", 18, "DiamondPlate", (150, 160, 180), (110, 125, 150), (90, 170, 255)),
+    ("Золотая яма", 36, "Foil", (200, 150, 40), (150, 110, 60), (255, 200, 40)),
+    ("Алмазная яма", 50, "Ice", (60, 120, 220), (80, 95, 170), (90, 220, 255)),
+    ("Мифическая яма", 65, "Basalt", (70, 30, 110), (95, 60, 140), (230, 80, 255)),
 ]
-PIT_SUBS = ["открыта · +1 силы", "🔒 2 перерождения", "🔒 5 перерождений", "🔒 10 перерождений", "🔒 20 перерождений", "🔒 40 перерождений"]
+PIT_ROWS = [-63, -42, -21, 0, 21, 42, 63]
+PIT_X = -36
+PIT_HOLE = 6  # половина ширины ямы
 
 
-def build_pits(cols, rows, hole):
+def crystal(name, pos, size, color, tilt=(0, 0, 0)):
+    return part(name, size, pos, color, "Neon", r=rot(*tilt), collide=False)
+
+
+def build_pits():
     pits = folder("Pits")
-    depth = 5
-    walk_x = -51
-    idx = 0
-    for c in cols:
-        for zc in rows:
-            idx += 1
-            if idx <= len(PIT_LOOK):
-                name, mat, color, rim = PIT_LOOK[idx - 1]
-                sub = PIT_SUBS[idx - 1]
-                bg = (122, 60, 255) if idx == 1 else (74, 79, 102)
-            else:
-                name, mat, color, rim, sub, bg = "Новая яма", "Concrete", (90, 90, 110), (85, 90, 112), "свободное место", (47, 52, 72)
-            m = model(f"Pit_{idx:02d}")
-            m.add(part("PitFloor", (2 * hole, 1, 2 * hole), (c, -depth - 0.5, zc), color, mat))
-            for side, (dx, dz, sx, sz) in {"N": (0, -hole - 0.5, 2 * hole + 2, 1), "S": (0, hole + 0.5, 2 * hole + 2, 1),
-                                           "W": (-hole - 0.5, 0, 1, 2 * hole), "E": (hole + 0.5, 0, 1, 2 * hole)}.items():
-                m.add(part(f"Wall{side}", (sx, depth, sz), (c + dx, -depth / 2, zc + dz), color, mat))
-            for side, (dx, dz, sx, sz) in {"N": (0, -hole, 2 * hole, 0.6), "S": (0, hole, 2 * hole, 0.6),
-                                           "W": (-hole, 0, 0.6, 2 * hole), "E": (hole, 0, 0.6, 2 * hole)}.items():
-                m.add(part(f"Rim{side}", (sx, 0.3, sz), (c + dx, 0.15, zc + dz), rim, "Neon", collide=False, cast_shadow=False))
-            # забор: вход со стороны дорожки между рядами
-            fence = folder("Fence")
-            fr = 8
-            open_side = "W"
-            posts = []
-            for k in range(-2, 3):
-                v = k * fr / 2
-                posts += [("N", v, -fr), ("S", v, fr), ("W", -fr, v), ("E", fr, v)]
-            seen = set()
-            for side, a, b in posts:
-                px, pz = a, b
-                if side == open_side and abs(b) < 0.1:
-                    continue
-                key = (round(px, 2), round(pz, 2))
-                if key in seen:
-                    continue
-                seen.add(key)
-                fence.add(part("Post", (0.6, 3.2, 0.6), (c + px, 1.6, zc + pz), (154, 98, 53), "WoodPlanks"))
-            for side in "NSWE":
-                for y in (1.3, 2.7):
-                    if side in "NS":
-                        fence.add(part("Rail", (2 * fr, 0.3, 0.3), (c, y, zc + (-fr if side == "N" else fr)), (181, 122, 69), "WoodPlanks"))
-                    elif side == open_side:
-                        for s in (-1, 1):
-                            fence.add(part("Rail", (0.3, 0.3, fr / 2), (c + (-fr if side == "W" else fr), y, zc + s * (fr * 0.75)),
-                                           (181, 122, 69), "WoodPlanks"))
-                    else:
-                        fence.add(part("Rail", (0.3, 0.3, 2 * fr), (c + (-fr if side == "W" else fr), y, zc), (181, 122, 69), "WoodPlanks"))
-            m.add(fence)
-            # табличка с дальней стороны ямы, смотрит на главный проход (+X)
-            sx = c - fr - 1.4
-            m.add(part("SignPostA", (0.5, 5, 0.5), (sx - 0.4, 2.5, zc - 2.5), WOOD, "Wood"))
-            m.add(part("SignPostB", (0.5, 5, 0.5), (sx - 0.4, 2.5, zc + 2.5), WOOD, "Wood"))
-            m.add(sign_part("Sign", (10, 3.6, 0.4), (sx, 6.8, zc), rot(0, -90, 0), name, sub, bg=bg, border=rim))
-            m.add(part("TrainZone", (2 * hole, 8, 2 * hole), (c, -1, zc), (255, 255, 255), "SmoothPlastic", transparency=1,
-                       collide=False, query=False, touch=False, cast_shadow=False))
-            m.add(part("LockBarrier", (2 * hole, 0.6, 2 * hole), (c, 0.3, zc), rim, "ForceField", transparency=0.2))
-            pits.add(m)
+    depth, h = 5, PIT_HOLE
+    rr = random.Random(11)
+    for idx, zc in enumerate(PIT_ROWS):
+        name, reb, mat, color, rim_col, accent = PIT_STYLE[idx]
+        c = PIT_X
+        m = model(f"Pit_{idx + 1:02d}")
+        m.add(part("PitFloor", (2 * h, 1, 2 * h), (c, -depth - 0.5, zc), color, mat))
+        for side, (dx, dz, sx, sz) in {"N": (0, -h - 0.5, 2 * h + 2, 1), "S": (0, h + 0.5, 2 * h + 2, 1),
+                                       "W": (-h - 0.5, 0, 1, 2 * h), "E": (h + 0.5, 0, 1, 2 * h)}.items():
+            m.add(part(f"Wall{side}", (sx, depth, sz), (c + dx, -depth / 2, zc + dz), color, mat))
+        # каменный бортик из блоков разной высоты
+        rim = folder("Rim")
+        k = 0
+        for side in "NSWE":
+            for t in range(6):
+                a = -h - 0.5 + (t + 0.5) * (2 * h + 1) / 6
+                bh = 0.6 + rr.random() * 1.2
+                if side in "NS":
+                    pos = (c + a, bh / 2, zc + (-h - 1.2 if side == "N" else h + 1.2))
+                    size = (2.1, bh, 2.2)
+                else:
+                    pos = (c + (-h - 1.2 if side == "W" else h + 1.2), bh / 2, zc + a)
+                    size = (2.2, bh, 2.1)
+                k += 1
+                blk = part(f"Block{k}", size, pos, rim_col, "DiamondPlate" if idx == 3 else "Slate")
+                rim.add(blk)
+                if idx == 3 and t % 2 == 0:  # заклёпки на железной яме
+                    rim.add(part(f"Rivet{k}", (0.35, 0.35, 0.35), (pos[0], bh + 0.1, pos[2]), accent, "Neon", collide=False))
+        m.add(rim)
+        props = folder("Props")
+        fy = -depth
+        if idx in (0, 2):  # камни и трава
+            for t in range(5):
+                s = 0.8 + rr.random() * (1.6 if idx == 2 else 0.8)
+                props.add(part(f"Rock{t}", (s, s * 0.8, s), (c + rr.uniform(-4, 4), fy + s * 0.4, zc + rr.uniform(-4, 4)),
+                               (120, 90, 60) if idx == 0 else (165, 168, 178), "Slate", r=rot(rr.uniform(0, 40), rr.uniform(0, 90), 0)))
+            for t, (gx, gz) in enumerate(((-h - 1.5, -h - 1.5), (h + 1.5, h + 1.5), (-h - 1.5, h + 1.2), (h + 1.2, -h - 1.6))):
+                for g in range(3):
+                    props.add(part(f"Grass{t}_{g}", (0.3, 1.2, 0.3), (c + gx + g * 0.3, 1.8, zc + gz), (90, 200, 70), "Grass",
+                                   r=rot(rr.uniform(-25, 25), 0, rr.uniform(-25, 25)), collide=False))
+        elif idx == 1:  # уголь, фонарь, кирка
+            for t in range(14):
+                s = 0.7 + rr.random() * 0.8
+                props.add(part(f"Coal{t}", (s, s, s), (c + rr.uniform(-4.5, 4.5), fy + s / 2, zc + rr.uniform(-4.5, 4.5)), (25, 25, 30),
+                               "Slate", r=rot(rr.uniform(0, 45), rr.uniform(0, 90), 0)))
+            for t in range(6):
+                props.add(part(f"Ember{t}", (0.5, 0.2, 0.5), (c + rr.uniform(-3, 3), fy + 0.15, zc + rr.uniform(-3, 3)), (255, 120, 30), "Neon",
+                               collide=False))
+            props.add(lantern("Lantern", (c + h + 1.2, 2.6, zc - h - 1.2)))
+            props.add(part("PickHandle", (0.4, 5, 0.4), (c - h - 1.6, 2.2, zc + h - 1), (140, 90, 50), "Wood", r=rot(25, 0, 0)))
+            props.add(part("PickHead", (0.5, 0.5, 3), (c - h - 1.6, 4.4, zc + h - 2), (180, 185, 195), "Metal", r=rot(25, 0, 0)))
+        elif idx == 3:  # железные блоки
+            for t in range(6):
+                s = 1.2 + rr.random() * 1.2
+                props.add(part(f"Iron{t}", (s, s, s), (c + rr.uniform(-4, 4), fy + s / 2, zc + rr.uniform(-4, 4)), (170, 180, 200),
+                               "DiamondPlate", r=rot(0, rr.uniform(0, 90), rr.uniform(0, 25))))
+        elif idx == 4:  # золотые кристаллы
+            for t in range(8):
+                hh = 1.5 + rr.random() * 2.5
+                props.add(crystal(f"Gold{t}", (c + rr.uniform(-4.5, 4.5), fy + hh / 2, zc + rr.uniform(-4.5, 4.5)), (0.8, hh, 0.8),
+                                  (255, 200, 40), (rr.uniform(-20, 20), 45, rr.uniform(-20, 20))))
+        elif idx == 5:  # алмазы
+            props.add(crystal("BigDiamondTop", (c, fy + 4.2, zc), (2.4, 2.4, 2.4), (110, 235, 255), (45, 45, 0)))
+            props.add(crystal("BigDiamondBottom", (c, fy + 2.6, zc), (1.7, 1.7, 1.7), (60, 180, 255), (45, 45, 0)))
+            for t in range(6):
+                hh = 1.5 + rr.random() * 2.2
+                props.add(crystal(f"Diamond{t}", (c + rr.uniform(-4.5, 4.5), fy + hh / 2, zc + rr.uniform(-4.5, 4.5)), (0.9, hh, 0.9),
+                                  (110, 235, 255), (rr.uniform(-25, 25), 45, rr.uniform(-25, 25))))
+        elif idx == 6:  # мифическая: кристаллы, вихрь, руны
+            for t, rad in enumerate((4.5, 3.2, 2.0, 0.9)):
+                props.add(part(f"Swirl{t}", (0.12, 2 * rad, 2 * rad), (c, fy + 0.08 + t * 0.03, zc), (230, 80, 255) if t % 2 == 0 else (120, 40, 200),
+                               "Neon", shape="Cylinder", r=rot(0, 0, 90), collide=False, cast_shadow=False))
+            for t in range(6):
+                hh = 2 + rr.random() * 2.5
+                props.add(crystal(f"Mythic{t}", (c + rr.choice((-4.6, 4.6)), fy + hh / 2, zc + rr.uniform(-4.5, 4.5)), (0.9, hh, 0.9),
+                                  (220, 90, 255), (rr.uniform(-20, 20), 45, rr.uniform(-20, 20))))
+            for t, (rx, rz) in enumerate(((-h - 1.8, -h + 1), (-h - 1.8, h - 1))):
+                rune = part(f"Rune{t}", (2, 1.2, 2), (c + rx, 0.6, zc + rz), (120, 80, 50), "WoodPlanks")
+                rune.add(surface_gui("RuneGui", "Top", 60, [label("Mark", "✦", ((1, 0), (1, 0)), ((0, 0), (0, 0)), color=(255, 200, 60), stroke=0)]))
+                props.add(rune)
+        m.add(props)
+        if idx >= 4:
+            light_part = part("Glow", (1, 1, 1), (c, fy + 2, zc), accent, "Neon", transparency=1, collide=False, query=False, touch=False,
+                              cast_shadow=False, children=[point_light(accent, 2.5, 22)])
+            m.add(light_part)
+        # табличка: название сверху, «Перерождения: N» снизу (смотрит на главный проход)
+        sx = c - h - 3.2
+        m.add(part("SignPostA", (0.5, 6, 0.5), (sx - 0.4, 3, zc - 3), WOOD, "Wood"))
+        m.add(part("SignPostB", (0.5, 6, 0.5), (sx - 0.4, 3, zc + 3), WOOD, "Wood"))
+        gui = surface_gui("SignGui", "Front", 40)
+        title_bg = frame("TitleBanner", ((1, 0), (0.48, 0)), ((0, 0), (0, 0)), bg=(60, 55, 80), bgt=0)
+        title_bg.add(ui_corner(0, 18), ui_stroke(6, accent), label("Title", name, ((0.94, 0), (0.86, 0)), ((0.03, 0), (0.07, 0)), stroke=4))
+        gui.add(title_bg)
+        req_bg = frame("ReqPlaque", ((0.9, 0), (0.38, 0)), ((0.05, 0), (0.58, 0)), bg=(35, 30, 50), bgt=0)
+        req_bg.add(ui_corner(0, 18), ui_stroke(5, accent), label("Sub", f"Перерождения: {reb}", ((0.92, 0), (0.8, 0)), ((0.04, 0), (0.1, 0)),
+                                                                 stroke=3))
+        gui.add(req_bg)
+        m.add(part("Sign", (12, 6, 0.4), (sx, 7.4, zc), DARK, "SmoothPlastic", r=rot(0, -90, 0), transparency=1, children=[gui]))
+        m.add(part("TrainZone", (2 * h, 8, 2 * h), (c, -1, zc), (255, 255, 255), "SmoothPlastic", transparency=1,
+                   collide=False, query=False, touch=False, cast_shadow=False))
+        m.add(part("LockBarrier", (2 * h, 0.6, 2 * h), (c, 0.3, zc), accent, "ForceField", transparency=0.2))
+        pits.add(m)
     return pits
 
 
-EGGS = [("common", -13, (242, 248, 255), (90, 180, 255), "Обычное яйцо", "10"),
-        ("rare", 0, (255, 200, 60), (255, 174, 0), "Редкое яйцо", "75"),
-        ("epic", 13, (200, 120, 255), (198, 107, 255), "Эпическое яйцо", "400")]
+# ---------- Яйца: 6 штук, как на картинке ----------
+EGG_STYLE = [  # id, название, бейдж, цена, цвет карточки
+    ("chicken", "Куриное\nЯйцо", "Обычное", "20 Побед", (255, 140, 40)),
+    ("steel", "Стальное\nЯйцо", "Редкое", "250 Побед", (40, 120, 255)),
+    ("magic", "Магическое\nЯйцо", "Эпическое", "1 000 Побед", (170, 60, 255)),
+    ("admin", "Админское\nЯйцо", "Легендарное", "2 000 Побед", (255, 170, 20)),
+    ("divine", "Божественное\nЯйцо", "Божественное", "100 Robux", (150, 120, 255)),
+    ("devil", "Дьявольское\nЯйцо", "Божественное", "150 Robux", (230, 30, 50)),
+]
+EGG_X = [57, 44, 30, 16, 2, -12]  # у южной стены: из зала слева направо — от Куриного к Дьявольскому
+
+
+def egg_body(m, x, y, z, color, mat="SmoothPlastic"):
+    egg = part("Egg", (4, 4, 4), (x, y, z), color, mat, shape="Ball", children=[
+        Inst("SpecialMesh", "Mesh", [P("token", "MeshType", 3), P("vec3", "Scale", (1, 1.3, 1))])])
+    m.add(egg)
+
+
+def ring(name, x, y, z, radius, color, mat="Metal", thick=0.35, tilt=0):
+    return part(name, (thick, 2 * radius, 2 * radius), (x, y, z), color, mat, shape="Cylinder", r=rot(tilt, 0, 90), collide=False)
 
 
 def build_eggs():
     eggs = folder("Eggs")
-    z = HD - 9
-    for egg_id, x, color, ring, title, price in EGGS:
+    z = HD - 12
+    for (egg_id, title, tag, price, card), x in zip(EGG_STYLE, EGG_X):
         m = model(f"Egg_{egg_id}")
-        ped = part("Pedestal", (2.2, 7, 7), (x, 1.1, z), STONE, "Cobblestone", shape="Cylinder", r=rot(0, 0, 90),
-                   children=[prompt("Открыть", title)])
-        m.add(ped)
-        m.add(part("Ring", (0.3, 7.4, 7.4), (x, 2.3, z), ring, "Neon", shape="Cylinder", r=rot(0, 0, 90), collide=False,
-                   cast_shadow=False))
-        egg = part("Egg", (4, 4, 4), (x, 5.4, z), color, "SmoothPlastic", shape="Ball", children=[
-            Inst("SpecialMesh", "Mesh", [P("token", "MeshType", 3), P("vec3", "Scale", (1, 1.3, 1))]),
-            billboard("InfoGui", (220, 90), (0, 4.6, 0), [
-                label("Title", title, ((1, 0), (0.55, 0)), ((0, 0), (0, 0)), stroke=3),
-                frame("PriceBg", ((0.7, 0), (0.42, 0)), ((0.15, 0), (0.58, 0)), bg=(26, 16, 51), bgt=0.2, children=[
-                    ui_corner(1, 0),
-                    label("Icon", "🏆", ((0.3, 0), (1, 0)), ((0.02, 0), (0, 0)), stroke=0),
-                    label("Price", price, ((0.62, 0), (0.9, 0)), ((0.34, 0), (0.05, 0)), color=(255, 225, 77), stroke=2)])])])
-        m.add(egg)
+        m.add(part("Pedestal", (1.6, 6.5, 6.5), (x, 0.8, z), (70, 60, 100), "Slate", shape="Cylinder", r=rot(0, 0, 90)))
+        m.add(part("Ring", (0.3, 6.9, 6.9), (x, 1.7, z), card, "Neon", shape="Cylinder", r=rot(0, 0, 90), collide=False, cast_shadow=False))
+        ey = 4.6
+        if egg_id == "chicken":
+            egg_body(m, x, ey, z, (245, 235, 215))
+            for k, (a, b) in enumerate(((0.4, 0.8), (-0.3, 0.2), (0.2, -0.5))):
+                m.add(part(f"Crack{k}", (0.12, 1.2, 0.12), (x + a, ey + b, z - 1.95), (90, 70, 50), "SmoothPlastic", r=rot(0, 0, 30 * (k - 1)),
+                           collide=False))
+            for k in range(10):
+                ang = k * 36
+                m.add(part(f"Straw{k}", (2.8, 0.35, 0.35), (x + 2.2 * math.cos(math.radians(ang)), 2.2, z + 2.2 * math.sin(math.radians(ang))),
+                           (230, 180, 60), "Fabric", r=rot(0, -ang + 90, 12), collide=False))
+        elif egg_id == "steel":
+            egg_body(m, x, ey, z, (120, 130, 145), "Metal")
+            for k, dy in enumerate((-1.2, 0.2, 1.5)):
+                m.add(ring(f"Band{k}", x, ey + dy, z, 2.05 - abs(dy) * 0.25, (170, 180, 195), "DiamondPlate", 0.5))
+        elif egg_id == "magic":
+            egg_body(m, x, ey, z, (140, 50, 220), "Neon")
+            for k in range(4):
+                m.add(part(f"Lattice{k}", (0.25, 5, 0.25), (x, ey, z), (255, 200, 60), "Foil", r=rot(0, 45 * k, 18), collide=False))
+            m.add(crystal("Gem", (x, ey, z - 2.05), (1, 1, 0.5), (230, 150, 255), (0, 0, 45)))
+        elif egg_id == "admin":
+            egg_body(m, x, ey, z, (30, 28, 36))
+            screen = part("Screen", (2.4, 1.4, 0.2), (x, ey, z - 2.0), (20, 10, 30), "SmoothPlastic", collide=False)
+            screen.add(surface_gui("ScreenGui", "Front", 60, [label("Prompt", ">_", ((1, 0), (1, 0)), ((0, 0), (0, 0)),
+                                                                    color=(255, 70, 220), stroke=0)]))
+            m.add(screen)
+            m.add(ring("CrownBase", x, ey + 2.6, z, 1.3, (255, 200, 40), "Foil", 0.6))
+            for k in range(5):
+                ang = math.radians(k * 72)
+                m.add(part(f"CrownSpike{k}", (0.4, 1.1, 0.4), (x + 1.1 * math.cos(ang), ey + 3.3, z + 1.1 * math.sin(ang)), (255, 200, 40), "Foil",
+                           collide=False))
+            for s in (-1, 1):
+                for k in range(3):
+                    m.add(part(f"Laurel{s}_{k}", (0.4, 1.2, 0.8), (x + s * (2.4 - k * 0.2), ey - 1.5 + k * 1.1, z - 0.6), (230, 180, 40), "Foil",
+                               r=rot(0, 0, -s * (20 + k * 15)), collide=False))
+        elif egg_id == "divine":
+            egg_body(m, x, ey, z, (250, 245, 235))
+            m.add(ring("GoldBand", x, ey, z, 2.05, (255, 200, 60), "Foil", 0.45))
+            m.add(crystal("Gem", (x, ey, z - 2.05), (0.9, 0.9, 0.5), (80, 200, 255), (0, 0, 45)))
+            m.add(ring("Halo", x, ey + 4.1, z, 1.6, (255, 220, 80), "Neon", 0.25, 0))
+            m.add(part("HaloHole", (0.3, 2.4, 2.4), (x, ey + 4.1, z), card, "SmoothPlastic", shape="Cylinder", r=rot(0, 0, 90),
+                       transparency=1, collide=False))
+            for s in (-1, 1):
+                for k in range(3):
+                    m.add(part(f"Wing{s}_{k}", (2.6 - k * 0.5, 0.5, 1.2), (x + s * (2.8 + k * 0.4), ey + 0.8 - k * 0.7, z + 0.3), (255, 255, 255),
+                               "SmoothPlastic", r=rot(0, 0, s * (25 - k * 10)), collide=False))
+        elif egg_id == "devil":
+            egg_body(m, x, ey, z, (35, 15, 18))
+            for k in range(6):
+                m.add(part(f"Crack{k}", (0.15, 1.6, 0.15), (x + math.cos(k) * 1.4, ey + math.sin(k * 2) * 1.2, z - 1.6 + abs(math.cos(k)) * 0.3),
+                           (255, 60, 30), "Neon", r=rot(0, 0, k * 40), collide=False))
+            for s in (-1, 1):
+                m.add(part(f"Horn{s}a", (0.7, 1.6, 0.7), (x + s * 1.3, ey + 2.6, z), (60, 20, 20), "SmoothPlastic", r=rot(0, 0, -s * 30), collide=False))
+                m.add(part(f"Horn{s}b", (0.45, 1.2, 0.45), (x + s * 1.9, ey + 3.6, z), (200, 40, 30), "SmoothPlastic", r=rot(0, 0, -s * 10),
+                           collide=False))
+            m.add(ring("Chain", x, ey - 0.6, z, 2.1, (90, 90, 100), "Metal", 0.3, 20))
+            m.add(ring("CrownBase", x, ey + 2.7, z, 0.9, (255, 200, 40), "Foil", 0.45))
+        # карточка-фон с названием, бейджем и ценой (смотрит на север, к игрокам)
+        gui = surface_gui("CardGui", "Front", 40)
+        bg = frame("Card", ((1, 0), (1, 0)), ((0, 0), (0, 0)), bg=card, bgt=0)
+        bg.add(ui_corner(0, 40), ui_stroke(10, (255, 255, 255), transparency=0.3))
+        bg.add(label("Title", title, ((0.92, 0), (0.24, 0)), ((0.04, 0), (0.03, 0)), stroke=6))
+        tagf = frame("TagBg", ((0.7, 0), (0.08, 0)), ((0.15, 0), (0.28, 0)), bg=(26, 16, 51), bgt=0.2)
+        tagf.add(ui_corner(1, 0), label("Tag", tag, ((0.9, 0), (0.8, 0)), ((0.05, 0), (0.1, 0)), stroke=3))
+        bg.add(tagf)
+        pricef = frame("PriceBg", ((0.88, 0), (0.13, 0)), ((0.06, 0), (0.84, 0)),
+                       bg=(40, 140, 60) if "Robux" in price else (60, 40, 20), bgt=0.1)
+        pricef.add(ui_corner(0, 26), ui_stroke(5, (255, 210, 80)),
+                   label("Icon", "💎" if "Robux" in price else "🏆", ((0.25, 0), (0.9, 0)), ((0.02, 0), (0.05, 0)), stroke=0),
+                   label("Price", price, ((0.7, 0), (0.86, 0)), ((0.28, 0), (0.07, 0)), color=(255, 225, 77), stroke=4))
+        bg.add(pricef)
+        gui.add(bg)
+        m.add(part("Card", (9, 13, 0.6), (x, 6.5, z + 4.2), DARK, "SmoothPlastic", children=[gui]))
         eggs.add(m)
-    eggs.add(sign_part("Sign", (16, 5, 0.6), (0, 15.5, HD - 1.6), rot(0, 0, 0), "ЯЙЦА", "питомцы усиливают силу"))
     return eggs
 
 
@@ -487,31 +635,34 @@ def fallback(text, size=((0.62, 0), (0.62, 0)), pos=((0.5, 0), (0.44, 0)), z=3):
     return label("Fallback", text, size, pos, anchor=(0.5, 0.5), stroke=0, z=z)
 
 
-def left_button(name, text, emoji, color, order, label_size=13):
-    b = image_button(name, ((0, 62), (0, 62)), ((0, 0), (0, 0)), bg=color, bgt=0, order=order)
-    b.add(ui_corner(0, 14), ui_stroke(3, DARK), ui_scale("Pulse"))
+def left_button(name, text, emoji, color, order, label_size=19):
+    """Большая плитка слева: картинка + подпись на нижнем краю (как на референсе)."""
+    b = image_button(name, ((0, 104), (0, 104)), ((0, 0), (0, 0)), bg=color, bgt=0, order=order)
+    b.add(ui_corner(0, 20), ui_stroke(4, DARK), ui_scale("Pulse"))
     b.add(image("Tile", "", ((1, 0), (1, 0)), ((0, 0), (0, 0)), visible=False, z=2))
-    b.add(image("Symbol", "", ((0.8, 0), (0.8, 0)), ((0.5, 0), (0.46, 0)), anchor=(0.5, 0.5), visible=False, z=3))
-    b.add(fallback(emoji, size=((0.6, 0), (0.6, 0)), pos=((0.5, 0), (0.42, 0))))
-    b.add(label("Label", text, ((1.25, 0), (0, label_size + 2)), ((0.5, 0), (1, 5)), anchor=(0.5, 1), z=4, stroke=2))
+    b.add(image("Symbol", "", ((0.78, 0), (0.78, 0)), ((0.5, 0), (0.42, 0)), anchor=(0.5, 0.5), visible=False, z=3))
+    b.add(fallback(emoji, size=((0.62, 0), (0.62, 0)), pos=((0.5, 0), (0.4, 0))))
+    b.add(label("Label", text, ((1.1, 0), (0, label_size + 6)), ((0.5, 0), (1, -2)), anchor=(0.5, 1), z=4, stroke=3))
     return b
 
 
-def small_button(name, text, emoji, order, color=(70, 48, 140)):
-    """Квадратная кнопка справа сверху: значок и подпись внутри квадрата."""
-    b = image_button(name, ((0, 56), (0, 56)), ((0, 0), (0, 0)), bg=color, bgt=0, order=order)
-    b.add(ui_corner(0, 12), ui_stroke(3, DARK))
-    b.add(image("Icon", "", ((0, 32), (0, 32)), ((0.5, 0), (0, 4)), anchor=(0.5, 0), visible=False, z=2))
-    b.add(label("Fallback", emoji, ((0, 28), (0, 28)), ((0.5, 0), (0, 5)), anchor=(0.5, 0), stroke=0, z=2))
-    b.add(label("Label", text, ((1, -4), (0, 13)), ((0.5, 0), (1, -3)), anchor=(0.5, 1), z=3, stroke=1.5))
+def top_button(name, text, emoji, order):
+    """Кнопка справа сверху: большой значок без фона + подпись снизу (как на референсе)."""
+    b = image_button(name, ((0, 88), (0, 92)), ((0, 0), (0, 0)), bgt=1, order=order)
+    b.add(image("Icon", "", ((0, 64), (0, 64)), ((0.5, 0), (0, 2)), anchor=(0.5, 0), visible=False, z=2))
+    b.add(label("Fallback", emoji, ((0, 58), (0, 58)), ((0.5, 0), (0, 4)), anchor=(0.5, 0), stroke=0, z=2))
+    b.add(label("Label", text, ((1.05, 0), (0, 19)), ((0.5, 0), (1, 0)), anchor=(0.5, 1), z=3, stroke=2.5))
     return b
 
 
-def stat_row(name, emoji, text, order):
-    r = frame(name, ((0, 190), (0, 24)), ((0, 0), (0, 0)), order=order)
-    r.add(image("Icon", "", ((0, 24), (0, 24)), ((0, 0), (0, 0)), visible=False, z=2))
-    r.add(label("Fallback", emoji, ((0, 22), (0, 22)), ((0, 1), (0, 1)), stroke=0))
-    r.add(label("Value", text, ((1, -30), (0, 18)), ((0, 30), (0, 3)), xalign=0, stroke=2))
+def stat_card(name, emoji, title, color, order):
+    """Цветная карточка показателя: значок слева, название и значение справа."""
+    r = frame(name, ((0, 150), (0, 60)), ((0, 0), (0, 0)), bg=color, bgt=0, order=order)
+    r.add(ui_corner(0, 14), ui_stroke(4, DARK))
+    r.add(image("Icon", "", ((0, 46), (0, 46)), ((0, 6), (0.5, 0)), anchor=(0, 0.5), visible=False, z=2))
+    r.add(label("Fallback", emoji, ((0, 40), (0, 40)), ((0, 8), (0.5, 0)), anchor=(0, 0.5), stroke=0))
+    r.add(label("Title", title, ((1, -60), (0, 20)), ((0, 56), (0, 6)), stroke=2.5))
+    r.add(label("Value", "0", ((1, -60), (0, 28)), ((0, 56), (0, 26)), stroke=3))
     return r
 
 
@@ -557,55 +708,68 @@ def build_gui():
     hud = screen_gui("MainHud")
     hud.add(ui_scale("Scale"))
 
-    left = frame("LeftMenu", ((0, 140), (0, 150)), ((0, 6), (0, 56)))
-    left.add(Inst("UIGridLayout", "UIGridLayout", [P("udim2", "CellSize", ((0, 62), (0, 62))),
-                                                   P("udim2", "CellPadding", ((0, 8), (0, 14))), P("token", "SortOrder", 2)]))
-    left.add(left_button("ShopButton", "Магазин", "🏪", (255, 106, 82), 1))
-    left.add(left_button("PetsButton", "Питомцы", "🐾", (69, 170, 255), 2))
-    left.add(left_button("AurasButton", "Ауры", "🔥", (111, 52, 220), 3))
-    left.add(left_button("RebirthButton", "Перерождение", "🔄", (240, 244, 250), 4, label_size=10))
+    # ===== Слева: 4 большие плитки 2×2 (как на референсе) =====
+    left = frame("LeftMenu", ((0, 216), (0, 216)), ((0, 12), (0.24, 0)))
+    left.add(Inst("UIGridLayout", "UIGridLayout", [P("udim2", "CellSize", ((0, 104), (0, 104))),
+                                                   P("udim2", "CellPadding", ((0, 8), (0, 8))), P("token", "SortOrder", 2)]))
+    left.add(left_button("ShopButton", "Магазин", "🧺", (255, 196, 40), 1))
+    left.add(left_button("PetsButton", "Питомцы", "🐾", (40, 150, 255), 2))
+    left.add(left_button("AurasButton", "Ауры", "🔥", (140, 60, 230), 3))
+    left.add(left_button("RebirthButton", "Перерождения", "🔄", (225, 230, 245), 4, label_size=13))
     hud.add(left)
 
-    # Показатели — в самом левом нижнем углу
-    stats = frame("Stats", ((0, 200), (0, 112)), ((0, 6), (1, -8)), anchor=(0, 1))
-    stats.add(ui_list(padding=3, valign=2))
-    stats.add(stat_row("StrengthRow", "⛏", "Сила: 0", 1))
-    stats.add(stat_row("LuckRow", "🍀", "Удача: 0%", 2))
-    stats.add(stat_row("WinsRow", "🏆", "Победы: 0", 3))
-    stats.add(stat_row("RebirthRow", "🔄", "Перерождения: 0", 4))
+    # ===== Слева снизу: цветные карточки показателей =====
+    stats = frame("Stats", ((0, 150), (0, 264)), ((0, 14), (0.24, 228)))
+    stats.add(ui_list(padding=6))
+    stats.add(stat_card("WinsRow", "🏆", "Победы", (255, 196, 40), 1))
+    stats.add(stat_card("StrengthRow", "💪", "Сила", (235, 55, 55), 2))
+    stats.add(stat_card("LuckRow", "🍀", "Удача", (60, 200, 70), 3))
+    stats.add(stat_card("RebirthRow", "🔄", "Перерожд.", (150, 70, 235), 4))
     hud.add(stats)
 
-    # Уровень игрока (качается в ямах) — полоса внизу по центру
-    xp = frame("XpBar", ((0, 340), (0, 30)), ((0.5, 0), (1, -10)), anchor=(0.5, 1))
-    xp.add(label("Level", "Уровень 1", ((0, 110), (1, 0)), ((0, 0), (0, 0)), xalign=0, color=(255, 225, 77), stroke=2.5))
-    xbar = frame("Bar", ((1, -116), (0, 22)), ((0, 116), (0, 4)), bg=DARK, bgt=0.3)
-    xbar.add(ui_corner(0, 10), ui_stroke(2.5, DARK))
-    xfill = frame("Fill", ((0, 0), (1, 0)), ((0, 0), (0, 0)), bg=(94, 231, 255), bgt=0)
-    xfill.add(ui_corner(0, 10))
-    xbar.add(xfill)
-    xbar.add(label("Text", "0 / 10", ((1, 0), (1, -4)), ((0, 0), (0, 2)), stroke=2, z=3))
-    xp.add(xbar)
-    hud.add(xp)
-
-    # Правый верхний угол: колесо + 4 квадратные кнопки одного размера
-    top = frame("TopRight", ((0, 310), (0, 60)), ((1, -6), (0, 4)), anchor=(1, 0))
-    top.add(ui_list(horizontal=True, padding=4, halign=2, valign=1))
-    wheel = image_button("WheelButton", ((0, 56), (0, 56)), ((0, 0), (0, 0)), bg=(122, 60, 255), bgt=0, order=0)
-    wheel.add(ui_corner(0, 12), ui_stroke(3, DARK))
+    # ===== Справа сверху: Настройки, Задания, Колесо, Награды =====
+    top = frame("TopRight", ((0, 400), (0, 96)), ((1, -8), (0, 4)), anchor=(1, 0))
+    top.add(ui_list(horizontal=True, padding=10, halign=2, valign=1))
+    top.add(top_button("SettingsButton", "Настройки", "⚙️", 1))
+    top.add(top_button("QuestsButton", "Задания", "📜", 2))
+    wheel = image_button("WheelButton", ((0, 88), (0, 92)), ((0, 0), (0, 0)), bgt=1, order=3)
     for nm, z in (("Base", 3), ("Disc", 4), ("Top", 5)):
-        wheel.add(image(nm, "", ((0, 34), (0, 34)), ((0.5, 0), (0, 3)), anchor=(0.5, 0), visible=False, z=z))
-    wheel.add(label("Fallback", "🎡", ((0, 30), (0, 30)), ((0.5, 0), (0, 4)), anchor=(0.5, 0), stroke=0, z=3))
-    badge = frame("Badge", ((0, 16), (0, 16)), ((1, 4), (0, -4)), anchor=(1, 0), bg=(255, 43, 58), bgt=0, z=6)
-    badge.add(ui_corner(1, 0), ui_stroke(2, (255, 255, 255)), ui_scale("UIScale"),
-              label("Text", "!", ((1, 0), (1, 0)), ((0, 0), (0, 0)), stroke=0, z=7))
-    wheel.add(badge)
-    wheel.add(label("Label", "Колесо", ((1, -4), (0, 13)), ((0.5, 0), (1, -3)), anchor=(0.5, 1), z=3, stroke=1.5))
+        wheel.add(image(nm, "", ((0, 64), (0, 64)), ((0.5, 0), (0, 2)), anchor=(0.5, 0), visible=False, z=z))
+    wheel.add(label("Fallback", "🎡", ((0, 58), (0, 58)), ((0.5, 0), (0, 4)), anchor=(0.5, 0), stroke=0, z=3))
+    wheel.add(label("Label", "Колесо", ((1.05, 0), (0, 19)), ((0.5, 0), (1, 0)), anchor=(0.5, 1), z=6, stroke=2.5))
     top.add(wheel)
-    top.add(small_button("AchievementsButton", "Достижения", "🏆", 1, (255, 160, 30)))
-    top.add(small_button("RewardsButton", "Награды", "🎁", 2, (255, 77, 109)))
-    top.add(small_button("QuestsButton", "Задания", "📅", 3, (63, 140, 255)))
-    top.add(small_button("SettingsButton", "Настройки", "⚙️", 4, (110, 120, 145)))
+    rewards_btn = top_button("RewardsButton", "Награды", "🎁", 4)
+    badge = frame("Badge", ((0, 24), (0, 24)), ((1, -2), (0, 0)), anchor=(1, 0), bg=(235, 40, 50), bgt=0, z=7, visible=False)
+    badge.add(ui_corner(1, 0), ui_stroke(2.5, (255, 255, 255)), ui_scale("UIScale"),
+              label("Text", "1", ((1, 0), (1, 0)), ((0, 0), (0, 0)), stroke=0, z=8))
+    rewards_btn.add(badge)
+    top.add(rewards_btn)
     hud.add(top)
+
+    # ===== Снизу: большая «N Сила», «Мощный удар», полоса уровня и кнопки опыта =====
+    power = frame("PowerPanel", ((0.76, -16), (0, 286)), ((0.22, 0), (1, -10)), anchor=(0, 1))
+    power.add(label("StrengthBig", "0 Сила", ((0.7, 0), (0, 86)), ((0.02, 0), (0, 0)), stroke=6, z=2))
+    strike = text_button("PowerStrikeButton", "", ((0.27, 0), (0, 76)), ((1, 0), (0, 6)), (255, 200, 40), anchor=(1, 0), stroke=0)
+    strike.add(image("Icon", "", ((0, 64), (0, 64)), ((0, 4), (0.5, 0)), anchor=(0, 0.5), visible=False, z=3),
+               label("Fallback", "🗡️", ((0, 60), (0, 60)), ((0, 6), (0.5, 0)), anchor=(0, 0.5), stroke=0, z=3),
+               label("Text", "Мощный\nудар", ((1, -76), (1, -10)), ((0, 70), (0, 5)), stroke=3.5, z=3))
+    power.add(strike)
+    lbar = frame("LevelBar", ((1, 0), (0, 80)), ((0, 0), (0, 96)), bg=(60, 60, 80), bgt=0, clip=False)
+    lbar.add(ui_corner(0, 18), ui_stroke(5, DARK))
+    lfill = frame("Fill", ((0.5, 0), (1, 0)), ((0, 0), (0, 0)), bg=(255, 196, 40), bgt=0)
+    lfill.add(ui_corner(0, 18))
+    lbar.add(lfill)
+    lbar.add(image("Icon", "", ((0, 84), (0, 84)), ((0, 4), (0.5, 0)), anchor=(0, 0.5), visible=False, z=3))
+    lbar.add(label("Fallback", "🗡️", ((0, 76), (0, 76)), ((0, 8), (0.5, 0)), anchor=(0, 0.5), stroke=0, z=3))
+    lbar.add(label("Level", "Уровень 1", ((0.5, 0), (0, 60)), ((0, 96), (0.5, 0)), anchor=(0, 0.5), xalign=0, stroke=5, z=3))
+    lbar.add(label("Xp", "0 / 10", ((0.4, 0), (0, 52)), ((1, -16), (0.5, 0)), anchor=(1, 0.5), xalign=1, stroke=5, z=3))
+    power.add(lbar)
+    xpb = frame("XpButtons", ((1, 0), (0, 94)), ((0, 0), (0, 190)))
+    xpb.add(ui_list(horizontal=True, padding=10, halign=0, valign=1))
+    for k, (nm, col) in enumerate((("XpSmallButton", (255, 196, 40)), ("XpMediumButton", (150, 60, 235)), ("XpBigButton", (235, 55, 70)))):
+        xpb.add(text_button(nm, "+0 очков опыта", ((0.32, 0), (1, 0)), ((0, 0), (0, 0)), col, order=k + 1, radius=16))
+    power.add(xpb)
+    hud.add(power)
 
     lvl = frame("LevelPanel", ((0, 480), (0, 92)), ((0.5, 0), (0, 4)), anchor=(0.5, 0), visible=False)
     lvl.add(label("Title", "Уровень 1 · Сено", ((1, 0), (0, 30)), ((0, 0), (0, 0)), stroke=3))
@@ -619,32 +783,56 @@ def build_gui():
     lvl.add(bar)
     hud.add(lvl)
 
-    # Анимация открытия яйца
-    egg_open = frame("EggOpen", ((1, 0), (1, 0)), ((0, 0), (0, 0)), bg=(0, 0, 0), bgt=0.35, visible=False, z=40)
-    rays = frame("Rays", ((0, 520), (0, 520)), ((0.5, 0), (0.5, 0)), anchor=(0.5, 0.5), visible=False, z=41)
-    for k in range(8):
-        rays.add(frame(f"Ray{k + 1}", ((0, 34), (1, 0)), ((0.5, 0), (0.5, 0)), anchor=(0.5, 0.5), bg=(255, 225, 77), bgt=0.6,
-                       rotation=k * 22.5, z=41))
-    egg_open.add(rays)
-    egg = frame("Egg", ((0, 150), (0, 190)), ((0.5, 0), (0.5, 0)), anchor=(0.5, 0.5), bg=(242, 248, 255), bgt=0, z=42)
-    egg.add(ui_corner(0.5, 0), ui_stroke(6, DARK), ui_scale())
-    for k, (x, y, d) in enumerate(((0.3, 0.35, 26), (0.62, 0.55, 32), (0.35, 0.72, 22))):
-        spot = frame(f"Spot{k + 1}", ((0, d), (0, d)), ((x, 0), (y, 0)), anchor=(0.5, 0.5), bg=(26, 16, 51), bgt=0.75, z=43)
-        spot.add(ui_corner(1, 0))
-        egg.add(spot)
-    shine = frame("Shine", ((0, 24), (0, 44)), ((0.3, 0), (0.2, 0)), anchor=(0.5, 0.5), bg=(255, 255, 255), bgt=0.4, rotation=20, z=43)
-    shine.add(ui_corner(1, 0))
-    egg.add(shine)
-    egg_open.add(egg)
-    card = frame("PetCard", ((0, 340), (0, 270)), ((0.5, 0), (0.5, 0)), anchor=(0.5, 0.5), visible=False, z=44)
-    card.add(ui_scale())
-    card.add(label("PetIcon", "🐾", ((0, 140), (0, 140)), ((0.5, 0), (0, 0)), anchor=(0.5, 0), stroke=0, z=45))
-    card.add(label("PetName", "Питомец", ((1, 0), (0, 46)), ((0, 0), (0, 146)), stroke=4, z=45))
-    card.add(label("PetRarity", "Обычный", ((1, 0), (0, 30)), ((0, 0), (0, 194)), stroke=3, z=45))
-    card.add(label("PetBonus", "+0.2 к силе", ((1, 0), (0, 26)), ((0, 0), (0, 228)), color=(255, 233, 168), stroke=2.5, z=45))
-    egg_open.add(card)
-    egg_open.add(frame("Flash", ((1, 0), (1, 0)), ((0, 0), (0, 0)), bg=(255, 255, 255), bgt=0, visible=False, z=50))
-    hud.add(egg_open)
+    # ===== Окно яйца: подходишь — видишь питомцев и шансы, зелёная кнопка открывает =====
+    prev = frame("EggPreview", ((0, 720), (0, 250)), ((0.5, 0), (0.36, 0)), anchor=(0.5, 0.5), bg=(30, 18, 60), bgt=0.05,
+                 visible=False, z=25)
+    prev.add(ui_corner(0, 22), ui_stroke(5, (255, 140, 40)), ui_scale())
+    ebox = frame("EggBox", ((0, 170), (1, -20)), ((0, 10), (0, 10)), bg=(255, 140, 40), bgt=0, z=26)
+    ebox.add(ui_corner(0, 18), ui_stroke(3, DARK))
+    ebox.add(label("Title", "Куриное\nЯйцо", ((1, -10), (0, 56)), ((0, 5), (0, 4)), stroke=3.5, z=27))
+    ebox.add(label("EggIcon", "🥚", ((0, 96), (0, 96)), ((0.5, 0), (0, 60)), anchor=(0.5, 0), stroke=0, z=27))
+    pbg = frame("PriceBg", ((1, -16), (0, 40)), ((0, 8), (1, -48)), bg=(26, 16, 51), bgt=0.15, z=27)
+    pbg.add(ui_corner(0, 14), label("Price", "🏆 20 Побед", ((1, -8), (1, -6)), ((0, 4), (0, 3)), color=(255, 225, 77), stroke=2.5, z=28))
+    ebox.add(pbg)
+    prev.add(ebox)
+    prev.add(label("Header", "Возможные питомцы", ((0, 360), (0, 34)), ((0, 300), (0, 8)), stroke=3, z=26))
+    plist = frame("Pets", ((1, -200), (0, 140)), ((0, 192), (0, 46)), z=26)
+    plist.add(ui_list(horizontal=True, padding=8, halign=1, valign=1))
+    ptpl = frame("PetTemplate", ((0, 120), (0, 140)), ((0, 0), (0, 0)), bg=(60, 45, 100), bgt=0, visible=False, z=27)
+    ptpl.add(ui_corner(0, 14), ui_stroke(3, (170, 175, 190)))
+    ptpl.add(label("Emoji", "🐔", ((0, 58), (0, 58)), ((0.5, 0), (0, 4)), anchor=(0.5, 0), stroke=0, z=28))
+    ptpl.add(label("PetName", "Курица", ((1, -6), (0, 22)), ((0, 3), (0, 62)), stroke=2, z=28))
+    ptpl.add(label("Mult", "x1.2 Силы", ((1, -6), (0, 22)), ((0, 3), (0, 86)), color=(255, 225, 77), stroke=2, z=28))
+    ptpl.add(label("Chance", "50%", ((1, -6), (0, 22)), ((0, 3), (0, 112)), stroke=2, z=28))
+    plist.add(ptpl)
+    prev.add(plist)
+    prev.add(text_button("OpenButton", "Открыть", ((0, 250), (0, 48)), ((1, -14), (1, 22)), (60, 200, 80), anchor=(1, 0.5), z=27))
+    hud.add(prev)
+
+    # ===== Анимация открытия: лента с питомцами прокручивается и останавливается на выигрыше =====
+    eo = frame("EggOpen", ((1, 0), (1, 0)), ((0, 0), (0, 0)), bg=(5, 0, 15), bgt=0.25, visible=False, z=40)
+    eo.add(label("Title", "Открываем…", ((0, 600), (0, 50)), ((0.5, 0), (0.5, -170)), anchor=(0.5, 0.5), stroke=4, z=41))
+    reel = frame("Reel", ((0, 760), (0, 210)), ((0.5, 0), (0.5, 0)), anchor=(0.5, 0.5), bg=(28, 16, 52), bgt=0, clip=True, z=41)
+    reel.add(ui_corner(0, 26), ui_stroke(5, (120, 70, 220)))
+    reel.add(frame("Strip", ((0, 4000), (1, 0)), ((0, 0), (0, 0)), z=42))
+    ctpl = frame("CardTemplate", ((0, 150), (0, 180)), ((0, 0), (0.5, 0)), anchor=(0, 0.5), bg=(70, 60, 110), bgt=0, visible=False, z=43)
+    ctpl.add(ui_corner(0, 18), ui_stroke(3, (20, 10, 40)))
+    ctpl.add(frame("Spot", ((0.8, 0), (0.55, 0)), ((0.1, 0), (0, 0)), bg=(255, 255, 255), bgt=0.8, z=43))
+    ctpl.add(label("Emoji", "🐔", ((0, 86), (0, 86)), ((0.5, 0), (0, 22)), anchor=(0.5, 0), stroke=0, z=44))
+    ctpl.add(label("PetName", "Курица", ((1, -8), (0, 26)), ((0, 4), (0, 118)), stroke=2.5, z=44))
+    ctpl.add(label("Mult", "x1.2", ((1, -8), (0, 22)), ((0, 4), (0, 148)), color=(255, 225, 77), stroke=2, z=44))
+    reel.add(ctpl)
+    reel.add(frame("Marker", ((0, 6), (1, 0)), ((0.5, 0), (0, 0)), anchor=(0.5, 0), bg=(255, 210, 60), bgt=0, z=46))
+    eo.add(reel)
+    win = frame("WinCard", ((0, 270), (0, 300)), ((0.5, 0), (0.5, 0)), anchor=(0.5, 0.5), bg=(255, 190, 40), bgt=0, visible=False, z=50)
+    win.add(ui_corner(0, 26), ui_stroke(6, (255, 255, 255)), ui_scale())
+    win.add(frame("Spot", ((0.8, 0), (0.6, 0)), ((0.1, 0), (0, 0)), bg=(255, 255, 255), bgt=0.7, z=50))
+    win.add(label("Emoji", "🐔", ((0, 150), (0, 150)), ((0.5, 0), (0, 26)), anchor=(0.5, 0), stroke=0, z=51))
+    win.add(label("PetName", "Курица", ((1, -10), (0, 40)), ((0, 5), (0, 182)), stroke=4, z=51))
+    win.add(label("Rarity", "Обычный", ((1, -10), (0, 28)), ((0, 5), (0, 222)), stroke=3, z=51))
+    win.add(label("Mult", "x1.2 Силы", ((1, -10), (0, 30)), ((0, 5), (0, 254)), color=(255, 225, 77), stroke=3, z=51))
+    eo.add(win)
+    hud.add(eo)
 
     hud.add(frame("Toasts", ((1, 0), (1, 0)), ((0, 0), (0, 0)), z=20))
 
@@ -703,7 +891,7 @@ def build_gui():
                                                                P("token", "HorizontalAlignment", 0)]))
     rewards.add(rc, rewards_tpl)
     panels.add(rewards)
-    panels.add(panel("QuestsPanel", "Ежедневные задания", "row", content_top=96, children=[
+    panels.add(panel("QuestsPanel", "Задания и достижения", "row", content_top=96, children=[
         label("Info", "Новые задания через 0:00", ((1, -40), (0, 28)), ((0, 20), (0, 60)), color=(255, 233, 168), xalign=0, stroke=2)]))
     panels.add(panel("AchievementsPanel", "Достижения", "row"))
     panels.add(panel("SettingsPanel", "Настройки", "row"))

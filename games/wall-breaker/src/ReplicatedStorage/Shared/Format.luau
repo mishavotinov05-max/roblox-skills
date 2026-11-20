@@ -6,7 +6,11 @@ local SUFFIXES = { "K", "M", "B", "T", "Qa", "Qi", "Sx", "Sp", "Oc", "No", "Dc" 
 function Format.Short(n: number): string
 	n = tonumber(n) or 0
 	if math.abs(n) < 1000 then
-		return tostring(math.floor(n))
+		if n == math.floor(n) then
+			return tostring(math.floor(n))
+		end
+		local d = string.format("%.2f", n):gsub("0+$", ""):gsub("%.$", "")
+		return d -- 1.2, 7.5, 12.5
 	end
 	local i = 0
 	while math.abs(n) >= 1000 and i < #SUFFIXES do

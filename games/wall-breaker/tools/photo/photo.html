@@ -1,0 +1,404 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<title>WallBreaker photo</title>
+<!-- Фото-рендер файла места: 3D-карта из Workspace + интерфейс из StarterGui (не Roblox, а приближение). -->
+<script type="importmap">{ "imports": { "three": "http://p.local/three.module.js" } }</script>
+<style>
+  @font-face { font-family: 'GuiFont'; src: url(http://p.local/fonts/rubik-cyrillic-900-normal.woff2) format('woff2'); unicode-range: U+0400-04FF; font-weight: 900; }
+  @font-face { font-family: 'GuiFont'; src: url(http://p.local/fonts/rubik-latin-900-normal.woff2) format('woff2'); font-weight: 900; }
+  html, body { margin: 0; background: #000; overflow: hidden; }
+  #gl, #hud { position: absolute; left: 0; top: 0; }
+</style>
+</head>
+<body>
+<canvas id="hud"></canvas>
+<script type="module">
+import * as THREE from 'three';
+
+const W = 1350, H = 760;
+const FONT = '900 {px}px GuiFont, "Noto Color Emoji", sans-serif';
+let TREE, ICONS = {}, TEX = {};
+
+// ---------------- общие утилиты ----------------
+const rgb = (c, a = 1) => `rgba(${c[0]},${c[1]},${c[2]},${a})`;
+const kids = (n, cls) => n.children.filter((c) => c.class === cls);
+const kid = (n, cls) => n.children.find((c) => c.class === cls);
+const GUI = new Set(['Frame', 'TextLabel', 'TextButton', 'ImageLabel', 'ImageButton', 'ScrollingFrame']);
+function find(root, path) {
+  let n = root;
+  for (const p of path.split('.')) { n = n && n.children.find((c) => c.name === p); }
+  return n;
+}
+function clone(n) { return JSON.parse(JSON.stringify(n)); }
+function loadImg(url) { return new Promise((res) => { const i = new Image(); i.onload = () => res(i); i.onerror = () => res(null); i.src = url; }); }
+
+// ---------------- раскладка и отрисовка GUI (2D canvas) ----------------
+// opts: { images: (pathString, node) => Image|null, texts: {path: text}, show: {path: bool} }
+function drawGui(ctx, node, rect, opts, path = '') {
+  const order = node.children.filter((c) => GUI.has(c.class));
+  layoutAndDraw(ctx, node, rect, opts, path, order);
+}
+
+function paddedRect(node, rect) {
+  const p = kid(node, 'UIPadding');
+  if (!p) return rect;
+  const g = (k, dim) => (p.props[k] ? p.props[k][0] * dim + p.props[k][1] : 0);
+  const l = g('PaddingLeft', rect.w), r = g('PaddingRight', rect.w), t = g('PaddingTop', rect.h), b = g('PaddingBottom', rect.h);
+  return { x: rect.x + l, y: rect.y + t, w: rect.w - l - r, h: rect.h - t - b };
+}
+
+function visible(n, opts, p) {
+  if (opts.show && p in opts.show) return opts.show[p];
+  return n.props.Visible !== false;
+}
+
+function layoutAndDraw(ctx, node, rect, opts, path, items) {
+  const content = paddedRect(node, rect);
+  const vis = items.filter((c) => visible(c, opts, path + c.name));
+  const grid = kid(node, 'UIGridLayout'), list = kid(node, 'UIListLayout');
+  const placed = [];
+  if (grid || list) vis.sort((a, b) => (a.props.LayoutOrder || 0) - (b.props.LayoutOrder || 0));
+  if (grid) {
+    const cs = grid.props.CellSize, cp = grid.props.CellPadding || [0, 0, 0, 0];
+    const cw = cs[0] * content.w + cs[1], ch = cs[2] * content.h + cs[3];
+    const px = cp[0] * content.w + cp[1], py = cp[2] * content.h + cp[3];
+    const cols = Math.max(1, Math.floor((content.w + px) / (cw + px)));
+    const ha = grid.props.HorizontalAlignment ?? 1; // 0 центр, 1 лево, 2 право
+    vis.forEach((c, i) => {
+      const row = Math.floor(i / cols), col = i % cols;
+      const inRow = Math.min(cols, vis.length - row * cols);
+      const rowW = inRow * cw + (inRow - 1) * px;
+      const sx = ha === 0 ? content.x + (content.w - rowW) / 2 : ha === 2 ? content.x + content.w - rowW : content.x;
+      placed.push([c, { x: sx + col * (cw + px), y: content.y + row * (ch + py), w: cw, h: ch }]);
+    });
+  } else if (list) {
+    const horiz = (list.props.FillDirection ?? 1) === 0;
+    const pad = list.props.Padding ? list.props.Padding[0] * (horiz ? content.w : content.h) + list.props.Padding[1] : 0;
+    const ha = list.props.HorizontalAlignment ?? 1, va = list.props.VerticalAlignment ?? 1;
+    const sizes = vis.map((c) => { const s = c.props.Size || [0, 0, 0, 0]; return [s[0] * content.w + s[1], s[2] * content.h + s[3]]; });
+    const total = sizes.reduce((a, s) => a + (horiz ? s[0] : s[1]), 0) + pad * Math.max(0, vis.length - 1);
+    let cur;
+    if (horiz) cur = ha === 0 ? content.x + (content.w - total) / 2 : ha === 2 ? content.x + content.w - total : content.x;
+    else cur = va === 0 ? content.y + (content.h - total) / 2 : va === 2 ? content.y + content.h - total : content.y;
+    vis.forEach((c, i) => {
+      const [w, h] = sizes[i];
+      let x, y;
+      if (horiz) { x = cur; y = va === 0 ? content.y + (content.h - h) / 2 : va === 2 ? content.y + content.h - h : content.y; cur += w + pad; }
+      else { y = cur; x = ha === 0 ? content.x + (content.w - w) / 2 : ha === 2 ? content.x + content.w - w : content.x; cur += h + pad; }
+      placed.push([c, { x, y, w, h }]);
+    });
+  } else {
+    for (const c of vis) {
+      const s = c.props.Size || [0, 0, 0, 0], p = c.props.Position || [0, 0, 0, 0], a = c.props.AnchorPoint || [0, 0];
+      const w = s[0] * content.w + s[1], h = s[2] * content.h + s[3];
+      placed.push([c, { x: content.x + p[0] * content.w + p[1] - a[0] * w, y: content.y + p[2] * content.h + p[3] - a[1] * h, w, h }]);
+    }
+  }
+  placed.sort((a, b) => (a[0].props.ZIndex || 1) - (b[0].props.ZIndex || 1));
+  for (const [c, r] of placed) drawNode(ctx, c, r, opts, path + c.name);
+}
+
+function roundRect(ctx, r, rad) {
+  rad = Math.max(0, Math.min(rad, r.w / 2, r.h / 2));
+  ctx.beginPath();
+  ctx.moveTo(r.x + rad, r.y);
+  ctx.arcTo(r.x + r.w, r.y, r.x + r.w, r.y + r.h, rad);
+  ctx.arcTo(r.x + r.w, r.y + r.h, r.x, r.y + r.h, rad);
+  ctx.arcTo(r.x, r.y + r.h, r.x, r.y, rad);
+  ctx.arcTo(r.x, r.y, r.x + r.w, r.y, rad);
+  ctx.closePath();
+}
+
+function drawNode(ctx, n, r, opts, p) {
+  const pr = n.props;
+  const isText = n.class === 'TextLabel' || n.class === 'TextButton';
+  const corner = kid(n, 'UICorner');
+  const rad = corner ? corner.props.CornerRadius[0] * Math.min(r.w, r.h) + corner.props.CornerRadius[1] : 0;
+  const stroke = kid(n, 'UIStroke');
+  const scaleNode = kid(n, 'UIScale');
+  ctx.save();
+  if (pr.Rotation) {
+    ctx.translate(r.x + r.w / 2, r.y + r.h / 2); ctx.rotate(pr.Rotation * Math.PI / 180); ctx.translate(-(r.x + r.w / 2), -(r.y + r.h / 2));
+  }
+  const bgt = opts.bgOverride && p in opts.bgOverride ? opts.bgOverride[p] : (pr.BackgroundTransparency ?? 1);
+  if (bgt < 1) {
+    roundRect(ctx, r, rad);
+    ctx.fillStyle = rgb(pr.BackgroundColor3 || [255, 255, 255], 1 - bgt);
+    ctx.fill();
+  }
+  const strokeIsBorder = stroke && (!isText || stroke.props.ApplyStrokeMode === 1) && !(opts.noStroke && opts.noStroke[p]);
+  if (strokeIsBorder && (bgt < 1 || stroke.props.ApplyStrokeMode === 1 || !isText)) {
+    roundRect(ctx, r, rad);
+    ctx.lineWidth = stroke.props.Thickness || 1;
+    ctx.strokeStyle = rgb(stroke.props.Color || [0, 0, 0], 1 - (stroke.props.Transparency || 0));
+    ctx.stroke();
+  }
+  // картинка
+  if (n.class === 'ImageLabel' || n.class === 'ImageButton') {
+    const img = opts.images && opts.images(p, n);
+    if (img) {
+      const s = Math.min(r.w / img.width, r.h / img.height);
+      const w = img.width * s, h = img.height * s;
+      ctx.drawImage(img, r.x + (r.w - w) / 2, r.y + (r.h - h) / 2, w, h);
+    }
+  }
+  // текст
+  if (isText) {
+    const text = opts.texts && p in opts.texts ? opts.texts[p] : (pr.Text || '');
+    if (text) {
+      const lines = String(text).split('\n');
+      let size = Math.min(r.h / lines.length / 1.12, 200);
+      ctx.font = FONT.replace('{px}', 100);
+      const widest = Math.max(...lines.map((l) => ctx.measureText(l).width / 100));
+      if (widest > 0) size = Math.min(size, (r.w * 0.98) / widest);
+      if (!pr.TextScaled) size = Math.min(size, pr.TextSize || 24);
+      ctx.font = FONT.replace('{px}', size.toFixed(1));
+      ctx.textBaseline = 'middle';
+      const xa = pr.TextXAlignment ?? 2;
+      ctx.textAlign = xa === 0 ? 'left' : xa === 1 ? 'right' : 'center';
+      const tx = xa === 0 ? r.x : xa === 1 ? r.x + r.w : r.x + r.w / 2;
+      const lh = size * 1.12, y0 = r.y + r.h / 2 - (lines.length - 1) * lh / 2;
+      lines.forEach((line, i) => {
+        if (stroke && stroke.props.ApplyStrokeMode !== 1) {
+          ctx.lineJoin = 'round';
+          ctx.lineWidth = (stroke.props.Thickness || 1) * 2;
+          ctx.strokeStyle = rgb(stroke.props.Color || [0, 0, 0]);
+          ctx.strokeText(line, tx, y0 + i * lh);
+        }
+        ctx.fillStyle = rgb(pr.TextColor3 || [255, 255, 255]);
+        ctx.fillText(line, tx, y0 + i * lh);
+      });
+    }
+  }
+  if (pr.ClipsDescendants || n.class === 'ScrollingFrame') {
+    roundRect(ctx, r, rad); ctx.clip();
+  }
+  let childRect = r;
+  if (scaleNode && scaleNode.props.Scale !== 1) {
+    const s = scaleNode.props.Scale;
+    ctx.translate(r.x + r.w / 2, r.y + r.h / 2); ctx.scale(s, s); ctx.translate(-(r.x + r.w / 2), -(r.y + r.h / 2));
+  }
+  drawGui(ctx, n, childRect, opts, p + '.');
+  ctx.restore();
+}
+
+// ---------------- 3D-карта ----------------
+let renderer, scene, camera;
+const MAT_TEX = { Brick: 'brick', Grass: 'grass_top', Cobblestone: 'stone_brick', WoodPlanks: 'level_wood', Fabric: 'level_hay', Foil: 'level_gold',
+  Ice: 'level_diamond', Basalt: 'level_obsidian', CrackedLava: 'level_netherite', DiamondPlate: 'level_iron', Metal: 'level_copper', Pebble: 'dirt' };
+
+function texFor(pathStr, pr) {
+  const mat = pr.material;
+  if (pathStr.includes('Hub.Floor')) return ['floor_tiles', 8];
+  if (pathStr.includes('.Structure.Floor') || pathStr.includes('NicheFloor')) return ['floor_dark', 8];
+  if (/\.Grass\w*$/.test(pathStr) || pathStr.includes('Ground.') && mat === 'Grass') return ['grass_top', 4];
+  if (pathStr.includes('Steps.Row1')) return ['floor_tiles', 8];
+  if (mat === 'Slate' && /Wall\.Layer_03|Level_03\.Wall/.test(pathStr)) return ['level_coal', 6];
+  if (mat === 'Cobblestone' && pathStr.includes('Level_04.Wall')) return ['level_stone', 6];
+  if (pathStr.includes('Pits.Pit_01') && /PitFloor|Wall[NSWE]$/.test(pathStr)) return ['dirt', 4];
+  if (pathStr.includes('Pits.Pit_02') && /PitFloor|Wall[NSWE]$/.test(pathStr)) return ['level_coal', 4];
+  if (/\.Wall\.Layer_/.test(pathStr) && pathStr.includes('Level_03')) return ['level_coal', 6];
+  if (MAT_TEX[mat] && !pathStr.includes('Display') && !pathStr.includes('Props') && !pathStr.includes('Rim')) return [MAT_TEX[mat], mat === 'Brick' ? 6 : 4];
+  return null;
+}
+
+function faceMaterials(size, tex, tile, base) {
+  const [sx, sy, sz] = size;
+  const dims = [[sz, sy], [sz, sy], [sx, sz], [sx, sz], [sx, sy], [sx, sy]];
+  return dims.map(([u, v]) => {
+    const t = TEX[tex].clone(); t.needsUpdate = true; t.repeat.set(Math.max(1, u / tile), Math.max(1, v / tile));
+    return new THREE.MeshStandardMaterial({ ...base, map: t, color: 0xffffff });
+  });
+}
+
+const MAT_NAMES = { 256: 'Plastic', 272: 'SmoothPlastic', 288: 'Neon', 512: 'Wood', 528: 'WoodPlanks', 788: 'Basalt', 800: 'Slate', 804: 'CrackedLava',
+  816: 'Concrete', 848: 'Brick', 864: 'Pebble', 880: 'Cobblestone', 1056: 'DiamondPlate', 1072: 'Foil', 1088: 'Metal', 1280: 'Grass', 1312: 'Fabric',
+  1536: 'Ice', 1568: 'Glass', 1584: 'ForceField' };
+const box = new THREE.BoxGeometry(1, 1, 1), ball = new THREE.SphereGeometry(0.5, 24, 16), cyl = new THREE.CylinderGeometry(0.5, 0.5, 1, 24);
+cyl.rotateZ(Math.PI / 2);
+let lightCount = 0;
+const billboards = [];
+
+function cfMatrix(cf) {
+  const [x, y, z, a, b, c, d, e, f, g, h, i] = cf;
+  return new THREE.Matrix4().set(a, b, c, x, d, e, f, y, g, h, i, z, 0, 0, 0, 1);
+}
+
+function surfaceCanvas(gui, w, h, images) {
+  const ppu = gui.props.PixelsPerStud || 50;
+  const cw = Math.max(8, Math.round(w * ppu)), ch = Math.max(8, Math.round(h * ppu));
+  const cv = document.createElement('canvas'); cv.width = cw; cv.height = ch;
+  const ctx = cv.getContext('2d');
+  drawGui(ctx, gui, { x: 0, y: 0, w: cw, h: ch }, { images });
+  const t = new THREE.CanvasTexture(cv); t.colorSpace = THREE.SRGBColorSpace; t.anisotropy = 8;
+  return t;
+}
+
+function addPart(n, pathStr) {
+  const pr = n.props;
+  const tr = pr.Transparency || 0;
+  const size = pr.size, mat = MAT_NAMES[pr.Material] || 'Plastic';
+  const M = cfMatrix(pr.CFrame);
+  for (const c of n.children) {
+    if (c.class === 'PointLight' && lightCount < 14) {
+      lightCount++;
+      const l = new THREE.PointLight(new THREE.Color(`rgb(${c.props.Color.join(',')})`), (c.props.Brightness || 1) * 40, (c.props.Range || 16) * 1.6, 1.5);
+      l.position.setFromMatrixPosition(M); scene.add(l);
+    }
+    if (c.class === 'SurfaceGui') {
+      const face = c.props.Face ?? 5;
+      let w = size[0], h = size[1], offset = new THREE.Vector3(0, 0, -size[2] / 2 - 0.02), rotm = new THREE.Matrix4();
+      if (face === 1) { w = size[0]; h = size[2]; offset = new THREE.Vector3(0, size[1] / 2 + 0.02, 0); rotm.makeRotationX(-Math.PI / 2); }
+      else rotm.makeRotationY(Math.PI); // Front = -Z
+      const tex = surfaceCanvas(c, w, h);
+      const plane = new THREE.Mesh(new THREE.PlaneGeometry(w, h), new THREE.MeshBasicMaterial({ map: tex, transparent: true }));
+      const m = M.clone().multiply(new THREE.Matrix4().makeTranslation(offset.x, offset.y, offset.z)).multiply(rotm);
+      plane.matrixAutoUpdate = false; plane.matrix.copy(m); scene.add(plane);
+    }
+    if (c.class === 'BillboardGui') {
+      const sz = c.props.Size; const pw = sz[1], ph = sz[3];
+      const cv = document.createElement('canvas'); cv.width = pw * 2; cv.height = ph * 2;
+      const ctx = cv.getContext('2d'); ctx.scale(2, 2);
+      drawGui(ctx, c, { x: 0, y: 0, w: pw, h: ph }, {});
+      const t = new THREE.CanvasTexture(cv); t.colorSpace = THREE.SRGBColorSpace;
+      const sp = new THREE.Sprite(new THREE.SpriteMaterial({ map: t, sizeAttenuation: false, depthTest: true, transparent: true }));
+      const pos = new THREE.Vector3().setFromMatrixPosition(M).add(new THREE.Vector3(...(c.props.StudsOffset || [0, 0, 0])));
+      sp.position.copy(pos); sp.userData = { pw, ph, max: c.props.MaxDistance || 90 }; scene.add(sp); billboards.push(sp);
+    }
+  }
+  if (tr >= 1) return;
+  const color = new THREE.Color(`rgb(${pr.Color3uint8.join(',')})`);
+  const base = { roughness: mat === 'Foil' || mat === 'Metal' || mat === 'Ice' ? 0.35 : 0.85, metalness: ['Metal', 'Foil', 'DiamondPlate'].includes(mat) ? 0.45 : 0,
+    transparent: tr > 0 || mat === 'ForceField', opacity: mat === 'ForceField' ? 0.3 : 1 - tr };
+  let material;
+  const tx = texFor(pathStr, { material: mat });
+  if (tx && TEX[tx[0]] && (pr.shape === undefined || pr.shape === 1)) material = faceMaterials(size, tx[0], tx[1], base);
+  else material = new THREE.MeshStandardMaterial({ ...base, color, emissive: mat === 'Neon' ? color : 0x000000, emissiveIntensity: mat === 'Neon' ? 1.3 : 0 });
+  const mesh = new THREE.Mesh(pr.shape === 0 ? ball : pr.shape === 2 ? cyl : box, material);
+  const mesh3 = kid(n, 'SpecialMesh');
+  const s = mesh3 ? size.map((v, i) => v * mesh3.props.Scale[i]) : size;
+  mesh.matrixAutoUpdate = false;
+  mesh.matrix.copy(M).multiply(new THREE.Matrix4().makeScale(...s));
+  mesh.castShadow = mat !== 'Neon' && tr < 0.5; mesh.receiveShadow = true;
+  scene.add(mesh);
+}
+
+function walk(n, path) {
+  for (const c of n.children) {
+    const p = path ? path + '.' + c.name : c.name;
+    if (c.class === 'Part' || c.class === 'SpawnLocation') addPart(c, p);
+    walk(c, p);
+  }
+}
+
+function avatar(x, z, rotY, pickColor) {
+  const g = new THREE.Group(); g.position.set(x, 0, z); g.rotation.y = rotY; scene.add(g);
+  const add = (w, h, d, col, px, py, pz, parent = g) => { const m = new THREE.Mesh(box, new THREE.MeshStandardMaterial({ color: col, roughness: 0.8 })); m.scale.set(w, h, d); m.position.set(px, py, pz); m.castShadow = true; parent.add(m); return m; };
+  add(2, 2, 1, 0x1d1d24, 0, 3, 0); add(1.25, 1.25, 1.25, 0xffd9a8, 0, 4.65, 0); add(1.4, 0.55, 1.4, 0x222222, 0, 5.4, -0.05);
+  add(1, 2, 1, 0xffd9a8, -1.5, 3, 0); add(1, 2, 1, 0x2b2b3a, -0.5, 1, 0); add(1, 2, 1, 0x2b2b3a, 0.5, 1, 0);
+  const arm = new THREE.Group(); arm.position.set(1.5, 4, 0); arm.rotation.x = -1.2; g.add(arm);
+  add(1, 2, 1, 0xffd9a8, 0, -1, 0, arm);
+  add(0.4, 0.4, 4.2, 0x6b3f1d, 0, -2, -1.6, arm); add(3.4, 0.55, 0.6, pickColor, 0, -2, -3.7, arm);
+  return g;
+}
+
+window.setup = async (opts) => {
+  TREE = await (await fetch('http://p.local/tree.json')).json();
+  for (const n of ['brick', 'grass_top', 'floor_tiles', 'floor_dark', 'stone_brick', 'dirt', 'level_hay', 'level_wood', 'level_coal', 'level_stone',
+    'level_copper', 'level_iron', 'level_gold', 'level_obsidian', 'level_diamond', 'level_netherite']) {
+    const img = await loadImg(`http://p.local/textures/${n}.png`);
+    if (img) { const t = new THREE.Texture(img); t.needsUpdate = true; t.colorSpace = THREE.SRGBColorSpace; t.wrapS = t.wrapT = THREE.RepeatWrapping; t.magFilter = THREE.NearestFilter; TEX[n] = t; }
+  }
+  for (const n of opts.icons) ICONS[n] = await loadImg(`http://p.local/icons/${n}.png`);
+  await document.fonts.load('900 40px GuiFont');
+  renderer = new THREE.WebGLRenderer({ antialias: true, preserveDrawingBuffer: true });
+  renderer.setSize(W, H); renderer.shadowMap.enabled = true; renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+  renderer.toneMapping = THREE.ACESFilmicToneMapping; renderer.toneMappingExposure = 1.05;
+  renderer.domElement.id = 'gl'; document.body.prepend(renderer.domElement);
+  scene = new THREE.Scene();
+  scene.background = new THREE.Color(0x8fcfff); scene.fog = new THREE.Fog(0xbfe0ff, 220, 900);
+  scene.add(new THREE.HemisphereLight(0xe6f0ff, 0x6a5a9a, 1.25));
+  const sun = new THREE.DirectionalLight(0xfff0d8, 2.0); sun.position.set(60, 140, 50); sun.castShadow = true; sun.shadow.mapSize.set(2048, 2048);
+  Object.assign(sun.shadow.camera, { left: -130, right: 130, top: 130, bottom: -130, far: 500 }); sun.shadow.bias = -0.0005; scene.add(sun);
+  walk(TREE.workspace, '');
+  camera = new THREE.PerspectiveCamera(60, W / H, 0.5, 3000);
+  const hud = document.getElementById('hud'); hud.width = W; hud.height = H;
+  window.__ready = true;
+};
+
+window.shot = (s) => {
+  for (const o of scene.children.filter((o) => o.userData.avatar)) scene.remove(o);
+  if (s.avatar) { const a = avatar(...s.avatar); a.userData.avatar = true; }
+  camera.position.set(...s.cam); camera.lookAt(...s.target); camera.fov = s.fov || 60; camera.updateProjectionMatrix();
+  const k = 2 * Math.tan((camera.fov * Math.PI / 180) / 2);
+  for (const b of billboards) {
+    const d = b.position.distanceTo(camera.position);
+    b.visible = d < b.userData.max;
+    b.scale.set(b.userData.pw / H * k, b.userData.ph / H * k, 1);
+  }
+  renderer.render(scene, camera);
+  const ctx = document.getElementById('hud').getContext('2d');
+  ctx.clearRect(0, 0, W, H);
+  if (s.gui) {
+    const gui = clone(find(TREE.gui, 'MainHud'));
+    s.mutate && window[s.mutate](gui, s);
+    drawGui(ctx, gui, { x: 0, y: 0, w: W, h: H }, {
+      texts: s.texts || {}, show: s.show || {}, bgOverride: s.bgOverride || {}, noStroke: s.noStroke || {},
+      images: (p) => (s.images && s.images[p] ? ICONS[s.images[p]] : null),
+    });
+  }
+};
+
+// ----- заполнение динамических частей, как это делает клиентский скрипт -----
+const PETS = () => TREE.petdata.pets, EGGS = () => TREE.petdata.eggs;
+const short = (n) => { const u = ['', 'K', 'M', 'B', 'T']; let i = 0; while (Math.abs(n) >= 1000 && i < 4) { n /= 1000; i++; } return (Math.round(n * 100) / 100).toString() + u[i]; };
+function rarityCol(r) { return TREE.petdata.rarities[r] || [170, 175, 190]; }
+
+window.fillEggPreview = (gui, s) => {
+  const egg = EGGS().find((e) => e.Id === s.egg);
+  const prev = find(gui, 'EggPreview');
+  prev.props.Visible = true;
+  find(prev, 'EggBox').props.BackgroundColor3 = egg.Color;
+  kid(prev, 'UIStroke').props.Color = egg.Color;
+  find(prev, 'EggBox.Title').props.Text = egg.Name.replace(' ', '\n');
+  find(prev, 'EggBox.PriceBg.Price').props.Text = egg.RobuxPrice ? `💎 ${egg.RobuxPrice} Robux` : `🏆 ${egg.Price} Побед`;
+  const list = find(prev, 'Pets'), tpl = find(list, 'PetTemplate');
+  egg.Pets.forEach(([id, ch], i) => {
+    const d = PETS()[id]; const c = clone(tpl); c.name = 'Pet'; c.props.Visible = true; c.props.LayoutOrder = i + 1;
+    find(c, 'Emoji').props.Text = d.Emoji; find(c, 'PetName').props.Text = d.Name; find(c, 'Mult').props.Text = `x${d.Multiplier} Силы`;
+    find(c, 'Chance').props.Text = ch + '%'; kid(c, 'UIStroke').props.Color = rarityCol(d.Rarity); list.children.push(c);
+  });
+  find(prev, 'OpenButton').props.Text = egg.RobuxPrice ? `Открыть за ${egg.RobuxPrice} R$` : 'Открыть';
+};
+
+window.fillRoulette = (gui, s) => {
+  const egg = EGGS().find((e) => e.Id === s.egg);
+  const eo = find(gui, 'EggOpen'); eo.props.Visible = true;
+  find(eo, 'Title').props.Text = 'Открываем: ' + egg.Name;
+  const reel = find(eo, 'Reel'), strip = find(reel, 'Strip'), tpl = find(reel, 'CardTemplate');
+  const seq = ['chick', 'chicken', 'bunny', 'chicken', 'fox_cub', 'chick', 'chicken', 'bunny', 'chicken', 'chick', 'chicken', 'fox_cub'];
+  const ids = egg.Pets.map((p) => p[0]);
+  for (let i = 0; i < 12; i++) {
+    const id = ids[(seq.indexOf(seq[i]) + i) % ids.length];
+    const d = PETS()[id]; const c = clone(tpl); c.name = 'Card'; c.props.Visible = true;
+    c.props.Position = [0, i * 160 + s.offset, 0.5, 0];
+    const col = rarityCol(d.Rarity);
+    c.props.BackgroundColor3 = col.map((v, k) => Math.round(v * 0.45 + [25, 15, 45][k] * 0.55));
+    find(c, 'Spot').props.BackgroundColor3 = col; kid(c, 'UIStroke').props.Color = col;
+    find(c, 'Emoji').props.Text = d.Emoji; find(c, 'PetName').props.Text = d.Name; find(c, 'Mult').props.Text = 'x' + d.Multiplier;
+    strip.children.push(c);
+  }
+  if (s.win) {
+    const d = PETS()[s.win]; reel.props.Visible = false; const w = find(eo, 'WinCard'); w.props.Visible = true;
+    w.props.BackgroundColor3 = rarityCol(d.Rarity); find(w, 'Emoji').props.Text = d.Emoji; find(w, 'PetName').props.Text = d.Name;
+    find(w, 'Rarity').props.Text = d.Rarity; find(w, 'Mult').props.Text = `x${d.Multiplier} Силы`;
+  }
+};
+
+window.fillLevel = (gui, s) => { find(gui, 'LevelPanel').props.Visible = true; find(gui, 'PowerPanel.LevelBar.Fill').props.Size = [s.fill, 0, 1, 0]; };
+window.fillHub = (gui, s) => { find(gui, 'PowerPanel.LevelBar.Fill').props.Size = [s.fill, 0, 1, 0]; };
+</script>
+</body>
+</html>

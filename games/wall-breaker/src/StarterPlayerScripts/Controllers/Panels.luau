@@ -215,7 +215,7 @@ local function fillPets(p: Frame)
 	local pets = table.clone(data.Pets)
 	table.sort(pets, function(a, b)
 		local da, db = Catalog.Pets[a.Id], Catalog.Pets[b.Id]
-		return (da and da.Bonus or 0) > (db and db.Bonus or 0)
+		return (da and da.Multiplier or 0) > (db and db.Multiplier or 0)
 	end)
 	if #pets == 0 then
 		addCard(p, { name = "Пока нет питомцев", info = "Открой яйцо в лобби!", fallback = "🥚" })
@@ -226,8 +226,8 @@ local function fillPets(p: Frame)
 			local equipped = table.find(data.EquippedPets, pet.Uid) ~= nil
 			local card = addCard(p, {
 				name = def.Name,
-				info = ("%s · +%s к силе"):format(def.Rarity, tostring(def.Bonus)),
-				fallback = "🐾",
+				info = ("%s · x%s Силы"):format(def.Rarity, tostring(def.Multiplier)),
+				fallback = def.Emoji or "🐾",
 				color = def.Color,
 				button = equipped and "Снять" or "Надеть",
 				buttonColor = equipped and COLOR_DONE or COLOR_EQUIP,
@@ -464,7 +464,7 @@ local function fillAchievements(p: Frame)
 					act("ClaimAchievement", ach.Id)
 				end
 			end,
-			order = (claimed and 1000 or 0) + i,
+			order = 100 + (claimed and 1000 or 0) + i,
 		})
 	end
 end
@@ -562,7 +562,10 @@ local FILLERS = {
 	RebirthPanel = fillRebirth,
 	WheelPanel = fillWheel,
 	RewardsPanel = fillRewards,
-	QuestsPanel = fillQuests,
+	QuestsPanel = function(p)
+		fillQuests(p)
+		fillAchievements(p) -- достижения в том же окне, ниже заданий
+	end,
 	AchievementsPanel = fillAchievements,
 	SettingsPanel = fillSettings,
 }

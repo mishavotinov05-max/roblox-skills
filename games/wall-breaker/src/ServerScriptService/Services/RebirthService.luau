@@ -14,6 +14,7 @@ local DataService = require(Services:WaitForChild("DataService"))
 local RequestService = require(Services:WaitForChild("RequestService"))
 local PickaxeService = require(Services:WaitForChild("PickaxeService"))
 local WallService = require(Services:WaitForChild("WallService"))
+local MapService = require(Services:WaitForChild("MapService"))
 
 local RebirthService = {}
 
@@ -40,6 +41,10 @@ function RebirthService.Init()
 		WallService.ResetPlayer(player)
 		DataService.MarkDirty(player)
 		PickaxeService.GiveTool(player)
+		local character = player.Character
+		if character then
+			character:PivotTo(MapService.SpawnCFrame()) -- после перерождения — на спавн
+		end
 		RequestService.Notify(player, ("Перерождение %d! Сила навсегда ×%s"):format(data.Rebirths, tostring(Formulas.RebirthMultiplier(data))), "success")
 		return { ok = true }
 	end)

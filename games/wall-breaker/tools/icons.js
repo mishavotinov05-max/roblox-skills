@@ -315,7 +315,7 @@ function tile2(rimA, rimB, inA, inB) {
   };
 }
 const TILE = {
-  shop: ['#ffc15e', '#ff4b2b', '#ff7a52', '#c4213b'],
+  shop: ['#fff27a', '#ffae00', '#ffd23f', '#ff9500'],
   pets: ['#8fdcff', '#1d6fe0', '#45aaff', '#1846b0'],
   auras: ['#e1a2ff', '#7a2cff', '#6f34dc', '#2a0d6e'],
   rebirth: ['#ffffff', '#c3cde2', '#ffffff', '#e0e7f4'],
@@ -329,6 +329,41 @@ const TILE = {
 function withTile2(set, sym, scale = 0.8) {
   const t = tile2(...TILE[set]);
   return `<defs>${t.defs}</defs>${t.body}<g transform="translate(128 124) scale(${scale}) translate(-128 -128)">${sym}</g>`;
+}
+
+function basket() {
+  const r = grad('#ff6b5a', '#c42a1e'), h = grad('#e6ebf5', '#8d97ab');
+  let slats = '';
+  for (let i = 0; i < 5; i++) slats += `<path d="M${70 + i * 29} 118 L${76 + i * 26} 212" stroke="${OL}" stroke-width="7" stroke-linecap="round" opacity=".55"/>`;
+  return `<defs>${r.def}${h.def}</defs>
+    <path d="M78 104 C 78 40 178 40 178 104" fill="none" stroke="${OL}" stroke-width="22" stroke-linecap="round"/>
+    <path d="M78 104 C 78 40 178 40 178 104" fill="none" stroke="url(#${h.id})" stroke-width="11" stroke-linecap="round"/>
+    <path d="M36 104 H220 L198 222 H58Z" fill="url(#${r.id})" stroke="${OL}" stroke-width="${SW}" stroke-linejoin="round"/>
+    <rect x="28" y="94" width="200" height="30" rx="10" fill="#ff8a7a" stroke="${OL}" stroke-width="9"/>
+    ${slats}
+    <path d="M52 160 H204" stroke="${OL}" stroke-width="7" opacity=".55"/>
+    ${shine(60, 106, 14, 5, 0)}`;
+}
+
+function scroll() {
+  const p = grad('#fff3d6', '#e8c98f');
+  return `<defs>${p.def}</defs>
+    <rect x="58" y="44" width="140" height="170" rx="10" fill="url(#${p.id})" stroke="${OL}" stroke-width="${SW}"/>
+    <rect x="40" y="30" width="176" height="30" rx="15" fill="#d9a560" stroke="${OL}" stroke-width="${SW}"/>
+    <rect x="40" y="198" width="176" height="30" rx="15" fill="#d9a560" stroke="${OL}" stroke-width="${SW}"/>
+    <path d="M84 98 H170 M84 124 H150" stroke="${OL}" stroke-width="8" stroke-linecap="round" opacity=".4"/>
+    <path d="M92 154 L118 178 L168 120" fill="none" stroke="${OL}" stroke-width="30" stroke-linecap="round" stroke-linejoin="round"/>
+    <path d="M92 154 L118 178 L168 120" fill="none" stroke="#e8202a" stroke-width="16" stroke-linecap="round" stroke-linejoin="round"/>`;
+}
+
+function sword(c1 = '#bff4ff', c2 = '#3f9bff') {
+  const b = grad(c1, c2, false);
+  return `<defs>${b.def}</defs><g transform="rotate(45 128 128)">
+    <path d="M128 18 L152 52 V170 H104 V52Z" fill="url(#${b.id})" stroke="${OL}" stroke-width="${SW}" stroke-linejoin="round"/>
+    <path d="M128 30 V164" stroke="#fff" stroke-width="7" opacity=".6"/>
+    <rect x="76" y="164" width="104" height="22" rx="10" fill="#ffd23f" stroke="${OL}" stroke-width="${SW}"/>
+    <rect x="114" y="184" width="28" height="46" rx="8" fill="#a86a3c" stroke="${OL}" stroke-width="${SW}"/>
+    <circle cx="128" cy="238" r="12" fill="#ffd23f" stroke="${OL}" stroke-width="8"/></g>`;
 }
 
 function shop2() {
@@ -443,7 +478,7 @@ function wheel2() {
 // bar  — нижний ряд кнопок без фона
 // tile — прочие кнопки-плитки
 export const ICONS = [
-  { group: 'hud', name: 'btn_shop', label: 'Магазин', svg: () => withTile2('shop', shop2(), .84) },
+  { group: 'hud', name: 'btn_shop', label: 'Магазин', svg: () => withTile2('shop', basket(), .84) },
   { group: 'hud', name: 'btn_pets', label: 'Питомцы', svg: () => withTile2('pets', paw2()) },
   { group: 'hud', name: 'btn_auras', label: 'Ауры', svg: () => withTile2('auras', flame2()) },
   { group: 'hud', name: 'btn_rebirth', label: 'Перерождение', svg: () => withTile2('rebirth', rebirth2()) },
@@ -452,7 +487,9 @@ export const ICONS = [
   { group: 'bar', name: 'bar_carts', label: 'Вагонетки', svg: () => cart2() },
   { group: 'bar', name: 'bar_achievements', label: 'Достижения', svg: () => trophy() },
   { group: 'bar', name: 'bar_rewards', label: 'Награды', svg: () => gift2() },
-  { group: 'bar', name: 'bar_daily', label: 'Ежедневные задания', svg: () => calendar2() },
+  { group: 'bar', name: 'bar_daily', label: 'Задания', svg: () => scroll() },
+  { group: 'bar', name: 'icon_sword', label: 'Уровень / Мощный удар', svg: () => sword() },
+  { group: 'bar', name: 'icon_sword_dark', label: 'Мощный удар', svg: () => sword('#e9b8ff', '#6a2cd6') },
   { group: 'bar', name: 'bar_settings', label: 'Настройки', svg: () => gear2() },
 
   { group: 'tile', name: 'btn_inventory', label: 'Инвентарь', svg: () => withTile2('orange', inventory()) },
@@ -464,7 +501,7 @@ export const ICONS = [
   { group: 'tile', name: 'btn_lock', label: 'Закрыто', svg: () => withTile2('gray', lock()) },
   { group: 'tile', name: 'btn_donate', label: 'Донат', svg: () => withTile2('green', donate()) },
 
-  { group: 'stat', name: 'stat_strength', label: 'Сила', svg: () => pickaxe('#fff27a', '#ffae00', '#8a5428') },
+  { group: 'stat', name: 'stat_strength', label: 'Сила', svg: () => bicep() },
   { group: 'stat', name: 'stat_luck', label: 'Удача', svg: () => clover() },
   { group: 'stat', name: 'stat_wins', label: 'Победы', svg: () => trophy() },
 
@@ -525,7 +562,7 @@ function wheelParts() {
     <path d="M110 6 H146 L128 42Z" fill="#fff" stroke="${OL}" stroke-width="8" stroke-linejoin="round"/>`;
   return { base, disc, top };
 }
-const SYMS = { shop: [shop2, .84], pets: [paw2, .8], auras: [flame2, .8], rebirth: [rebirth2, .8] };
+const SYMS = { shop: [basket, .84], pets: [paw2, .8], auras: [flame2, .8], rebirth: [rebirth2, .8] };
 for (const [k, [fn, sc]] of Object.entries(SYMS)) {
   ICONS.push({ group: 'layer', name: `layer_tile_${k}`, label: '', svg: () => { const t = tile2(...TILE[k]); return `<defs>${t.defs}</defs>${t.body}`; } });
   ICONS.push({ group: 'layer', name: `layer_sym_${k}`, label: '', svg: () => `<g transform="translate(128 124) scale(${sc}) translate(-128 -128)">${fn()}</g>` });

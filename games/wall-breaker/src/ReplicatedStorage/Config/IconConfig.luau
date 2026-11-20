@@ -27,11 +27,15 @@ return {
 	-- Правый верхний угол
 	Achievements = "rbxassetid://0", -- bar_achievements.png
 	Rewards = "rbxassetid://0", -- bar_rewards.png
-	Quests = "rbxassetid://0", -- bar_daily.png
+	Quests = "rbxassetid://0", -- bar_daily.png (свиток)
 	Settings = "rbxassetid://0", -- bar_settings.png
 
+	-- Меч на полосе уровня и на кнопке «Мощный удар»
+	LevelSword = "rbxassetid://0", -- icon_sword.png
+	PowerSword = "rbxassetid://0", -- icon_sword_dark.png
+
 	-- Показатели
-	Strength = "rbxassetid://0", -- stat_strength.png
+	Strength = "rbxassetid://0", -- stat_strength.png (рука)
 	Luck = "rbxassetid://0", -- stat_luck.png
 	Wins = "rbxassetid://0", -- stat_wins.png
 

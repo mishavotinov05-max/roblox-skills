@@ -38,5 +38,5 @@ return {
 		"rbxassetid://0", -- 10 level_netherite.png
 	},
 	-- Текстуры ям по номеру (Pit_01 …): ключ из Textures или номер уровня из Levels
-	Pits = { "dirt", 3, 4, 6, 7, 9 },
+	Pits = { "dirt", 3, 4, 6, 7, 9, 8 },
 }

@@ -32,6 +32,7 @@ local RequestService = require(Services:WaitForChild("RequestService"))
 local MapService = require(Services:WaitForChild("MapService"))
 local MonetizationService = require(Services:WaitForChild("MonetizationService"))
 local OreService = require(Services:WaitForChild("OreService"))
+local BoostService = require(Services:WaitForChild("BoostService"))
 
 local WallService = {}
 local LAYERS = LevelConfig.LayersPerLevel
@@ -132,7 +133,7 @@ local function targetLayer(data, pos: Vector3)
 end
 
 local function hit(player: Player, data, level)
-	local remaining = layerHP(player, data, level.Id) - Formulas.Damage(data)
+	local remaining = layerHP(player, data, level.Id) - Formulas.Damage(data) * BoostService.Multiplier(player)
 	if remaining > 0 then
 		hp[player][level.Id] = remaining
 		sendLevelState(player, level.Id)

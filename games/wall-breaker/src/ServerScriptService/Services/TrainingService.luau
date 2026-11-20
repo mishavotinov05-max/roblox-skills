@@ -20,6 +20,7 @@ local DataService = require(Services:WaitForChild("DataService"))
 local RequestService = require(Services:WaitForChild("RequestService"))
 local MapService = require(Services:WaitForChild("MapService"))
 local MonetizationService = require(Services:WaitForChild("MonetizationService"))
+local BoostService = require(Services:WaitForChild("BoostService"))
 
 local TrainingService = {}
 local pits = {}
@@ -35,7 +36,7 @@ local function pitAt(pos: Vector3)
 end
 
 local function gainStrength(player: Player, data, power: number)
-	local gain = Formulas.StrengthPerSwing(data, power, MonetizationService.HasPass(player, "StrengthX2"))
+	local gain = Formulas.StrengthPerSwing(data, power, MonetizationService.HasPass(player, "StrengthX2")) * BoostService.Multiplier(player)
 	data.Strength += gain
 	DataService.MarkDirty(player)
 	Remotes.Event("Effect"):FireClient(player, "Strength", gain)
@@ -53,9 +54,9 @@ local function playSlash(player: Player)
 	end
 end
 
--- Опыт за удар в яме → уровень игрока
-local function gainXp(player: Player, data, pitPower: number)
-	data.Xp += math.max(1, math.floor(pitPower * Settings.Xp.PerPitPower))
+-- Добавить опыт и поднять уровень (используется ямами и пакетами опыта)
+function TrainingService.AddXp(player: Player, data, amount: number)
+	data.Xp += math.max(1, math.floor(amount))
 	local leveled = false
 	while data.Xp >= Formulas.XpForLevel(data.PlayerLevel) do
 		data.Xp -= Formulas.XpForLevel(data.PlayerLevel)
@@ -65,6 +66,11 @@ local function gainXp(player: Player, data, pitPower: number)
 	if leveled then
 		Remotes.Event("Effect"):FireClient(player, "LevelUp", data.PlayerLevel)
 	end
+	DataService.MarkDirty(player)
+end
+
+local function gainXp(player: Player, data, pitPower: number)
+	TrainingService.AddXp(player, data, pitPower * Settings.Xp.PerPitPower * BoostService.Multiplier(player))
 end
 
 -- Удар в яме. true — игрок стоит в яме (даже если она закрыта)
@@ -102,16 +108,21 @@ function TrainingService.Init()
 		local cfg = PitConfig.Pits[pit.Index]
 		if cfg then
 			MapService.SetText(pit.Sign, "Title", cfg.Name)
-			MapService.SetText(
-				pit.Sign,
-				"Sub",
-				cfg.RequiredRebirths > 0 and ("🔒 %d перерождений · +%s силы"):format(cfg.RequiredRebirths, tostring(cfg.Power))
-					or ("открыта · +%s силы"):format(tostring(cfg.Power))
-			)
+			MapService.SetText(pit.Sign, "Sub", ("Перерождения: %d"):format(cfg.RequiredRebirths))
 		else
 			MapService.SetText(pit.Sign, "Title", "Новая яма")
 			MapService.SetText(pit.Sign, "Sub", "свободное место")
 		end
+	end
+
+	-- Пакеты опыта за Robux (кнопки под полосой уровня)
+	for _, key in ipairs({ "xp_small", "xp_medium", "xp_big" }) do
+		MonetizationService.RegisterProductHandler(key, function(player, data, product)
+			local amount = Formulas.XpForLevel(data.PlayerLevel) * (product.XpFactor or 1)
+			TrainingService.AddXp(player, data, amount)
+			RequestService.Notify(player, "+" .. tostring(math.floor(amount)) .. " опыта!", "success")
+			return true
+		end)
 	end
 
 	-- Автоудары в открытой яме
