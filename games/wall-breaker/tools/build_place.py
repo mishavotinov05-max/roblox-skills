@@ -1096,6 +1096,61 @@ def modules_from(dirpath):
     return out
 
 
+# ---------- Иконки из IconConfig прямо в файл (видны в Studio и без Play) ----------
+ICON_MAP = [  # (путь в MainHud, картинка, ключ IconConfig, что скрыть, убрать фон)
+    ("LeftMenu.ShopButton", "Tile", "ShopTile", ["Fallback", "Label"], True),
+    ("LeftMenu.PetsButton", "Tile", "PetsTile", ["Fallback", "Label"], True),
+    ("LeftMenu.AurasButton", "Tile", "AurasTile", ["Fallback", "Label"], True),
+    ("LeftMenu.RebirthButton", "Tile", "RebirthTile", ["Fallback", "Label"], True),
+    ("TopRight.WheelButton", "Disc", "WheelDisc", ["Fallback", "Label"], False),
+    ("TopRight.RewardsButton", "Icon", "Rewards", ["Fallback", "Label"], False),
+    ("TopRight.QuestsButton", "Icon", "Quests", ["Fallback", "Label"], False),
+    ("TopRight.SettingsButton", "Icon", "Settings", ["Fallback", "Label"], False),
+    ("Stats.WinsRow", "Skin", "WinsCard", ["Icon", "Fallback", "Title"], True),
+    ("Stats.StrengthRow", "Skin", "StrengthCard", ["Icon", "Fallback", "Title"], True),
+    ("Stats.LuckRow", "Skin", "LuckCard", ["Icon", "Fallback", "Title"], True),
+    ("Stats.RebirthRow", "Skin", "RebirthCard", ["Icon", "Fallback", "Title"], True),
+    ("PowerPanel.PowerStrikeButton", "Skin", "PowerButton", ["Icon", "Fallback", "Text"], True),
+    ("PowerPanel.LevelBar", "Skin", "LevelBarEmpty", ["Icon", "Fallback"], True),
+    ("PowerPanel.LevelBar.Fill", "Skin", "LevelBarFull", [], True),
+]
+
+
+def icon_ids():
+    import re
+    src = read(os.path.join(SRC, "ReplicatedStorage", "Config", "IconConfig.luau"))
+    return {k: v for k, v in re.findall(r'(\w+) = "(rbxassetid://\d+)"', src) if not v.endswith("://0")}
+
+
+def bake_icons(hud):
+    ids = icon_ids()
+
+    def find(node, path):
+        for name in path.split("."):
+            node = next((c for c in node.children if c.name == name), None)
+            if node is None:
+                return None
+        return node
+
+    def setp(node, kind, name, value):
+        node.props = [p for p in node.props if p.name != name] + [P(kind, name, value)]
+
+    for path, child, key, hide, clear_bg in ICON_MAP:
+        holder = find(hud, path)
+        img = holder and find(holder, child)
+        if not img or key not in ids:
+            continue
+        setp(img, "content", "Image", ids[key])
+        setp(img, "bool", "Visible", True)
+        for h in hide:
+            o = find(holder, h)
+            if o:
+                setp(o, "bool", "Visible", False)
+        if clear_bg:
+            setp(holder, "float", "BackgroundTransparency", 1)
+            holder.children = [c for c in holder.children if c.cls != "UIStroke"]
+
+
 def build():
     rs = SRC + "/ReplicatedStorage"
     sss = SRC + "/ServerScriptService"
@@ -1120,7 +1175,9 @@ def build():
         Inst("StarterPlayerScripts", "StarterPlayerScripts", [], [client]),
         Inst("StarterCharacterScripts", "StarterCharacterScripts"),
     ])
-    starter_gui = Inst("StarterGui", "StarterGui", [], [build_gui()])
+    hud = build_gui()
+    bake_icons(hud)
+    starter_gui = Inst("StarterGui", "StarterGui", [], [hud])
     # Освещение: яркий мультяшный день. Все значения можно менять в Studio: Explorer › Lighting.
     # Technology: 3 = ShadowMap (мягкие тени, быстро на телефонах); 4 = Future (красивее, тяжелее).
     lighting = Inst("Lighting", "Lighting", [
