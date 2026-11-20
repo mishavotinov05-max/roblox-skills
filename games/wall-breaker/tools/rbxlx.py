@@ -310,3 +310,19 @@ def particles(color, rate, texture, speed, size, name="Particles"):
         P("numrange", "Lifetime", (0.5, 1)), P("numrange", "Speed", (speed, speed * 2)),
         P("vec2", "SpreadAngle", (180, 180)), P("numseq", "Size", (size, 0)), P("numseq", "Transparency", (0.1, 1)),
         P("content", "Texture", texture)])
+
+
+def ui_gradient(c0, c1, rotation=90):
+    r0, g0, b0 = (v / 255 for v in c0)
+    r1, g1, b1 = (v / 255 for v in c1)
+    return Inst("UIGradient", "UIGradient", [
+        P("float", "Rotation", rotation),
+        Pseq("Color", f"0 {r0} {g0} {b0} 0 1 {r1} {g1} {b1} 0 ")])
+
+
+class Pseq(P):
+    def __init__(self, name, text):
+        super().__init__("raw", name, text)
+
+    def xml(self):
+        return f'<ColorSequence name="{self.name}">{self.value}</ColorSequence>'

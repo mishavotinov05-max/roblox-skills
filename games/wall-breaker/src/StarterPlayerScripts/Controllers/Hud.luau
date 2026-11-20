@@ -94,6 +94,10 @@ local function setSkin(holder: Instance?, key: string, hide: { string })
 			o.Visible = false
 		end
 	end
+	local patch = holder:FindFirstChild("ValueBg") -- закрывает число, напечатанное на картинке
+	if patch and patch:IsA("GuiObject") then
+		patch.Visible = true
+	end
 	return true
 end
 

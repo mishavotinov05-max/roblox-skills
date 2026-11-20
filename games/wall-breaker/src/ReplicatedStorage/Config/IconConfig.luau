@@ -28,14 +28,14 @@ return {
 
 	-- Колесо фортуны
 	WheelBase = "rbxassetid://0", -- layer_wheel_base.png
-	WheelDisc = "rbxassetid://0", -- layer_wheel_disc.png
+	WheelDisc = "rbxassetid://102177297594423", -- layer_wheel_disc.png
 	WheelTop = "rbxassetid://0", -- layer_wheel_top.png
 
 	-- Правый верхний угол
 	Achievements = "rbxassetid://0", -- bar_achievements.png
-	Rewards = "rbxassetid://0", -- bar_rewards.png
-	Quests = "rbxassetid://0", -- bar_daily.png (свиток)
-	Settings = "rbxassetid://0", -- bar_settings.png
+	Rewards = "rbxassetid://123604929350824", -- bar_rewards.png
+	Quests = "rbxassetid://110903843704268", -- bar_daily.png (свиток)
+	Settings = "rbxassetid://126268987946288", -- bar_settings.png
 
 	-- Меч на полосе уровня и на кнопке «Мощный удар»
 	LevelSword = "rbxassetid://0", -- icon_sword.png
@@ -43,13 +43,13 @@ return {
 
 	-- Карточки слева внизу и полоса уровня — целые картинки (папка art/ui_ref).
 	-- Число игра пишет сама поверх картинки.
-	WinsCard = "rbxassetid://0", -- card_wins.png
-	StrengthCard = "rbxassetid://0", -- card_strength.png
-	LuckCard = "rbxassetid://0", -- card_luck.png
-	RebirthCard = "rbxassetid://0", -- card_rebirth.png
+	WinsCard = "rbxassetid://86147372644434", -- card_wins.png
+	StrengthCard = "rbxassetid://132318617791587", -- card_strength.png
+	LuckCard = "rbxassetid://93482408998552", -- card_luck.png
+	RebirthCard = "rbxassetid://119123577001004", -- card_rebirth.png
 	LevelBarEmpty = "rbxassetid://0", -- levelbar_empty.png
 	LevelBarFull = "rbxassetid://0", -- levelbar_full.png
-	PowerButton = "rbxassetid://0", -- power_button.png
+	PowerButton = "rbxassetid://91365611636904", -- power_button.png
 
 	-- Показатели
 	Strength = "rbxassetid://0", -- stat_strength.png (рука)
@@ -64,8 +64,5 @@ return {
 
 	-- Номера картинок «без названий»: игра при запуске сама узнаёт имя каждой картинки
 	-- (ref_wheel, card_wins …) и ставит её на нужное место. Номера, вписанные выше, важнее.
-	Unsorted = {
-		132318617791587, 93482408998552, 123604929350824, 119123577001004, 86147372644434, 91365611636904,
-		133648570211127, 124522909300125, 126268987946288, 110903843704268, 102177297594423,
-	},
+	Unsorted = {},
 }

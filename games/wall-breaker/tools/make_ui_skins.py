@@ -15,11 +15,19 @@ os.makedirs(OUT, exist_ok=True)
 meta = {}
 
 
+CANVAS = {}
+
+
 def load(name):
     im = Image.open(os.path.join(SRC, name)).convert("RGBA")
     a = im.getchannel("A").point(lambda v: 0 if v < 128 else v)
     im.putalpha(a)
-    return im.crop(im.getbbox())
+    bb = im.getbbox()
+    W, H = im.size
+    cw, ch = bb[2] - bb[0], bb[3] - bb[1]
+    # если в Roblox загружен ИСХОДНЫЙ файл (с пустыми полями) — как растянуть его, чтобы карточка совпала
+    CANVAS[name] = {"size": [round(W / cw, 4), round(H / ch, 4)], "pos": [round(-bb[0] / cw, 4), round(-bb[1] / ch, 4)]}
+    return im.crop(bb)
 
 
 def lum(c):
@@ -134,12 +142,19 @@ for src, name in (("wins.webp", "card_wins"), ("strength.webp", "card_strength")
                     continue
                 px2[x, y] = c
     im.save(os.path.join(OUT, name + ".png"))
-    meta[name] = {"ratio": round(w / h, 4), "value": frac(area, im), "title": frac(top, im)}
+    pp = im.load()
+    cols = [pp[x, y] for x in range(area[0], area[2], 7) for y in range(area[1], area[3], 7) if pp[x, y][3] > 200]
+    patch = [sum(c[i] for c in cols) // len(cols) for i in range(3)]
+    def rowc(y):
+        r = [pp[x, y] for x in range(area[0], area[2], 5) if pp[x, y][3] > 200]
+        return [sum(c[i] for c in r) // len(r) for i in range(3)]
+    meta[name] = {"ratio": round(w / h, 4), "value": frac(area, im), "title": frac(top, im), "patch": patch,
+                  "patchTop": rowc(area[1] + 3), "patchBottom": rowc(area[3] - 3), "canvas": CANVAS[src]}
 
 # Мощный удар: картинка целиком (меч + надпись)
 pw = load("power.webp")
 pw.save(os.path.join(OUT, "power_button.png"))
-meta["power_button"] = {"ratio": round(pw.size[0] / pw.size[1], 4)}
+meta["power_button"] = {"ratio": round(pw.size[0] / pw.size[1], 4), "canvas": CANVAS["power.webp"]}
 
 # Полоса уровня: делаем 2 картинки — пустую (тёмную) и полную (жёлтую), без текста
 im = load("level.webp")

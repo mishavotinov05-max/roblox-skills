@@ -7,7 +7,7 @@ import json
 import math
 import os
 import random
-from rbxlx import (Inst, P, Frame3, rot, part, particles, model, folder, point_light, prompt, script, frame, label, text_button,
+from rbxlx import (Inst, P, Frame3, rot, part, particles, ui_gradient, model, folder, point_light, prompt, script, frame, label, text_button,
                    image, image_button, ui_corner, ui_stroke, ui_padding, ui_scale, ui_list, ui_grid, scrolling,
                    surface_gui, billboard, screen_gui, write_place, FONT_BOLD)
 
@@ -824,7 +824,9 @@ def stat_card(name, emoji, title, color, order, skin):
     h = round(w / meta["ratio"])
     r = frame(name, ((0, w), (0, h)), ((0, 0), (0, 0)), bg=color, bgt=0, order=order)
     r.add(ui_corner(0, 14), ui_stroke(4, DARK))
-    r.add(image("Skin", "", ((1, 0), (1, 0)), ((0, 0), (0, 0)), visible=False, stretch=True, z=1))
+    cv = meta["canvas"]  # загружен исходный файл с полями — растягиваем так, чтобы карточка совпала с рамкой
+    r.add(image("Skin", "", ((cv["size"][0], 0), (cv["size"][1], 0)), ((cv["pos"][0], 0), (cv["pos"][1], 0)), visible=False,
+                stretch=True, z=1))
     r.add(image("Icon", "", ((0, h - 16), (0, h - 16)), ((0, 8), (0.5, 0)), anchor=(0, 0.5), visible=False, z=2))
     r.add(label("Fallback", emoji, ((0, h - 20), (0, h - 20)), ((0, 10), (0.5, 0)), anchor=(0, 0.5), stroke=0, z=2))
     vx, vy, vw, vh = meta["value"]
@@ -833,6 +835,10 @@ def stat_card(name, emoji, title, color, order, skin):
         r.add(label("Title", title, ((tw, 0), (th, 0)), ((tx, 0), (ty, 0)), stroke=2.5, z=3))
     else:  # перерождения: название над «таблеткой»
         r.add(label("Title", title, ((0.6, 0), (0.36, 0)), ((0.36, 0), (0.05, 0)), stroke=2.5, z=3))
+    # заплатка цвета карточки — закрывает число, напечатанное на картинке
+    vb = frame("ValueBg", ((vw, 0), (vh, 0)), ((vx, 0), (vy, 0)), bg=(255, 255, 255), bgt=0, visible=False, z=2)
+    vb.add(ui_corner(0, 6), ui_gradient(tuple(meta["patchTop"]), tuple(meta["patchBottom"])))
+    r.add(vb)
     r.add(label("Value", "0", ((vw, 0), (vh * 0.9, 0)), ((vx + vw / 2, 0), (vy + vh / 2, 0)), anchor=(0.5, 0.5), stroke=3, z=3))
     return r
 
@@ -929,7 +935,9 @@ def build_gui():
     strike.add(image("Icon", "", ((0, 64), (0, 64)), ((0, 4), (0.5, 0)), anchor=(0, 0.5), visible=False, z=3),
                label("Fallback", "🗡️", ((0, 60), (0, 60)), ((0, 6), (0.5, 0)), anchor=(0, 0.5), stroke=0, z=3),
                label("Text", "Мощный\nудар", ((1, -76), (1, -10)), ((0, 70), (0, 5)), stroke=3.5, z=3),
-               image("Skin", "", ((1, 0), (1, 0)), ((0, 0), (0, 0)), visible=False, stretch=True, z=2))
+               image("Skin", "", ((SKINS["power_button"]["canvas"]["size"][0], 0), (SKINS["power_button"]["canvas"]["size"][1], 0)),
+                     ((SKINS["power_button"]["canvas"]["pos"][0], 0), (SKINS["power_button"]["canvas"]["pos"][1], 0)),
+                     visible=False, stretch=True, z=2))
     power.add(strike)
     # полоса уровня: Skin — пустая (тёмная) картинка, Fill/Skin — полная (жёлтая), обрезается по проценту
     lb = SKINS["levelbar"]
@@ -1106,10 +1114,10 @@ ICON_MAP = [  # (путь в MainHud, картинка, ключ IconConfig, ч�
     ("TopRight.RewardsButton", "Icon", "Rewards", ["Fallback", "Label"], False),
     ("TopRight.QuestsButton", "Icon", "Quests", ["Fallback", "Label"], False),
     ("TopRight.SettingsButton", "Icon", "Settings", ["Fallback", "Label"], False),
-    ("Stats.WinsRow", "Skin", "WinsCard", ["Icon", "Fallback", "Title"], True),
-    ("Stats.StrengthRow", "Skin", "StrengthCard", ["Icon", "Fallback", "Title"], True),
-    ("Stats.LuckRow", "Skin", "LuckCard", ["Icon", "Fallback", "Title"], True),
-    ("Stats.RebirthRow", "Skin", "RebirthCard", ["Icon", "Fallback", "Title"], True),
+    ("Stats.WinsRow", "Skin", "WinsCard", ["Icon", "Fallback", "Title", "+ValueBg"], True),
+    ("Stats.StrengthRow", "Skin", "StrengthCard", ["Icon", "Fallback", "Title", "+ValueBg"], True),
+    ("Stats.LuckRow", "Skin", "LuckCard", ["Icon", "Fallback", "Title", "+ValueBg"], True),
+    ("Stats.RebirthRow", "Skin", "RebirthCard", ["Icon", "Fallback", "Title", "+ValueBg"], True),
     ("PowerPanel.PowerStrikeButton", "Skin", "PowerButton", ["Icon", "Fallback", "Text"], True),
     ("PowerPanel.LevelBar", "Skin", "LevelBarEmpty", ["Icon", "Fallback"], True),
     ("PowerPanel.LevelBar.Fill", "Skin", "LevelBarFull", [], True),
@@ -1143,9 +1151,10 @@ def bake_icons(hud):
         setp(img, "content", "Image", ids[key])
         setp(img, "bool", "Visible", True)
         for h in hide:
-            o = find(holder, h)
+            show = h.startswith("+")
+            o = find(holder, h.lstrip("+"))
             if o:
-                setp(o, "bool", "Visible", False)
+                setp(o, "bool", "Visible", show)
         if clear_bg:
             setp(holder, "float", "BackgroundTransparency", 1)
             holder.children = [c for c in holder.children if c.cls != "UIStroke"]
