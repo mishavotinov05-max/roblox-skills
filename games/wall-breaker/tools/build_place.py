@@ -90,25 +90,73 @@ def build_hub():
     hub.add(floor_f)
 
     # --- Стены ---
+    # Ступенчатые холмы из рыжих блоков с травой сверху (вместо ровных стен), как на скриншоте
     walls = folder("Walls")
     gap = 9
-    walls.add(wall_box("WallSouth", HW - XL + 2 * T, WALLH, T, (XL + HW) / 2, HD + T / 2))
-    walls.add(wall_box("WallWest", T, WALLH, 2 * HD, XL - T / 2, 0))
-    walls.add(wall_box("WallEast", T, WALLH, 2 * HD, HW + T / 2, 0))
-    walls.add(wall_box("WallNorthLeft", -gap - XL + T, WALLH, T, (XL - T - gap) / 2, -HD - T / 2))
-    walls.add(wall_box("WallNorthRight", HW - gap + T, WALLH, T, (gap + HW + T) / 2, -HD - T / 2))
-    walls.add(wall_box("WallNorthTop", 2 * gap, WALLH - 19, T, 0, -HD - T / 2, y0=19))
-    walls.add(grass_cap("GrassSouth", HW - XL + 2 * T + 0.4, T + 0.4, (XL + HW) / 2, HD + T / 2, WALLH))
-    walls.add(grass_cap("GrassNorth", HW - XL + 2 * T + 0.4, T + 0.4, (XL + HW) / 2, -HD - T / 2, WALLH))
-    walls.add(grass_cap("GrassWest", T + 0.4, 2 * HD, XL - T / 2, 0, WALLH))
-    walls.add(grass_cap("GrassEast", T + 0.4, 2 * HD, HW + T / 2, 0, WALLH))
+    cr = random.Random(21)
+    n = [0]
+
+    def cliff(x0, x1, z0, z1, h):
+        n[0] += 1
+        walls.add(part(f"Cliff_{n[0]}", (x1 - x0, h, z1 - z0), ((x0 + x1) / 2, h / 2, (z0 + z1) / 2), BRICK, "Brick"))
+        walls.add(part(f"GrassCliff_{n[0]}", (x1 - x0 + 0.4, 1.6, z1 - z0 + 0.4), ((x0 + x1) / 2, h + 0.8, (z0 + z1) / 2), GRASS, "Grass"))
+        return h
+
+    def side(a0, a1, place, skip=None):
+        """Вдоль стороны: блоки разной ширины, 2–3 ступени назад и вверх."""
+        a = a0
+        while a < a1:
+            w = cr.choice((8, 12, 12, 16, 20))
+            w = min(w, a1 - a)
+            if skip and a < skip[1] and a + w > skip[0]:
+                a = skip[1]
+                continue
+            h = cr.choice((12, 14, 16, 18, 20))
+            d0 = 0
+            for tier in range(cr.choice((2, 3, 3))):
+                depth = cr.choice((6, 8, 10))
+                shift = cr.choice((-2, 0, 0, 2)) if tier else 0
+                place(a + shift, a + w + shift, d0, d0 + depth, h)
+                d0 += depth
+                h += cr.choice((6, 8, 10))
+            a += w
+
+    # юг (z = HD … дальше), запад (x = XL … меньше), восток (x = HW … больше), север (z = -HD … меньше, кроме арки)
+    side(XL - 10, HW + 10, lambda a0, a1, d0, d1, h: cliff(a0, a1, HD + d0, HD + d1, h))
+    side(-HD - 10, HD + 10, lambda a0, a1, d0, d1, h: cliff(XL - d1, XL - d0, a0, a1, h))
+    side(-HD - 10, HD + 10, lambda a0, a1, d0, d1, h: cliff(HW + d0, HW + d1, a0, a1, h))
+    side(XL - 10, HW + 10, lambda a0, a1, d0, d1, h: cliff(a0, a1, -HD - d1, -HD - d0, h), skip=(-14, 14))
+    # над аркой — перемычка, по бокам арки — блоки
+    cliff(-14, -13.2, -HD - 6, -HD, 23)
+    cliff(13.2, 14, -HD - 6, -HD, 23)
+    walls.add(wall_box("WallNorthTop", 28, 6, 6, 0, -HD - 3, y0=23))
+    walls.add(grass_cap("GrassNorthTop", 28.4, 6.4, 0, -HD - 3, 29))
+
+    # пиксельные ёлки на холмах
+    trees = folder("Trees")
+    for k in range(18):
+        sd = k % 4
+        if sd == 0:
+            x, z = cr.uniform(XL, HW), HD + cr.uniform(8, 22)
+        elif sd == 1:
+            x, z = XL - cr.uniform(8, 22), cr.uniform(-HD, HD)
+        elif sd == 2:
+            x, z = HW + cr.uniform(8, 22), cr.uniform(-HD, HD)
+        else:
+            x, z = cr.choice((cr.uniform(XL, -20), cr.uniform(20, HW))), -HD - cr.uniform(8, 22)
+        base = 30 + cr.choice((0, 4, 8))
+        t = model(f"Tree_{k + 1}")
+        t.add(part("Trunk", (2, 6, 2), (x, base + 3, z), (120, 72, 40), "Wood"))
+        for i, (w, hh) in enumerate(((12, 4), (9, 4), (6, 4), (3, 3))):
+            t.add(part(f"Leaves{i + 1}", (w, hh, w), (x, base + 6 + i * 4 + hh / 2, z), (70, 190, 60), "Grass"))
+        trees.add(t)
+    hub.add(trees)
     hub.add(walls)
 
     # --- Декор: светящиеся линии прохода и фонари ---
     decor = folder("Decor")
     # песчаная дорожка по центральному проходу (как на скриншоте)
     decor.add(part("Path_Center", (14, 0.12, 2 * HD - 2), (0, 0.06, 0), (240, 201, 138), "SmoothPlastic", cast_shadow=False))
-    decor.add(part("PitZoneLine", (0.5, 0.1, 2 * HD - 10), (-20.5, 0.05, 0), (198, 107, 255), "Neon", collide=False, cast_shadow=False))
     n = 0
     for z in (-26, 0, 26):
         n += 1
