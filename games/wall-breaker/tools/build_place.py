@@ -1182,18 +1182,18 @@ def build():
     # Technology: 3 = ShadowMap (мягкие тени, быстро на телефонах); 4 = Future (красивее, тяжелее).
     lighting = Inst("Lighting", "Lighting", [
         P("token", "Technology", 3), P("float", "ClockTime", 14), P("float", "GeographicLatitude", 30),
-        P("float", "Brightness", 3), P("float", "ExposureCompensation", 0.1),
+        P("float", "Brightness", 2), P("float", "ExposureCompensation", -0.35),
         P("bool", "GlobalShadows", True), P("float", "ShadowSoftness", 0.35),
         P("float", "EnvironmentDiffuseScale", 1), P("float", "EnvironmentSpecularScale", 0.6),
-        P("color3", "Ambient", (110, 110, 125)), P("color3", "OutdoorAmbient", (160, 165, 180)),
+        P("color3", "Ambient", (80, 80, 95)), P("color3", "OutdoorAmbient", (120, 125, 140)),
         P("color3", "ColorShift_Top", (255, 245, 225))], [
         Inst("Sky", "Sky", [P("float", "SunAngularSize", 18), P("float", "MoonAngularSize", 9), P("int", "StarCount", 0),
                             P("bool", "CelestialBodiesShown", True)]),
         Inst("Atmosphere", "Atmosphere", [P("float", "Density", 0.22), P("float", "Offset", 0.1), P("color3", "Color", (199, 226, 255)),
                                           P("color3", "Decay", (120, 170, 255)), P("float", "Glare", 0.15), P("float", "Haze", 0.4)]),
-        Inst("BloomEffect", "Bloom", [P("float", "Intensity", 0.45), P("float", "Size", 22), P("float", "Threshold", 1.6)]),
-        Inst("ColorCorrectionEffect", "ColorCorrection", [P("float", "Saturation", 0.15), P("float", "Contrast", 0.07),
-                                                          P("float", "Brightness", 0.02), P("color3", "TintColor", (255, 252, 245))]),
+        Inst("BloomEffect", "Bloom", [P("float", "Intensity", 0.35), P("float", "Size", 22), P("float", "Threshold", 1.8)]),
+        Inst("ColorCorrectionEffect", "ColorCorrection", [P("float", "Saturation", 0.2), P("float", "Contrast", 0.12),
+                                                          P("float", "Brightness", -0.04), P("color3", "TintColor", (245, 242, 238))]),
         Inst("SunRaysEffect", "SunRays", [P("float", "Intensity", 0.04), P("float", "Spread", 0.6)]),
     ])
     write_place(OUT, [workspace, lighting, replicated, server, storage, starter_player, starter_gui])

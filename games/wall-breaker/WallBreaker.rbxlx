@@ -75880,14 +75880,14 @@
 <token name="Technology">3</token>
 <float name="ClockTime">14</float>
 <float name="GeographicLatitude">30</float>
-<float name="Brightness">3</float>
-<float name="ExposureCompensation">0.1</float>
+<float name="Brightness">2</float>
+<float name="ExposureCompensation">-0.35</float>
 <bool name="GlobalShadows">true</bool>
 <float name="ShadowSoftness">0.35</float>
 <float name="EnvironmentDiffuseScale">1</float>
 <float name="EnvironmentSpecularScale">0.6</float>
-<Color3 name="Ambient"><R>0.43137254901960786</R><G>0.43137254901960786</G><B>0.49019607843137253</B></Color3>
-<Color3 name="OutdoorAmbient"><R>0.6274509803921569</R><G>0.6470588235294118</G><B>0.7058823529411765</B></Color3>
+<Color3 name="Ambient"><R>0.3137254901960784</R><G>0.3137254901960784</G><B>0.37254901960784315</B></Color3>
+<Color3 name="OutdoorAmbient"><R>0.47058823529411764</R><G>0.49019607843137253</G><B>0.5490196078431373</B></Color3>
 <Color3 name="ColorShift_Top"><R>1</R><G>0.9607843137254902</G><B>0.8823529411764706</B></Color3>
 </Properties>
 <Item class="Sky" referent="RBX004126"><Properties>
@@ -75910,17 +75910,17 @@
 </Item>
 <Item class="BloomEffect" referent="RBX004128"><Properties>
 <string name="Name">Bloom</string>
-<float name="Intensity">0.45</float>
+<float name="Intensity">0.35</float>
 <float name="Size">22</float>
-<float name="Threshold">1.6</float>
+<float name="Threshold">1.8</float>
 </Properties>
 </Item>
 <Item class="ColorCorrectionEffect" referent="RBX004129"><Properties>
 <string name="Name">ColorCorrection</string>
-<float name="Saturation">0.15</float>
-<float name="Contrast">0.07</float>
-<float name="Brightness">0.02</float>
-<Color3 name="TintColor"><R>1</R><G>0.9882352941176471</G><B>0.9607843137254902</B></Color3>
+<float name="Saturation">0.2</float>
+<float name="Contrast">0.12</float>
+<float name="Brightness">-0.04</float>
+<Color3 name="TintColor"><R>0.9607843137254902</R><G>0.9490196078431372</G><B>0.9333333333333333</B></Color3>
 </Properties>
 </Item>
 <Item class="SunRaysEffect" referent="RBX004130"><Properties>
