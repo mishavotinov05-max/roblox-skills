@@ -96,8 +96,11 @@ def build_hub():
     cr = random.Random(21)
     n = [0]
 
+    tops = []  # (x0, x1, z0, z1, верх) — чтобы ставить ёлки ровно на холмы
+
     def cliff(x0, x1, z0, z1, h):
         n[0] += 1
+        tops.append((min(x0, x1), max(x0, x1), min(z0, z1), max(z0, z1), h + 1.6))
         col = cr.choice(((236, 128, 72), (226, 112, 60), (245, 145, 85)))
         walls.add(part(f"Cliff_{n[0]}", (x1 - x0, h, z1 - z0), ((x0 + x1) / 2, h / 2, (z0 + z1) / 2), col, "SmoothPlastic"))
         walls.add(part(f"Trim_{n[0]}", (x1 - x0 + 0.2, 0.8, z1 - z0 + 0.2), ((x0 + x1) / 2, h - 0.4, (z0 + z1) / 2), (255, 190, 120),
@@ -140,7 +143,10 @@ def build_hub():
 
     # пиксельные ёлки на холмах
     trees = folder("Trees")
-    for k in range(18):
+    placed = 0
+    for k in range(80):
+        if placed >= 20:
+            break
         sd = k % 4
         if sd == 0:
             x, z = cr.uniform(XL, HW), HD + cr.uniform(8, 22)
@@ -150,8 +156,13 @@ def build_hub():
             x, z = HW + cr.uniform(8, 22), cr.uniform(-HD, HD)
         else:
             x, z = cr.choice((cr.uniform(XL, -20), cr.uniform(20, HW))), -HD - cr.uniform(8, 22)
-        base = 30 + cr.choice((0, 4, 8))
-        t = model(f"Tree_{k + 1}")
+        # высота земли под ёлкой = верх самого высокого холма в этой точке (с травой)
+        under = [t4 for (a0, a1, b0, b1, t4) in tops if a0 + 2 <= x <= a1 - 2 and b0 + 2 <= z <= b1 - 2]
+        if not under:
+            continue  # не над холмом — не ставим, чтобы ёлка не висела в воздухе
+        base = max(under)
+        placed += 1
+        t = model(f"Tree_{placed}")
         t.add(part("Trunk", (2, 6, 2), (x, base + 3, z), (120, 72, 40), "Wood"))
         for i, (w, hh) in enumerate(((12, 4), (9, 4), (6, 4), (3, 3))):
             t.add(part(f"Leaves{i + 1}", (w, hh, w), (x, base + 6 + i * 4 + hh / 2, z), (70, 190, 60), "Grass"))
