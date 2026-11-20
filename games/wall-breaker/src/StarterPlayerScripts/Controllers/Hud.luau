@@ -347,10 +347,55 @@ local function fitScale()
 	end
 end
 
+-- имя файла картинки → строка IconConfig
+local NAME_TO_KEY = {
+	ref_shop = "ShopTile", ref_pets = "PetsTile", ref_auras = "AurasTile", ref_rebirth = "RebirthTile",
+	ref_settings = "Settings", ref_quests = "Quests", ref_wheel = "WheelDisc", ref_rewards = "Rewards",
+	ref_wins = "Wins", ref_strength = "Strength", ref_luck = "Luck",
+	ref_level_sword = "LevelSword", ref_power_sword = "PowerSword",
+	card_wins = "WinsCard", card_strength = "StrengthCard", card_luck = "LuckCard", card_rebirth = "RebirthCard",
+	levelbar_empty = "LevelBarEmpty", levelbar_full = "LevelBarFull", power_button = "PowerButton",
+}
+
+-- Узнаём имена картинок из IconConfig.Unsorted и раскладываем их по местам
+local function resolveUnsorted(): boolean
+	local list = IconConfig.Unsorted
+	if type(list) ~= "table" or #list == 0 then
+		return false
+	end
+	local MarketplaceService = game:GetService("MarketplaceService")
+	local changed = false
+	for _, id in ipairs(list) do
+		local ok, info = pcall(function()
+			return MarketplaceService:GetProductInfo(id)
+		end)
+		local name = ok and info and tostring(info.Name):lower():gsub("%.png$", ""):gsub("%s+", "") or nil
+		local key = name and NAME_TO_KEY[name]
+		if key then
+			local cur = IconConfig[key]
+			if cur == nil or cur == "" or cur == "rbxassetid://0" then
+				IconConfig[key] = "rbxassetid://" .. tostring(id)
+				changed = true
+			end
+			print(("[Иконки] %s = \"rbxassetid://%d\""):format(key, id))
+		else
+			print(("[Иконки] %d — имя «%s» не узнано"):format(id, tostring(ok and info and info.Name)))
+		end
+	end
+	return changed
+end
+
 function Hud.Init()
 	gui = Players.LocalPlayer:WaitForChild("PlayerGui"):WaitForChild("MainHud") :: ScreenGui
 	applyIcons()
 	applySkins()
+	task.spawn(function()
+		if resolveUnsorted() then
+			applyIcons()
+			applySkins()
+			refreshStats()
+		end
+	end)
 	bindButton("LeftMenu.ShopButton", "ShopPanel")
 	bindButton("LeftMenu.PetsButton", "PetsPanel")
 	bindButton("LeftMenu.AurasButton", "AurasPanel")
