@@ -625,19 +625,36 @@ function refWheel() {
 }
 
 function refGift() {
-  const y = grad('#fff27a', '#ffb800'), r = grad('#ff6b5a', '#d61f1f');
-  const box = 'M40 108 H196 V222 H40Z', lid = 'M30 82 H206 V116 H30Z';
-  return `<defs>${y.def}${r.def}</defs>
-    ${OUTL(box, 26)}${OUTL(lid, 26)}
-    ${OUTL('M118 82 C 90 30 48 40 62 70 C 70 86 104 84 118 82Z M118 82 C 146 30 188 40 174 70 C 166 86 132 84 118 82Z', 26)}
-    <path d="${box}" fill="url(#${y.id})"/><path d="${lid}" fill="url(#${y.id})"/>
-    <rect x="102" y="82" width="32" height="140" fill="url(#${r.id})"/>
-    <path d="M118 82 C 90 30 48 40 62 70 C 70 86 104 84 118 82Z" fill="url(#${r.id})"/>
-    <path d="M118 82 C 146 30 188 40 174 70 C 166 86 132 84 118 82Z" fill="url(#${r.id})"/>
-    <path d="M50 118 V210" stroke="#fff" stroke-width="7" stroke-linecap="round" opacity=".6"/>
-    <circle cx="200" cy="58" r="40" fill="${OL}"/><circle cx="200" cy="58" r="31" fill="#ee2a2a"/>
-    <circle cx="200" cy="58" r="31" fill="none" stroke="#fff" stroke-width="6"/>
-    <text x="200" y="74" text-anchor="middle" font-family="Russo One" font-size="44" fill="#fff">1</text>`;
+  // Объёмный подарок как на референсе: жёлтая коробка, правая грань темнее, крышка, красные ленты, большой бант, значок «1»
+  const front = grad('#fff36b', '#ffc21a'), side = grad('#ffb21a', '#e88a00'), lidF = grad('#fff58a', '#ffd23f'),
+    rib = grad('#ff5a4a', '#c8161b'), bow = grad('#ff7a66', '#d61f1f');
+  const frontBox = 'M44 122 L150 132 L150 226 L48 214Z';
+  const sideBox = 'M150 132 L212 116 L208 206 L150 226Z';
+  const lidFront = 'M34 98 L156 108 L156 136 L36 126Z';
+  const lidTop = 'M34 98 L104 80 L224 88 L156 108Z';
+  const lidSide = 'M156 108 L224 88 L222 116 L156 136Z';
+  const bowL = 'M128 90 C 92 40 52 48 64 78 C 72 96 108 96 128 90Z';
+  const bowR = 'M128 90 C 150 36 196 34 188 66 C 182 88 148 94 128 90Z';
+  const all = [frontBox, sideBox, lidFront, lidTop, lidSide, bowL, bowR];
+  return `<defs>${front.def}${side.def}${lidF.def}${rib.def}${bow.def}</defs>
+    ${all.map((d) => `<path d="${d}" fill="${OL}" stroke="${OL}" stroke-width="22" stroke-linejoin="round"/>`).join('')}
+    <path d="${frontBox}" fill="url(#${front.id})"/>
+    <path d="${sideBox}" fill="url(#${side.id})"/>
+    <path d="${lidFront}" fill="url(#${lidF.id})"/>
+    <path d="${lidTop}" fill="#fff8b0"/>
+    <path d="${lidSide}" fill="url(#${side.id})"/>
+    <path d="M86 116 L112 118 L112 224 L88 220Z" fill="url(#${rib.id})"/>
+    <path d="M86 103 L112 106 L112 132 L86 129Z" fill="url(#${rib.id})"/>
+    <path d="M174 112 L188 108 L186 210 L172 216Z" fill="url(#${rib.id})" opacity=".95"/>
+    <path d="M64 92 L140 84 L182 92 L112 106Z" fill="url(#${rib.id})"/>
+    <path d="${bowL}" fill="url(#${bow.id})"/><path d="${bowR}" fill="url(#${bow.id})"/>
+    <path d="M118 92 L104 128 M136 92 L148 126" stroke="#c8161b" stroke-width="12" stroke-linecap="round"/>
+    <ellipse cx="128" cy="90" rx="16" ry="12" fill="#e8302a" stroke="${OL}" stroke-width="6"/>
+    <path d="M76 68 C 84 58 98 58 108 70" fill="none" stroke="#fff" stroke-width="6" stroke-linecap="round" opacity=".7"/>
+    <path d="M56 134 L60 204" stroke="#fff" stroke-width="7" stroke-linecap="round" opacity=".55"/>
+    <circle cx="206" cy="48" r="40" fill="${OL}"/><circle cx="206" cy="48" r="31" fill="#ee2a2a"/>
+    <circle cx="206" cy="48" r="31" fill="none" stroke="#fff" stroke-width="6"/>
+    <text x="206" y="64" text-anchor="middle" font-family="Russo One" font-size="44" fill="#fff">1</text>`;
 }
 
 for (const [name, fn] of [['ref_settings', refGear], ['ref_quests', refScroll], ['ref_wheel', refWheel], ['ref_rewards', refGift]]) {
