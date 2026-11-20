@@ -365,6 +365,7 @@ local function resolveUnsorted(): boolean
 	end
 	local MarketplaceService = game:GetService("MarketplaceService")
 	local changed = false
+	local unknown = {}
 	for _, id in ipairs(list) do
 		local ok, info = pcall(function()
 			return MarketplaceService:GetProductInfo(id)
@@ -380,7 +381,62 @@ local function resolveUnsorted(): boolean
 			print(("[Иконки] %s = \"rbxassetid://%d\""):format(key, id))
 		else
 			print(("[Иконки] %d — имя «%s» не узнано"):format(id, tostring(ok and info and info.Name)))
+			table.insert(unknown, { id = id, name = ok and info and info.Name or "?" })
 		end
+	end
+	-- В Studio показываем нераспознанные картинки с номерами — сделайте скриншот и пришлите
+	if #unknown > 0 and game:GetService("RunService"):IsStudio() then
+		local panel = Instance.new("Frame")
+		panel.Name = "UnknownIcons"
+		panel.AnchorPoint = Vector2.new(0.5, 0.5)
+		panel.Position = UDim2.fromScale(0.5, 0.5)
+		panel.Size = UDim2.fromOffset(760, 140 + math.ceil(#unknown / 6) * 130)
+		panel.BackgroundColor3 = Color3.fromRGB(30, 20, 50)
+		panel.ZIndex = 100
+		local title = Instance.new("TextLabel")
+		title.Size = UDim2.new(1, 0, 0, 40)
+		title.BackgroundTransparency = 1
+		title.TextColor3 = Color3.new(1, 1, 1)
+		title.TextScaled = true
+		title.Font = Enum.Font.GothamBold
+		title.Text = "Сделайте скриншот и пришлите (это видно только в Studio)"
+		title.ZIndex = 101
+		title.Parent = panel
+		for i, u in ipairs(unknown) do
+			local cell = Instance.new("Frame")
+			cell.Size = UDim2.fromOffset(120, 125)
+			cell.Position = UDim2.fromOffset(10 + ((i - 1) % 6) * 125, 50 + math.floor((i - 1) / 6) * 130)
+			cell.BackgroundColor3 = Color3.fromRGB(70, 140, 70)
+			cell.ZIndex = 101
+			local img = Instance.new("ImageLabel")
+			img.Size = UDim2.fromOffset(100, 100)
+			img.Position = UDim2.fromOffset(10, 0)
+			img.BackgroundTransparency = 1
+			img.ScaleType = Enum.ScaleType.Fit
+			img.Image = "rbxassetid://" .. tostring(u.id)
+			img.ZIndex = 102
+			img.Parent = cell
+			local lbl = Instance.new("TextLabel")
+			lbl.Size = UDim2.new(1, 0, 0, 22)
+			lbl.Position = UDim2.fromOffset(0, 102)
+			lbl.BackgroundTransparency = 1
+			lbl.TextColor3 = Color3.new(1, 1, 1)
+			lbl.TextScaled = true
+			lbl.Text = tostring(u.id)
+			lbl.ZIndex = 102
+			lbl.Parent = cell
+			cell.Parent = panel
+		end
+		local close = Instance.new("TextButton")
+		close.Size = UDim2.fromOffset(40, 40)
+		close.Position = UDim2.new(1, -45, 0, 0)
+		close.Text = "X"
+		close.ZIndex = 103
+		close.Parent = panel
+		close.Activated:Connect(function()
+			panel:Destroy()
+		end)
+		panel.Parent = gui
 	end
 	return changed
 end
