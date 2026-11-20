@@ -97,7 +97,17 @@ function layoutAndDraw(ctx, node, rect, opts, path, items) {
     }
   }
   placed.sort((a, b) => (a[0].props.ZIndex || 1) - (b[0].props.ZIndex || 1));
-  for (const [c, r] of placed) drawNode(ctx, c, r, opts, path + c.name);
+  for (const [c, r] of placed) {
+    const sc = kid(c, 'UIScale');
+    const s = sc ? sc.props.Scale : 1;
+    if (s !== 1) {
+      const a = c.props.AnchorPoint || [0, 0];
+      const ax = r.x + a[0] * r.w, ay = r.y + a[1] * r.h;
+      ctx.save(); ctx.translate(ax, ay); ctx.scale(s, s); ctx.translate(-ax, -ay);
+      drawNode(ctx, c, r, opts, path + c.name);
+      ctx.restore();
+    } else drawNode(ctx, c, r, opts, path + c.name);
+  }
 }
 
 function roundRect(ctx, r, rad) {
@@ -117,7 +127,6 @@ function drawNode(ctx, n, r, opts, p) {
   const corner = kid(n, 'UICorner');
   const rad = corner ? corner.props.CornerRadius[0] * Math.min(r.w, r.h) + corner.props.CornerRadius[1] : 0;
   const stroke = kid(n, 'UIStroke');
-  const scaleNode = kid(n, 'UIScale');
   ctx.save();
   if (pr.Rotation) {
     ctx.translate(r.x + r.w / 2, r.y + r.h / 2); ctx.rotate(pr.Rotation * Math.PI / 180); ctx.translate(-(r.x + r.w / 2), -(r.y + r.h / 2));
@@ -175,12 +184,7 @@ function drawNode(ctx, n, r, opts, p) {
   if (pr.ClipsDescendants || n.class === 'ScrollingFrame') {
     roundRect(ctx, r, rad); ctx.clip();
   }
-  let childRect = r;
-  if (scaleNode && scaleNode.props.Scale !== 1) {
-    const s = scaleNode.props.Scale;
-    ctx.translate(r.x + r.w / 2, r.y + r.h / 2); ctx.scale(s, s); ctx.translate(-(r.x + r.w / 2), -(r.y + r.h / 2));
-  }
-  drawGui(ctx, n, childRect, opts, p + '.');
+  drawGui(ctx, n, r, opts, p + '.');
   ctx.restore();
 }
 

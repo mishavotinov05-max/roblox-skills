@@ -719,8 +719,9 @@ def build_gui():
     hud.add(left)
 
     # ===== Слева снизу: цветные карточки показателей =====
-    stats = frame("Stats", ((0, 150), (0, 264)), ((0, 14), (0.24, 228)))
-    stats.add(ui_list(padding=6))
+    # уменьшено в 3 раза: UIScale "Size" (Scale = 0.34) — поменяйте число, чтобы сделать крупнее/мельче
+    stats = frame("Stats", ((0, 150), (0, 264)), ((0, 10), (1, -10)), anchor=(0, 1))
+    stats.add(ui_list(padding=6), ui_scale("Size", 0.34))
     stats.add(stat_card("WinsRow", "🏆", "Победы", (255, 196, 40), 1))
     stats.add(stat_card("StrengthRow", "💪", "Сила", (235, 55, 55), 2))
     stats.add(stat_card("LuckRow", "🍀", "Удача", (60, 200, 70), 3))
@@ -747,7 +748,9 @@ def build_gui():
     hud.add(top)
 
     # ===== Снизу: большая «N Сила», «Мощный удар», полоса уровня и кнопки опыта =====
-    power = frame("PowerPanel", ((0.76, -16), (0, 286)), ((0.22, 0), (1, -10)), anchor=(0, 1))
+    # уменьшено в 3 раза: UIScale "Size" (Scale = 0.34)
+    power = frame("PowerPanel", ((0, 1030), (0, 286)), ((0.5, 0), (1, -8)), anchor=(0.5, 1))
+    power.add(ui_scale("Size", 0.34))
     power.add(label("StrengthBig", "0 Сила", ((0.7, 0), (0, 86)), ((0.02, 0), (0, 0)), stroke=6, z=2))
     strike = text_button("PowerStrikeButton", "", ((0.27, 0), (0, 76)), ((1, 0), (0, 6)), (255, 200, 40), anchor=(1, 0), stroke=0)
     strike.add(image("Icon", "", ((0, 64), (0, 64)), ((0, 4), (0.5, 0)), anchor=(0, 0.5), visible=False, z=3),
