@@ -154,15 +154,7 @@ for name, box in {"ref_shop": (6, 230, 162, 398), "ref_pets": (152, 252, 310, 39
                   "ref_rebirth": (152, 398, 310, 548)}.items():
     save(name, key_bg(src.crop(box), FLOOR + colors_at([(8, 300), (150, 250), (8, 560), (315, 300)])), 300)
 
-# Значки справа сверху (фон — пол)
-gear = largest_part(key_bg(src.crop((1078, 21, 1168, 97)), FLOOR, 48, 0))
-gm = Image.new("L", gear.size, 0)
-ImageDraw.Draw(gm).ellipse([45 - 42, 38 - 42, 45 + 42, 38 + 42], fill=255)  # шестерёнка круглая — всё вне круга это фон
-gear.putalpha(Image.composite(gear.getchannel("A"), Image.new("L", gear.size, 0), gm))
-save("ref_settings", gear)
-save("ref_quests", largest_part(key_bg(src.crop((1222, 12, 1332, 99)), FLOOR, 48, 0)))
-draw_wheel().save(os.path.join(OUT, "ref_wheel.png"))
-save("ref_rewards", key_bg(src.crop((1524, 6, 1662, 99)), FLOOR, 48, 0))
+# Значки справа сверху (Настройки, Задания, Колесо, Награды) рисуются в icons.js — целиком, без обрезки
 # Значки на карточках показателей
 save("ref_wins", key_bg(src.crop((25, 583, 109, 667)), YELLOW))
 save("ref_strength", key_bg(src.crop((27, 683, 109, 761)), RED))

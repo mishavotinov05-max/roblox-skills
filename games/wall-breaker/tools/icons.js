@@ -570,3 +570,76 @@ for (const [k, [fn, sc]] of Object.entries(SYMS)) {
 ICONS.push({ group: 'layer', name: 'layer_wheel_base', label: '', svg: () => wheelParts().base });
 ICONS.push({ group: 'layer', name: 'layer_wheel_disc', label: '', svg: () => wheelParts().disc });
 ICONS.push({ group: 'layer', name: 'layer_wheel_top', label: '', svg: () => wheelParts().top });
+
+// ---------- Значки справа сверху в стиле референса (рисуются целиком, фон прозрачный) ----------
+const OUTL = (d, w = 22) => `<path d="${d}" fill="none" stroke="${OL}" stroke-width="${w}" stroke-linejoin="round" stroke-linecap="round"/>`;
+
+function refGear() {
+  const g = grad('#ffffff', '#b9c9f2'), sh = grad('#9fb4ec', '#5c78d6');
+  const cx = 128, cy = 128, n = 8, ro = 104, ri = 80;
+  let d = '';
+  for (let k = 0; k < n; k++) {
+    const a = (k / n) * Math.PI * 2;
+    for (const [da, r] of [[-0.27, ri], [-0.16, ro], [0.16, ro], [0.27, ri]]) {
+      d += `${d ? 'L' : 'M'}${(cx + r * Math.cos(a + da)).toFixed(1)} ${(cy + r * Math.sin(a + da)).toFixed(1)} `;
+    }
+  }
+  d += 'Z';
+  return `<defs>${g.def}${sh.def}</defs>
+    <path d="${d}" fill="${OL}" stroke="${OL}" stroke-width="24" stroke-linejoin="round"/>
+    <path d="${d}" transform="translate(0 7)" fill="url(#${sh.id})"/>
+    <path d="${d}" fill="url(#${g.id})"/>
+    <circle cx="128" cy="128" r="36" fill="${OL}"/>
+    <circle cx="128" cy="128" r="36" fill="none" stroke="#7f95d8" stroke-width="5" opacity=".8"/>
+    <path d="M70 92 Q 96 58 132 54" fill="none" stroke="#fff" stroke-width="10" stroke-linecap="round" opacity=".9"/>`;
+}
+
+function refScroll() {
+  const p = grad('#fff6e2', '#f1d2a4'), r = grad('#f7dcb2', '#d9a96a');
+  const body = 'M64 52 H192 V204 H64Z';
+  return `<defs>${p.def}${r.def}</defs>
+    ${OUTL(body, 26)}${OUTL('M44 34 H212 A16 16 0 0 1 212 66 H44 A16 16 0 0 1 44 34Z', 26)}${OUTL('M44 190 H212 A16 16 0 0 1 212 222 H44 A16 16 0 0 1 44 190Z', 26)}
+    <path d="${body}" fill="url(#${p.id})"/>
+    <path d="M44 34 H212 A16 16 0 0 1 212 66 H44 A16 16 0 0 1 44 34Z" fill="url(#${r.id})"/>
+    <path d="M44 190 H212 A16 16 0 0 1 212 222 H44 A16 16 0 0 1 44 190Z" fill="url(#${r.id})"/>
+    <path d="M84 88 H172" stroke="#d6b07c" stroke-width="7" stroke-linecap="round"/>
+    <path d="M90 140 L118 168 L172 104" fill="none" stroke="${OL}" stroke-width="34" stroke-linecap="round" stroke-linejoin="round"/>
+    <path d="M90 140 L118 168 L172 104" fill="none" stroke="#e8202a" stroke-width="20" stroke-linecap="round" stroke-linejoin="round"/>
+    <path d="M60 40 H150" stroke="#fff" stroke-width="6" stroke-linecap="round" opacity=".7"/>`;
+}
+
+function refWheel() {
+  const cols = ['#ff4b4b', '#ff9a2e', '#ffe14d', '#7be05a', '#33d6c4', '#3f8cff', '#8a5cff', '#ff4fd0'];
+  const cx = 128, cy = 128, r = 100;
+  let s = '';
+  for (let i = 0; i < 8; i++) {
+    const a0 = (i / 8) * Math.PI * 2 - Math.PI / 2, a1 = ((i + 1) / 8) * Math.PI * 2 - Math.PI / 2;
+    s += `<path d="M${cx} ${cy} L${cx + r * Math.cos(a0)} ${cy + r * Math.sin(a0)} A${r} ${r} 0 0 1 ${cx + r * Math.cos(a1)} ${cy + r * Math.sin(a1)}Z" fill="${cols[i]}"/>`;
+  }
+  const rg = uid('rg');
+  return `<defs><radialGradient id="${rg}" cx=".5" cy=".5" r=".5"><stop offset="0" stop-color="#fff" stop-opacity=".55"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></radialGradient></defs>
+    <circle cx="${cx}" cy="${cy}" r="${r + 14}" fill="${OL}"/>${s}
+    <circle cx="${cx}" cy="${cy}" r="${r}" fill="url(#${rg})"/>
+    <path d="M62 84 A 80 80 0 0 1 120 46" fill="none" stroke="#fff" stroke-width="9" stroke-linecap="round" opacity=".75"/>
+    <circle cx="${cx}" cy="${cy}" r="9" fill="#fff"/>`;
+}
+
+function refGift() {
+  const y = grad('#fff27a', '#ffb800'), r = grad('#ff6b5a', '#d61f1f');
+  const box = 'M40 108 H196 V222 H40Z', lid = 'M30 82 H206 V116 H30Z';
+  return `<defs>${y.def}${r.def}</defs>
+    ${OUTL(box, 26)}${OUTL(lid, 26)}
+    ${OUTL('M118 82 C 90 30 48 40 62 70 C 70 86 104 84 118 82Z M118 82 C 146 30 188 40 174 70 C 166 86 132 84 118 82Z', 26)}
+    <path d="${box}" fill="url(#${y.id})"/><path d="${lid}" fill="url(#${y.id})"/>
+    <rect x="102" y="82" width="32" height="140" fill="url(#${r.id})"/>
+    <path d="M118 82 C 90 30 48 40 62 70 C 70 86 104 84 118 82Z" fill="url(#${r.id})"/>
+    <path d="M118 82 C 146 30 188 40 174 70 C 166 86 132 84 118 82Z" fill="url(#${r.id})"/>
+    <path d="M50 118 V210" stroke="#fff" stroke-width="7" stroke-linecap="round" opacity=".6"/>
+    <circle cx="200" cy="58" r="40" fill="${OL}"/><circle cx="200" cy="58" r="31" fill="#ee2a2a"/>
+    <circle cx="200" cy="58" r="31" fill="none" stroke="#fff" stroke-width="6"/>
+    <text x="200" y="74" text-anchor="middle" font-family="Russo One" font-size="44" fill="#fff">1</text>`;
+}
+
+for (const [name, fn] of [['ref_settings', refGear], ['ref_quests', refScroll], ['ref_wheel', refWheel], ['ref_rewards', refGift]]) {
+  ICONS.push({ group: 'ref', name, label: name, svg: fn, dir: 'icons_ref' });
+}

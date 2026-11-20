@@ -28,7 +28,8 @@ await page.setContent(`<style>${css}</style>${html}`);
 await page.evaluate(() => document.fonts.ready);
 
 for (const ic of ICONS) {
-  await page.locator('#' + ic.name).screenshot({ path: path.join(out, ic.name + '.png'), omitBackground: true });
+  const dir = ic.dir ? path.resolve(here, '../art', ic.dir) : out;
+  await page.locator('#' + ic.name).screenshot({ path: path.join(dir, ic.name + '.png'), omitBackground: true });
 }
 
 // Лист-превью всех иконок
