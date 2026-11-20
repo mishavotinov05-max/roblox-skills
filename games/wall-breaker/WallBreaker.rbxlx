@@ -50212,6 +50212,7 @@ local function setSkin(holder: Instance?, key: string, hide: { string })
 end
 
 local levelSkin = false
+local powerSkin = false
 local LEVEL_START = 0.122 -- где на картинке полосы кончается меч (из art/ui_ref/skins.json)
 
 local function applySkins()
@@ -50219,7 +50220,7 @@ local function applySkins()
 	setSkin(find("Stats.StrengthRow"), "StrengthCard", { "Icon", "Fallback", "Title" })
 	setSkin(find("Stats.LuckRow"), "LuckCard", { "Icon", "Fallback", "Title" })
 	setSkin(find("Stats.RebirthRow"), "RebirthCard", { "Icon", "Fallback", "Title" })
-	setSkin(find("PowerPanel.PowerStrikeButton"), "PowerButton", {})
+	powerSkin = setSkin(find("PowerPanel.PowerStrikeButton"), "PowerButton", { "Icon", "Fallback" })
 	if setSkin(find("PowerPanel.LevelBar"), "LevelBarEmpty", { "Icon", "Fallback" }) then
 		levelSkin = setSkin(find("PowerPanel.LevelBar.Fill"), "LevelBarFull", {})
 	end
@@ -50317,6 +50318,10 @@ local function refreshTimers()
 	if strikeText and strikeText:IsA("TextLabel") then
 		local active = State.Countdown("PowerStrikeActiveFor")
 		local ready = State.Countdown("PowerStrikeReadyIn")
+		-- на картинке уже написано «Мощный удар» — свой текст показываем только для таймера
+		if powerSkin then
+			strikeText.Visible = active > 0 or ready > 0
+		end
 		if active > 0 then
 			strikeText.Text = ("Активен\n%d сек"):format(math.ceil(active))
 		elseif ready > 0 then
@@ -53196,7 +53201,7 @@ return World
 <float name="BackgroundTransparency">0</float>
 <int name="BorderSizePixel">0</int>
 <UDim2 name="Position"><XS>0</XS><XO>0</XO><YS>0</YS><YO>0</YO></UDim2>
-<UDim2 name="Size"><XS>0</XS><XO>200</XO><YS>0</YS><YO>62</YO></UDim2>
+<UDim2 name="Size"><XS>0</XS><XO>200</XO><YS>0</YS><YO>91</YO></UDim2>
 <bool name="Visible">true</bool>
 <int name="ZIndex">1</int>
 <int name="LayoutOrder">4</int>
@@ -53240,7 +53245,7 @@ return World
 <float name="BackgroundTransparency">1</float>
 <int name="BorderSizePixel">0</int>
 <UDim2 name="Position"><XS>0</XS><XO>8</XO><YS>0.5</YS><YO>0</YO></UDim2>
-<UDim2 name="Size"><XS>0</XS><XO>46</XO><YS>0</YS><YO>46</YO></UDim2>
+<UDim2 name="Size"><XS>0</XS><XO>75</XO><YS>0</YS><YO>75</YO></UDim2>
 <bool name="Visible">false</bool>
 <int name="ZIndex">2</int>
 <int name="LayoutOrder">0</int>
@@ -53257,7 +53262,7 @@ return World
 <float name="BackgroundTransparency">1</float>
 <int name="BorderSizePixel">0</int>
 <UDim2 name="Position"><XS>0</XS><XO>10</XO><YS>0.5</YS><YO>0</YO></UDim2>
-<UDim2 name="Size"><XS>0</XS><XO>42</XO><YS>0</YS><YO>42</YO></UDim2>
+<UDim2 name="Size"><XS>0</XS><XO>71</XO><YS>0</YS><YO>71</YO></UDim2>
 <bool name="Visible">true</bool>
 <int name="ZIndex">2</int>
 <int name="LayoutOrder">0</int>
@@ -53279,8 +53284,8 @@ return World
 <Color3 name="BackgroundColor3"><R>1</R><G>1</G><B>1</B></Color3>
 <float name="BackgroundTransparency">1</float>
 <int name="BorderSizePixel">0</int>
-<UDim2 name="Position"><XS>0.36</XS><XO>0</XO><YS>0.05</YS><YO>0</YO></UDim2>
-<UDim2 name="Size"><XS>0.6</XS><XO>0</XO><YS>0.36</YS><YO>0</YO></UDim2>
+<UDim2 name="Position"><XS>0.4722</XS><XO>0</XO><YS>0.1583</YS><YO>0</YO></UDim2>
+<UDim2 name="Size"><XS>0.3823</XS><XO>0</XO><YS>0.2759</YS><YO>0</YO></UDim2>
 <bool name="Visible">true</bool>
 <int name="ZIndex">3</int>
 <int name="LayoutOrder">0</int>
@@ -53859,8 +53864,8 @@ return World
 <Color3 name="BackgroundColor3"><R>1</R><G>0.7843137254901961</G><B>0.1568627450980392</B></Color3>
 <float name="BackgroundTransparency">0</float>
 <int name="BorderSizePixel">0</int>
-<UDim2 name="Position"><XS>1</XS><XO>0</XO><YS>0</YS><YO>6</YO></UDim2>
-<UDim2 name="Size"><XS>0.27</XS><XO>0</XO><YS>0</YS><YO>76</YO></UDim2>
+<UDim2 name="Position"><XS>1</XS><XO>0</XO><YS>0</YS><YO>-14</YO></UDim2>
+<UDim2 name="Size"><XS>0</XS><XO>250</XO><YS>0</YS><YO>99</YO></UDim2>
 <bool name="Visible">true</bool>
 <int name="ZIndex">1</int>
 <int name="LayoutOrder">0</int>

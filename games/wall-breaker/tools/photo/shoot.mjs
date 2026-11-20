@@ -33,7 +33,7 @@ for (const p of Object.keys(IMG)) {
 }
 SHOW['TopRight.RewardsButton.Badge'] = true;
 for (const r of ['WinsRow', 'StrengthRow', 'LuckRow', 'RebirthRow']) { SHOW[`Stats.${r}.Title`] = false; SHOW[`Stats.${r}.Fallback`] = false; SHOW[`Stats.${r}.Icon`] = false; }
-SHOW['PowerPanel.LevelBar.Icon'] = false; SHOW['PowerPanel.LevelBar.Fallback'] = false;
+SHOW['PowerPanel.LevelBar.Icon'] = false; SHOW['PowerPanel.PowerStrikeButton.Icon'] = false; SHOW['PowerPanel.PowerStrikeButton.Text'] = false; SHOW['PowerPanel.LevelBar.Fallback'] = false;
 for (const b of ['ShopButton', 'PetsButton', 'AurasButton', 'RebirthButton']) SHOW[`LeftMenu.${b}.Label`] = false;
 for (const b of ['SettingsButton', 'QuestsButton', 'WheelButton', 'RewardsButton']) SHOW[`TopRight.${b}.Label`] = false;
 

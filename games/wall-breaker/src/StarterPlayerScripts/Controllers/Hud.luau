@@ -98,6 +98,7 @@ local function setSkin(holder: Instance?, key: string, hide: { string })
 end
 
 local levelSkin = false
+local powerSkin = false
 local LEVEL_START = 0.122 -- где на картинке полосы кончается меч (из art/ui_ref/skins.json)
 
 local function applySkins()
@@ -105,7 +106,7 @@ local function applySkins()
 	setSkin(find("Stats.StrengthRow"), "StrengthCard", { "Icon", "Fallback", "Title" })
 	setSkin(find("Stats.LuckRow"), "LuckCard", { "Icon", "Fallback", "Title" })
 	setSkin(find("Stats.RebirthRow"), "RebirthCard", { "Icon", "Fallback", "Title" })
-	setSkin(find("PowerPanel.PowerStrikeButton"), "PowerButton", {})
+	powerSkin = setSkin(find("PowerPanel.PowerStrikeButton"), "PowerButton", { "Icon", "Fallback" })
 	if setSkin(find("PowerPanel.LevelBar"), "LevelBarEmpty", { "Icon", "Fallback" }) then
 		levelSkin = setSkin(find("PowerPanel.LevelBar.Fill"), "LevelBarFull", {})
 	end
@@ -203,6 +204,10 @@ local function refreshTimers()
 	if strikeText and strikeText:IsA("TextLabel") then
 		local active = State.Countdown("PowerStrikeActiveFor")
 		local ready = State.Countdown("PowerStrikeReadyIn")
+		-- на картинке уже написано «Мощный удар» — свой текст показываем только для таймера
+		if powerSkin then
+			strikeText.Visible = active > 0 or ready > 0
+		end
 		if active > 0 then
 			strikeText.Text = ("Активен\n%d сек"):format(math.ceil(active))
 		elseif ready > 0 then

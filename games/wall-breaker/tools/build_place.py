@@ -840,7 +840,9 @@ def build_gui():
     power = frame("PowerPanel", ((0, 1030), (0, 306)), ((0.5, 0), (1, -8)), anchor=(0.5, 1))
     power.add(ui_scale("Size", 0.6))
     power.add(label("StrengthBig", "0 Сила", ((0.7, 0), (0, 86)), ((0.02, 0), (0, 0)), stroke=6, z=2))
-    strike = text_button("PowerStrikeButton", "", ((0.27, 0), (0, 76)), ((1, 0), (0, 6)), (255, 200, 40), anchor=(1, 0), stroke=0)
+    sw = 250
+    strike = text_button("PowerStrikeButton", "", ((0, sw), (0, round(sw / SKINS["power_button"]["ratio"]))), ((1, 0), (0, -14)),
+                         (255, 200, 40), anchor=(1, 0), stroke=0)
     strike.add(image("Icon", "", ((0, 64), (0, 64)), ((0, 4), (0.5, 0)), anchor=(0, 0.5), visible=False, z=3),
                label("Fallback", "🗡️", ((0, 60), (0, 60)), ((0, 6), (0.5, 0)), anchor=(0, 0.5), stroke=0, z=3),
                label("Text", "Мощный\nудар", ((1, -76), (1, -10)), ((0, 70), (0, 5)), stroke=3.5, z=3),
