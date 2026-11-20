@@ -57,7 +57,8 @@ const SHOTS = {
     ...hud({ mutate: 'fillRoulette', egg: 'chicken', offset: -300, show: { PowerPanel: false, LeftMenu: false, Stats: false, TopRight: false } }) },
   '06_egg_win': { cam: [54, 10, HD - 34], target: [56, 5, HD - 10],
     ...hud({ mutate: 'fillRoulette', egg: 'chicken', offset: -300, win: 'fox_cub', show: { PowerPanel: false, LeftMenu: false, Stats: false, TopRight: false } }) },
-  '07_pickaxes': { cam: [14, 16, 30], target: [54, 6, -4], fov: 62 },
+  '07_pickaxes': { cam: [22, 13, 16], target: [56, 7, 4], fov: 60 },
+  '07b_pick_close': { cam: [22, 9, 14], target: [46, 5, 14], fov: 38 },
   '08_level_pads': { cam: [-2, 12, -HD - 4 - 50], target: [22, 2, -HD - 4 - 62], avatar: [8, -HD - 4 - 56, -2.2, 0x9ff8ff] },
   '09_overview': { cam: [-10, 165, 120], target: [-2, 0, -6], fov: 55 },
 };

@@ -39,7 +39,7 @@ def text_box(im, x0, x1, y0, y1):
     return min(xs), min(ys), max(xs), max(ys)
 
 
-def erase(im, box, pad, top_limit=None, left_only=False):
+def erase(im, box, pad, top_limit=None, left_only=False, clean_tail=False):
     """Стирает число: каждую строку заливаем цветом фона этой же строки, взятым из чистого места
     справа от текста (у правого края карточки, внутри обводки)."""
     px = im.load()
@@ -63,6 +63,19 @@ def erase(im, box, pad, top_limit=None, left_only=False):
         for xx in range(x0, min(x1 + 1, w)):
             t = (xx - x0) / max(1, x1 - x0)
             px[xx, y] = tuple(int(cl[i] * (1 - t) + cr[i] * t) for i in range(3)) + (255,)
+    # хвосты обводки числа, торчащие выше стёртой области: снизу вверх до первого пикселя фона
+    # (только если хвост короткий и под ним снова фон — иначе это уже заголовок, его не трогаем)
+    for x in (range(x0, min(x1 + 1, w)) if clean_tail else ()):
+        y, ys = y0 - 1, []
+        while y > 0 and len(ys) <= 45:
+            c = px[x, y]
+            if not (c[3] > 0 and (lum(c) < 70 or min(c[:3]) > 200)):
+                break
+            ys.append(y)
+            y -= 1
+        for yy in ys:
+            if len(ys) <= 45 or yy >= clean_tail:
+                px[x, yy] = px[x, y0]
     region = im.crop((x0 - 2, y0 - 2, x1 + 3, y1 + 3)).filter(ImageFilter.GaussianBlur(1.5))
     im.paste(region, (x0 - 2, y0 - 2))
     return (x0, y0, x1, y1)
@@ -83,7 +96,43 @@ for src, name in (("wins.webp", "card_wins"), ("strength.webp", "card_strength")
     num = text_box(im, tx0, int(w * 0.97), int(h * 0.5), int(h * 0.92))
     if name == "card_rebirth":  # «0» узкий — место для числа делаем во всю ширину заголовка
         num = (top[0] + 40, num[1], top[2] - 40, num[3])
-    area = erase(im, num, 30, top_limit=top[3] + 4)
+    area = erase(im, num, 30, top_limit=top[3] + 4, clean_tail=(top[3] + 30 if name == "card_rebirth" else False))
+    if name == "card_rebirth":
+        # остаток обводки «0» под заголовком: тёмные/белые пиксели, не соединённые с буквами заголовка
+        px2 = im.load()
+        from collections import deque
+        sx0, sx1 = area[0], area[2]
+        bad = lambda c: c[3] > 0 and (lum(c) < 70 or min(c[:3]) > 200)
+        letters = set()
+        q = deque((x, top[3] - 5) for x in range(sx0, sx1) if bad(px2[x, top[3] - 5]))
+        while q:
+            x, y = q.popleft()
+            if (x, y) in letters or not (sx0 <= x <= sx1 and top[1] <= y <= area[3]) or not bad(px2[x, y]):
+                continue
+            letters.add((x, y))
+            q.extend(((x + 1, y), (x - 1, y), (x, y + 1), (x, y - 1)))
+        for y in range(top[3] - 12, area[3]):
+            c = px2[int(w * 0.93), y]
+            for x in range(sx0, sx1 + 1):
+                if bad(px2[x, y]) and (x, y) not in letters:
+                    px2[x, y] = c
+        # точечная заплатка: верх обводки стёртого «0» под буквами «ож» (координаты на этой картинке)
+        sx, sy = w / 1362, h / 579
+        for y in range(int(254 * sy), int(284 * sy)):
+            c = px2[int(w * 0.93), y]
+            for x in range(int(805 * sx), int(905 * sx)):
+                px2[x, y] = c
+        px2 = im.load()
+        for y in range(top[3] + 2, area[1] + 2):
+            c = px2[int(w * 0.93), y]
+            if c[3] < 200 or lum(c) < 60:
+                continue
+            for x in range(area[0], area[2] + 1):
+                d = px2[x, y]
+                # не трогаем саму надпись (белые буквы и их обводку, соединённые с заголовком сверху)
+                if y <= top[3] + 6 and (lum(d) < 70 or min(d[:3]) > 200):
+                    continue
+                px2[x, y] = c
     im.save(os.path.join(OUT, name + ".png"))
     meta[name] = {"ratio": round(w / h, 4), "value": frac(area, im), "title": frac(top, im)}
 

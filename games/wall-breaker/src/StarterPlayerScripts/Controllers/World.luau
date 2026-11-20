@@ -199,7 +199,34 @@ local function confetti()
 	end
 end
 
+-- Кирки на витринах медленно вращаются (у каждого игрока своё, на «Низкой» графике выключено)
+local function spinDisplays()
+	local map = Workspace:FindFirstChild("Map")
+	local shop = map and map:FindFirstChild("Hub") and map.Hub:FindFirstChild("PickaxeShop")
+	local slots = shop and shop:FindFirstChild("Slots")
+	if not slots then
+		return
+	end
+	local items = {}
+	for _, slot in ipairs(slots:GetChildren()) do
+		local d = slot:FindFirstChild("Display")
+		if d and d:IsA("Model") then
+			table.insert(items, { model = d, base = d:GetPivot() })
+		end
+	end
+	game:GetService("RunService").Heartbeat:Connect(function()
+		if Graphics.ParticleScale < 0.5 then
+			return
+		end
+		local t = os.clock()
+		for i, it in ipairs(items) do
+			it.model:PivotTo(it.base * CFrame.new(0, 0.25 * math.sin(t * 1.5 + i), 0) * CFrame.Angles(0, math.rad(25) * math.sin(t * 0.8 + i), 0))
+		end
+	end)
+end
+
 function World.Init()
+	task.spawn(spinDisplays)
 	Remotes.Event("LevelState").OnClientEvent:Connect(onLevelState)
 	-- пиксельные текстуры карты (если ID указаны в TextureConfig)
 	local ok, err = pcall(function()

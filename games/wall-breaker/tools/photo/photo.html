@@ -202,7 +202,7 @@ function texFor(pathStr, pr) {
   if (/Decor\.Path/.test(pathStr)) return ['sand', 8];
   if (pathStr.includes('.Structure.Floor') || pathStr.includes('NicheFloor')) return ['sand', 8];
   if (/\.Grass\w*$/.test(pathStr) || pathStr.includes('Ground.') && mat === 'Grass') return ['grass_top', 4];
-  if (pathStr.includes('Steps.Row1')) return ['floor_tiles', 8];
+
   if (mat === 'Slate' && /Wall\.Layer_03|Level_03\.Wall/.test(pathStr)) return ['level_coal', 6];
   if (mat === 'Cobblestone' && pathStr.includes('Level_04.Wall')) return ['level_stone', 6];
   if (pathStr.includes('Pits.Pit_01') && /PitFloor|Wall[NSWE]$/.test(pathStr)) return ['dirt', 4];
@@ -296,7 +296,7 @@ function addPart(n, pathStr) {
 function walk(n, path) {
   for (const c of n.children) {
     const p = path ? path + '.' + c.name : c.name;
-    if (c.class === 'Part' || c.class === 'SpawnLocation') addPart(c, p);
+    if (c.class === 'Part' || c.class === 'WedgePart' || c.class === 'SpawnLocation') addPart(c, p);
     walk(c, p);
   }
 }

@@ -7,7 +7,7 @@ import json
 import math
 import os
 import random
-from rbxlx import (Inst, P, Frame3, rot, part, model, folder, point_light, prompt, script, frame, label, text_button,
+from rbxlx import (Inst, P, Frame3, rot, part, particles, model, folder, point_light, prompt, script, frame, label, text_button,
                    image, image_button, ui_corner, ui_stroke, ui_padding, ui_scale, ui_list, ui_grid, scrolling,
                    surface_gui, billboard, screen_gui, write_place, FONT_BOLD)
 
@@ -251,17 +251,88 @@ RARITY_COL = {"Обычная": (190, 195, 210), "Редкая": (70, 160, 255),
               "Легендарная": (255, 190, 40), "Божественная": (255, 60, 80)}
 
 
-def display_pickaxe(x, y, z, head, handle, glow):
-    """Кирка на витрине: рукоять + изогнутая головка из 5 сегментов."""
+PICK_FX = {  # как в PickaxeConfig: эффект и цвет свечения
+    "Железная": ("shine", None), "Стальная": ("shine", None),
+    "Золотая": ("glow", (255, 240, 150)), "Алмазная": ("glow", (200, 255, 255)), "Изумрудная": ("glow", (170, 255, 190)),
+    "Обсидиановая": ("glow", (200, 120, 255)), "Ледяная": ("ice", (210, 245, 255)), "Огненная": ("fire", (255, 220, 80)),
+    "Электрическая": ("electric", (160, 240, 255)), "Космическая": ("cosmic", (255, 140, 255)),
+    "Ангельская": ("angel", (255, 215, 90)), "Теневая": ("shadow", (190, 90, 255)), "Дьявольская": ("devil", (255, 80, 40)),
+}
+PICK_PARTICLES = {
+    "fire": ((255, 140, 30), 14, "rbxasset://textures/particles/fire_main.dds", 2, 0.6),
+    "ice": ((200, 240, 255), 6, "rbxasset://textures/particles/sparkles_main.dds", 0.6, 0.35),
+    "electric": ((120, 220, 255), 10, "rbxasset://textures/particles/sparkles_main.dds", 3, 0.3),
+    "cosmic": ((220, 140, 255), 8, "rbxasset://textures/particles/sparkles_main.dds", 0.8, 0.4),
+    "angel": ((255, 240, 180), 6, "rbxasset://textures/particles/sparkles_main.dds", 0.6, 0.4),
+    "shadow": ((120, 40, 180), 10, "rbxasset://textures/particles/smoke_main.dds", 0.8, 0.8),
+    "devil": ((255, 60, 20), 12, "rbxasset://textures/particles/fire_main.dds", 1.5, 0.5),
+}
+
+
+def dkc(c, k):
+    return tuple(int(v * k) for v in c)
+
+
+def display_pickaxe(name, x, y, z, head, handle):
+    """Кирка на витрине — та же форма, что в руке (ReplicatedStorage › Shared › PickaxeLook)."""
+    effect, accent = PICK_FX.get(name, ("", None))
+    accent = accent or head
+    rare = effect not in ("", "shine")
+    head_mat = "Glass" if effect in ("ice", "glow") else "Metal"
+    dk = lambda c, k: tuple(int(v * k) for v in c)
     m = model("Display")
-    mat = "Neon" if glow else "Metal"
-    m.add(part("Handle", (0.5, 5.2, 0.5), (x, y + 2.6, z), handle, "Wood", collide=False))
-    m.add(part("Collar", (0.8, 0.8, 0.8), (x, y + 5.0, z), head, mat, collide=False))
-    for k, (dz, dy, ang) in enumerate(((0, 0, 0), (1.0, -0.12, -15), (1.9, -0.45, -32), (-1.0, -0.12, 15), (-1.9, -0.45, 32))):
-        m.add(part(f"Head{k + 1}", (0.6, 0.6, 1.15 if k else 1.2), (x, y + 5.3 + dy, z + dz), head, mat, r=rot(ang, 0, 0), collide=False))
-    for s in (-1, 1):
-        m.add(part(f"Tip{'A' if s < 0 else 'B'}", (0.45, 0.45, 0.8), (x, y + 4.45, z + s * 2.6), head, mat, r=rot(s * 55, 0, 0),
-                   collide=False))
+    L, R, N, SPAN = 4.6, 3.2, 11, 50
+    TILT = -35  # наклон кирки на витрине, как на картинке (по диагонали)
+    ct, st_ = math.cos(math.radians(TILT)), math.sin(math.radians(TILT))
+    PIV = L * 0.55
+
+    def add(nm, size, local, color, mat, ang=0, shape=None, cls="Part", ry=0, children=None, rz=0):
+        ly, lz = local[1] - PIV, local[2]
+        ly, lz = ly * ct - lz * st_, ly * st_ + lz * ct
+        m.add(part(nm, size, (x + local[0], y + PIV + ly, z + lz), color, mat, r=rot(ang + TILT, ry, rz), collide=False,
+                   shape=shape, cls=cls, reflectance=0.08 if mat in ("Metal", "SmoothPlastic") else 0,
+                   cast_shadow=mat != "Neon", children=children))
+    add("Handle", (0.42, L, 0.42), (0, L / 2, 0), handle, "Wood")
+    for i, yy in enumerate((0.55, 0.95, 1.35)):
+        add(f"Wrap{i + 1}", (0.5, 0.16, 0.5), (0, yy, 0), dk(handle, 0.6), "Fabric")
+    add("Pommel", (0.7, 0.7, 0.7), (0, 0.05, 0), accent if rare else dk(handle, 0.8), "Metal", shape="Ball")
+    add("Collar", (0.72, 0.95, 0.95), (0, L - 0.25, 0), dk(head, 0.75), "Metal")
+    top = L + 0.3
+    seg = R * math.radians(SPAN * 2 / (N - 1)) * 1.3
+    for i in range(N):
+        deg = -SPAN + i * (SPAN * 2 / (N - 1))
+        t = math.radians(deg)
+        k = abs(deg) / SPAN
+        h = 1.0 * (1 - 0.65 * k) + 0.2
+        cy, cz = top - R * (1 - math.cos(t)), R * math.sin(t)
+        extra = None
+        if rare and i == N // 2:
+            extra = [point_light(accent, 1.2, 8)]
+            if effect in PICK_PARTICLES:
+                extra.append(particles(*PICK_PARTICLES[effect]))
+        add(f"Head{i}", (0.5, h, seg), (0, cy, cz), head, head_mat, ang=deg, children=extra)
+        if rare:
+            dy, dz = -h * 0.1 * math.cos(t), -h * 0.1 * math.sin(t)
+            add(f"Vein{i}", (0.54, max(0.08, h * 0.22), seg * 0.95), (0, cy + dy, cz + dz), accent, "Neon", ang=deg)
+        elif effect == "shine":
+            o = h / 2 - 0.05
+            add(f"Shine{i}", (0.52, 0.08, seg * 0.9), (0, cy + o * math.cos(t), cz + o * math.sin(t)), (255, 255, 255), "SmoothPlastic", ang=deg)
+    for sgn in (-1, 1):
+        t = math.radians(SPAN * sgn)
+        d = sgn * seg * 0.75
+        cy = top - R * (1 - math.cos(t)) - 0.05 * math.cos(t) - d * math.sin(t)
+        cz = R * math.sin(t) - 0.05 * math.sin(t) + d * math.cos(t)
+        add("TipA" if sgn < 0 else "TipB", (0.46, 0.3, 0.75), (0, cy, cz), head, head_mat, ang=SPAN * sgn, cls="WedgePart",
+            ry=180 if sgn < 0 else 0)
+    if effect == "angel":
+        for sgn in (-1, 1):
+            for f in range(1, 4):
+                add(f"Feather{sgn}{f}", (0.2, 0.45, 1.6 - f * 0.25), (0, L - 0.6 + f * 0.35, sgn * (0.9 + f * 0.25)), (255, 255, 255),
+                    "SmoothPlastic", ang=sgn * (25 + f * 12))
+        add("Halo", (0.12, 1.3, 1.3), (0, top + 0.9, 0), accent, "Neon", rz=90, shape="Cylinder")
+    elif effect == "devil":
+        for sgn in (-1, 1):
+            add(f"Horn{sgn}", (0.3, 0.9, 0.3), (0, top + 0.5, sgn * 0.5), accent, "Neon", ang=sgn * 25)
     return m
 
 
@@ -271,15 +342,18 @@ def build_pickaxe_shop():
     row_x = [HW - 4 * ROW_D + k * ROW_D for k in range(4)]
     row_col = [(190, 195, 210), (70, 160, 255), (255, 190, 40), (255, 60, 80)]
     steps = folder("Steps")
-    steps.add(part("Row1", (ROW_D, 0.4, 2 * SHOP_Z), (row_x[0] + ROW_D / 2, 0.2, 0), FLOOR, "Slate"))
+    SHOP_DARK, SHOP_MID = (46, 32, 78), (64, 46, 104)
+    steps.add(part("Row1", (ROW_D, 0.4, 2 * SHOP_Z), (row_x[0] + ROW_D / 2, 0.2, 0), SHOP_MID, "SmoothPlastic"))
     for k in range(1, 4):
-        steps.add(part(f"Row{k + 1}", (HW - row_x[k], STEP * k, 2 * SHOP_Z), ((row_x[k] + HW) / 2, STEP * k / 2, 0), STONE, "Cobblestone"))
-        steps.add(part(f"Stair{k}", (2.5, STEP * (k - 0.5), 5), (row_x[k] - 1.25, STEP * (k - 0.5) / 2, 0), STONE, "Cobblestone"))
+        steps.add(part(f"Row{k + 1}", (HW - row_x[k], STEP * k, 2 * SHOP_Z), ((row_x[k] + HW) / 2, STEP * k / 2, 0),
+                       SHOP_MID if k % 2 == 0 else SHOP_DARK, "SmoothPlastic"))
+        steps.add(part(f"Stair{k}", (2.5, STEP * (k - 0.5), 5), (row_x[k] - 1.25, STEP * (k - 0.5) / 2, 0), SHOP_MID, "SmoothPlastic"))
     for r, x in enumerate(row_x):
         steps.add(part(f"Edge{r + 1}", (0.35, 0.35, 2 * SHOP_Z), (x + 0.2, r * STEP + 0.6, 0), row_col[r], "Neon",
                        collide=False, cast_shadow=False))
     shop.add(steps)
-    shop.add(part("BackWall", (1.2, 20, 2 * SHOP_Z + 4), (HW - 0.6, 3 * STEP + 10, 0), WOOD, "WoodPlanks"))
+    shop.add(part("BackWall", (1.2, 20, 2 * SHOP_Z + 4), (HW - 0.6, 3 * STEP + 10, 0), (34, 22, 58), "SmoothPlastic"))
+    shop.add(part("BackWallTrim", (1.4, 0.6, 2 * SHOP_Z + 4), (HW - 0.6, 3 * STEP + 20, 0), (255, 196, 61), "Neon", collide=False))
     shop.add(sign_part("Sign", (24, 5.4, 0.6), (HW - 1.4, 24.5, 0), rot(0, 90, 0), "КИРКИ", "Коллекция: 16 кирок"))
 
     slots = folder("Slots")
@@ -292,15 +366,23 @@ def build_pickaxe_shop():
             rc = RARITY_COL[rarity]
             s = model(f"Slot_{idx + 1:02d}")
             px = x0 + ROW_D - 1.8
-            ped = part("Pedestal", (2.4, 1.6, 2.4), (px, y + 0.8, z), (60, 50, 90), "Slate")
-            ped.add(billboard("NameGui", (210, 62), (0, 9.3, 0), max_dist=34, children=[
+            # карточка-витрина как на картинке: тёмная панель с рамкой цвета редкости
+            bx = x0 + ROW_D - 0.35
+            s.add(part("CardBack", (0.4, 10.5, 8.4), (bx, y + 5.25, z), (30, 20, 52), "SmoothPlastic"))
+            s.add(part("CardInner", (0.1, 9.7, 7.6), (bx - 0.25, y + 5.25, z), dkc(rc, 0.35), "SmoothPlastic", collide=False))
+            for nm, sz, dy, dz in (("FrameTop", (0.2, 0.3, 8.4), 10.35, 0), ("FrameBottom", (0.2, 0.3, 8.4), 0.15, 0),
+                                   ("FrameL", (0.2, 10.5, 0.3), 5.25, -4.05), ("FrameR", (0.2, 10.5, 0.3), 5.25, 4.05)):
+                s.add(part(nm, sz, (bx - 0.25, y + dy, z + dz), rc, "Neon", collide=False, cast_shadow=False))
+            ped = part("Pedestal", (2.2, 1.4, 2.2), (px, y + 0.7, z), (44, 30, 74), "SmoothPlastic", shape="Cylinder", r=rot(0, 0, 90))
+            ped.add(billboard("NameGui", (210, 62), (0, 10.6, 0), max_dist=34, children=[
                 label("PickName", name, ((1, 0), (0.55, 0)), ((0, 0), (0, 0)), stroke=3),
                 frame("Tag", ((0.9, 0), (0.42, 0)), ((0.05, 0), (0.57, 0)), bg=(26, 16, 51), bgt=0.15, children=[
                     ui_corner(1, 0), ui_stroke(2, rc),
                     label("PickInfo", f"{rarity} · {mult} Силы", ((1, -8), (1, -4)), ((0, 4), (0, 2)), color=rc, stroke=2)])]))
             s.add(ped)
-            s.add(part("Glow", (2.6, 0.2, 2.6), (px, y + 1.7, z), rc, "Neon", collide=False, cast_shadow=False))
-            s.add(display_pickaxe(px, y + 1.8, z, head, handle, rarity in ("Легендарная", "Божественная")))
+            s.add(part("Glow", (0.25, 2.5, 2.5), (px, y + 1.45, z), rc, "Neon", shape="Cylinder", r=rot(0, 0, 90), collide=False,
+                       cast_shadow=False, children=[point_light(rc, 0.8, 7)]))
+            s.add(display_pickaxe(name, px, y + 1.7, z, head, handle))
             pad = part("BuyPad", (3.6, 0.3, 3.6), (x0 + 2.2, y + 0.15, z), (42, 23, 87), "SmoothPlastic",
                        children=[prompt("Купить", name),
                                  billboard("PriceGui", (150, 46), (0, 2.4, 0), max_dist=30, children=[

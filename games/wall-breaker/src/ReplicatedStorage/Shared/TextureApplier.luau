@@ -86,12 +86,7 @@ function TextureApplier.Apply()
 			end
 		end)
 		local shop = hub:FindFirstChild("PickaxeShop")
-		each(shop and shop:FindFirstChild("Steps"), function(p)
-			if p.Name:match("^Row") or p.Name:match("^Stair") then
-				add(p, tex("stone_brick"), SIDES, 4, 4)
-				add(p, tex("floor_tiles"), TOP, 8, 8)
-			end
-		end)
+		-- ступени магазина — гладкие, без текстуры
 		each(hub:FindFirstChild("Pits"), function(pit)
 			local n = tonumber(pit.Name:match("(%d+)$"))
 			local key = n and TextureConfig.Pits[n]

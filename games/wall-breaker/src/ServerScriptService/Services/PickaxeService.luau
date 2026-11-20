@@ -11,8 +11,10 @@ local ServerStorage = game:GetService("ServerStorage")
 local Config = ReplicatedStorage:WaitForChild("Config")
 local PickaxeConfig = require(Config:WaitForChild("PickaxeConfig"))
 local ShopConfig = require(Config:WaitForChild("ShopConfig"))
+local Settings = require(Config:WaitForChild("GameSettings"))
 local Shared = ReplicatedStorage:WaitForChild("Shared")
 local Catalog = require(Shared:WaitForChild("Catalog"))
+local PickaxeLook = require(Shared:WaitForChild("PickaxeLook"))
 local Formulas = require(Shared:WaitForChild("Formulas"))
 local Format = require(Shared:WaitForChild("Format"))
 
@@ -38,43 +40,69 @@ local function buildTool(cfg): Tool
 	tool.ToolTip = cfg.Name
 	tool.CanBeDropped = false
 	tool.RequiresHandle = true
-	-- Хват как у классического меча: рукоять вдоль Z, держим за нижний конец
-	tool.GripPos = Vector3.new(0, 0, -1.6)
+	-- Посадка: держим за низ рукояти, кирка наклонена назад (угол — GameSettings.PickaxeGripTilt)
+	local L = PickaxeLook.HANDLE_LENGTH
+	local tilt = math.rad(Settings.PickaxeGripTilt or 25)
+	tool.GripPos = Vector3.new(0, 0, -(L / 2 - 0.7))
 	tool.GripForward = Vector3.new(-1, 0, 0)
-	tool.GripRight = Vector3.new(0, 1, 0)
-	tool.GripUp = Vector3.new(0, 0, 1)
+	tool.GripRight = Vector3.new(0, math.cos(tilt), math.sin(tilt))
+	tool.GripUp = Vector3.new(0, -math.sin(tilt), math.cos(tilt))
 
-	local handle = Instance.new("Part")
-	handle.Name = "Handle"
-	handle.Size = Vector3.new(0.45, 0.45, 4.4)
-	handle.Color = cfg.HandleColor
-	handle.Material = Enum.Material.Wood
-	handle.CanCollide = false
-	handle.Massless = true
-	handle.CFrame = CFrame.new()
-	handle.Parent = tool
-
-	local function addPart(name: string, size: Vector3, offset: CFrame, material: Enum.Material)
-		local p = Instance.new("Part")
-		p.Name = name
-		p.Size = size
-		p.Color = cfg.Color
-		p.Material = material
-		p.CanCollide = false
-		p.Massless = true
-		p.CFrame = handle.CFrame * offset
-		local weld = Instance.new("WeldConstraint")
-		weld.Part0 = handle
-		weld.Part1 = p
-		weld.Parent = p
+	-- невидимый корень Handle; видимая кирка приварена к нему
+	local root = Instance.new("Part")
+	root.Name = "Handle"
+	root.Size = Vector3.new(0.4, 0.4, 0.4)
+	root.Transparency = 1
+	root.CanCollide = false
+	root.Massless = true
+	root.CFrame = CFrame.new()
+	root.Parent = tool
+	-- модель строится с рукоятью по Y; в инструменте рукоять идёт по Z, головка — по X
+	local origin = CFrame.fromMatrix(Vector3.new(0, 0, -L / 2), Vector3.new(0, 1, 0), Vector3.new(0, 0, 1))
+	local look = PickaxeLook.Build(cfg, origin)
+	local shaft = look.PrimaryPart :: BasePart
+	shaft.Name = "Shaft"
+	local w = Instance.new("WeldConstraint")
+	w.Part0 = root
+	w.Part1 = shaft
+	w.Parent = shaft
+	for _, p in ipairs(look:GetChildren()) do
 		p.Parent = tool
 	end
-	-- Головка кирки: перекладина и два острых конца
-	addPart("Head", Vector3.new(3.4, 0.55, 0.6), CFrame.new(0, 0, 2.1), Enum.Material.Metal)
-	addPart("TipA", Vector3.new(0.9, 0.4, 0.45), CFrame.new(-1.9, -0.2, 2.1) * CFrame.Angles(0, 0, math.rad(-25)), Enum.Material.Metal)
-	addPart("TipB", Vector3.new(0.9, 0.4, 0.45), CFrame.new(1.9, -0.2, 2.1) * CFrame.Angles(0, 0, math.rad(25)), Enum.Material.Metal)
-	addPart("Cap", Vector3.new(0.8, 0.8, 0.8), CFrame.new(0, 0, 2.1), Enum.Material.Neon)
+	look:Destroy()
 	return tool
+end
+
+-- Кирка на спине, пока она не в руках
+local function updateBack(player: Player, show: boolean)
+	local character = player.Character
+	if not character then
+		return
+	end
+	local old = character:FindFirstChild("BackPickaxe")
+	if old then
+		old:Destroy()
+	end
+	local data = DataService.Get(player)
+	local torso = character:FindFirstChild("UpperTorso") or character:FindFirstChild("Torso")
+	if not show or not data or not torso or not torso:IsA("BasePart") then
+		return
+	end
+	local look = PickaxeLook.Build(Catalog.Pickaxe(data.EquippedPickaxe))
+	look.Name = "BackPickaxe"
+	local L = PickaxeLook.HANDLE_LENGTH
+	look:PivotTo(torso.CFrame * CFrame.new(0, 0, 0.75) * CFrame.Angles(0, 0, math.rad(40)) * CFrame.new(0, -L / 2 - 0.4, 0)
+		* CFrame.Angles(0, math.rad(90), 0))
+	for _, p in ipairs(look:GetDescendants()) do
+		if p:IsA("BasePart") then
+			p.Massless = true
+		end
+	end
+	local weld = Instance.new("WeldConstraint")
+	weld.Part0 = torso
+	weld.Part1 = look.PrimaryPart
+	weld.Parent = look.PrimaryPart
+	look.Parent = character
 end
 
 -- Выдать (или заменить) кирку и сразу взять её в руки
@@ -98,6 +126,12 @@ function PickaxeService.GiveTool(player: Player)
 	if not backpack then
 		return
 	end
+	tool.Equipped:Connect(function()
+		updateBack(player, false)
+	end)
+	tool.Unequipped:Connect(function()
+		updateBack(player, true)
+	end)
 	tool.Parent = backpack
 	local character = player.Character
 	local humanoid = character and character:FindFirstChildOfClass("Humanoid")

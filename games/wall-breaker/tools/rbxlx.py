@@ -68,6 +68,13 @@ class P:
         if k == "udim":
             s, o = v
             return f'<UDim name="{n}"><S>{_f(s)}</S><O>{int(o)}</O></UDim>'
+        if k == "colorseq":  # один цвет на всё время
+            r, g, b = (c / 255 for c in v)
+            return f'<ColorSequence name="{n}">0 {_f(r)} {_f(g)} {_f(b)} 0 1 {_f(r)} {_f(g)} {_f(b)} 0 </ColorSequence>'
+        if k == "numseq":  # (начало, конец)
+            return f'<NumberSequence name="{n}">0 {_f(v[0])} 0 1 {_f(v[1])} 0 </NumberSequence>'
+        if k == "numrange":
+            return f'<NumberRange name="{n}">{_f(v[0])} {_f(v[1])} </NumberRange>'
         if k == "content":
             return f'<Content name="{n}"><url>{escape(v)}</url></Content>' if v else f'<Content name="{n}"><null></null></Content>'
         raise ValueError(k)
@@ -146,7 +153,7 @@ def write_place(path, services):
 # ---------- Детали ----------
 
 def part(name, size, pos, color, material="SmoothPlastic", r=None, anchored=True, collide=True,
-         transparency=0, shape=None, cls="Part", query=True, touch=True, cast_shadow=True, children=None, studs=False):
+         transparency=0, shape=None, cls="Part", query=True, touch=True, cast_shadow=True, children=None, studs=False, reflectance=0):
     sf = 3 if studs else 0  # SurfaceType: Smooth = 0, Studs = 3 — классические «пупырышки» Roblox
     props = [
         P("bool", "Anchored", anchored),
@@ -160,6 +167,7 @@ def part(name, size, pos, color, material="SmoothPlastic", r=None, anchored=True
         P("color3u8", "Color3uint8", color),
         P("token", "Material", MAT[material]),
         P("float", "Transparency", transparency),
+        P("float", "Reflectance", reflectance),
         P("vec3", "size", size),
     ]
     if shape is not None:
@@ -294,3 +302,11 @@ def billboard(name, size_px, offset, children=None, max_dist=90):
 def screen_gui(name, children=None):
     return Inst("ScreenGui", name, [P("bool", "ResetOnSpawn", False), P("token", "ZIndexBehavior", 1),
                                     P("bool", "IgnoreGuiInset", False)], children)
+
+
+def particles(color, rate, texture, speed, size, name="Particles"):
+    return Inst("ParticleEmitter", name, [
+        P("colorseq", "Color", color), P("float", "LightEmission", 0.8), P("float", "Rate", rate),
+        P("numrange", "Lifetime", (0.5, 1)), P("numrange", "Speed", (speed, speed * 2)),
+        P("vec2", "SpreadAngle", (180, 180)), P("numseq", "Size", (size, 0)), P("numseq", "Transparency", (0.1, 1)),
+        P("content", "Texture", texture)])
