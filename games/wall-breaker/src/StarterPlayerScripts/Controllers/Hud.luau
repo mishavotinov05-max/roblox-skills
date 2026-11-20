@@ -45,6 +45,13 @@ local function setIcon(holder: Instance?, childName: string, key: string)
 			fallback.Visible = false
 		end
 		-- если загружена картинка-плитка, убираем цветной фон кнопки
+		-- (плитки с референса уже содержат подпись — свою подпись прячем, если символа нет)
+		if childName == "Tile" and (IconConfig[key:gsub("Tile$", "Symbol")] or "rbxassetid://0") == "rbxassetid://0" then
+			local lbl = holder:FindFirstChild("Label")
+			if lbl and lbl:IsA("GuiObject") then
+				lbl.Visible = false
+			end
+		end
 		if childName == "Tile" and holder:IsA("GuiObject") then
 			holder.BackgroundTransparency = 1
 			local stroke = holder:FindFirstChildOfClass("UIStroke")

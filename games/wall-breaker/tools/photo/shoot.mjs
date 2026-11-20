@@ -10,20 +10,18 @@ const [NM, TREE, OUT] = process.argv.slice(2);
 const ART = path.resolve(here, '../../art');
 fs.mkdirSync(OUT, { recursive: true });
 
-const ICON_LIST = ['layer_tile_shop', 'layer_sym_shop', 'layer_tile_pets', 'layer_sym_pets', 'layer_tile_auras', 'layer_sym_auras',
+const ICON_LIST = ['ref_shop', 'ref_pets', 'ref_auras', 'ref_rebirth', 'ref_wheel', 'ref_settings', 'ref_quests', 'ref_rewards', 'ref_wins', 'ref_strength', 'ref_luck', 'ref_level_sword', 'ref_power_sword', 'layer_tile_shop', 'layer_sym_shop', 'layer_tile_pets', 'layer_sym_pets', 'layer_tile_auras', 'layer_sym_auras',
   'layer_tile_rebirth', 'layer_sym_rebirth', 'layer_wheel_base', 'layer_wheel_disc', 'layer_wheel_top', 'bar_settings', 'bar_daily',
   'bar_rewards', 'stat_wins', 'stat_strength', 'stat_luck', 'icon_sword', 'icon_sword_dark'];
 
 // Как будто иконки уже загружены в Roblox и вставлены в IconConfig
 const IMG = {
-  'LeftMenu.ShopButton.Tile': 'layer_tile_shop', 'LeftMenu.ShopButton.Symbol': 'layer_sym_shop',
-  'LeftMenu.PetsButton.Tile': 'layer_tile_pets', 'LeftMenu.PetsButton.Symbol': 'layer_sym_pets',
-  'LeftMenu.AurasButton.Tile': 'layer_tile_auras', 'LeftMenu.AurasButton.Symbol': 'layer_sym_auras',
-  'LeftMenu.RebirthButton.Tile': 'layer_tile_rebirth', 'LeftMenu.RebirthButton.Symbol': 'layer_sym_rebirth',
-  'TopRight.WheelButton.Base': 'layer_wheel_base', 'TopRight.WheelButton.Disc': 'layer_wheel_disc', 'TopRight.WheelButton.Top': 'layer_wheel_top',
-  'TopRight.SettingsButton.Icon': 'bar_settings', 'TopRight.QuestsButton.Icon': 'bar_daily', 'TopRight.RewardsButton.Icon': 'bar_rewards',
-  'Stats.WinsRow.Icon': 'stat_wins', 'Stats.StrengthRow.Icon': 'stat_strength', 'Stats.LuckRow.Icon': 'stat_luck', 'Stats.RebirthRow.Icon': 'layer_sym_rebirth',
-  'PowerPanel.LevelBar.Icon': 'icon_sword', 'PowerPanel.PowerStrikeButton.Icon': 'icon_sword_dark',
+  'LeftMenu.ShopButton.Tile': 'ref_shop', 'LeftMenu.PetsButton.Tile': 'ref_pets',
+  'LeftMenu.AurasButton.Tile': 'ref_auras', 'LeftMenu.RebirthButton.Tile': 'ref_rebirth',
+  'TopRight.WheelButton.Disc': 'ref_wheel',
+  'TopRight.SettingsButton.Icon': 'ref_settings', 'TopRight.QuestsButton.Icon': 'ref_quests', 'TopRight.RewardsButton.Icon': 'ref_rewards',
+  'Stats.WinsRow.Icon': 'ref_wins', 'Stats.StrengthRow.Icon': 'ref_strength', 'Stats.LuckRow.Icon': 'ref_luck', 'Stats.RebirthRow.Icon': 'layer_sym_rebirth',
+  'PowerPanel.LevelBar.Icon': 'ref_level_sword', 'PowerPanel.PowerStrikeButton.Icon': 'ref_power_sword',
 };
 const SHOW = {}, BG = {}, NOSTROKE = {};
 for (const p of Object.keys(IMG)) {
@@ -32,6 +30,7 @@ for (const p of Object.keys(IMG)) {
   if (p.endsWith('.Tile')) { const b = p.replace(/\.Tile$/, ''); BG[b] = 1; NOSTROKE[b] = true; }
 }
 SHOW['TopRight.RewardsButton.Badge'] = true;
+for (const b of ['ShopButton', 'PetsButton', 'AurasButton', 'RebirthButton']) SHOW[`LeftMenu.${b}.Label`] = false;
 
 const HUD_TEXT = {
   'Stats.WinsRow.Value': '7.45K', 'Stats.StrengthRow.Value': '360M', 'Stats.LuckRow.Value': '12.5%', 'Stats.RebirthRow.Value': '3',
@@ -67,6 +66,7 @@ page.on('console', (m) => { if (m.type() === 'error') console.log('console:', m.
 await page.route('http://p.local/**', (route) => {
   const p = new URL(route.request().url()).pathname;
   let f = files[p];
+  if (!f && p.startsWith('/icons/ref_')) f = [path.join(ART, 'icons_ref', path.basename(p)), 'image/png'];
   if (!f && p.startsWith('/icons/')) f = [path.join(ART, 'icons', path.basename(p)), 'image/png'];
   if (!f && p.startsWith('/textures/')) f = [path.join(ART, 'textures', path.basename(p)), 'image/png'];
   if (!f && p.startsWith('/fonts/')) f = [path.join(NM, '@fontsource/rubik/files', path.basename(p)), 'font/woff2'];

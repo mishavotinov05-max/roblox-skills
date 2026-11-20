@@ -30963,6 +30963,12 @@ return {
 	IconConfig — картинки для кнопок интерфейса.
 
 	Пока здесь "rbxassetid://0", кнопки показывают эмодзи-заглушку.
+
+	ИКОНКИ «КАК НА РЕФЕРЕНСЕ» лежат в папке art/icons_ref (вырезаны из вашей картинки):
+	  ref_shop/pets/auras/rebirth — целые плитки (с подписью) → вставьте их ID в *Tile, а *Symbol оставьте 0;
+	  ref_settings, ref_quests, ref_wheel, ref_rewards → Settings, Quests, WheelDisc (Base/Top оставьте 0), Rewards;
+	  ref_wins, ref_strength, ref_luck → Wins, Strength, Luck;
+	  ref_level_sword, ref_power_sword → LevelSword, PowerSword.
 	Как поставить настоящие иконки (из папки art/icons):
 	1) Studio › View › Asset Manager › Bulk Import → выберите PNG-файлы.
 	2) Правый клик по картинке в Asset Manager › Copy Asset ID.
@@ -34924,6 +34930,13 @@ local function setIcon(holder: Instance?, childName: string, key: string)
 			fallback.Visible = false
 		end
 		-- если загружена картинка-плитка, убираем цветной фон кнопки
+		-- (плитки с референса уже содержат подпись — свою подпись прячем, если символа нет)
+		if childName == "Tile" and (IconConfig[key:gsub("Tile$", "Symbol")] or "rbxassetid://0") == "rbxassetid://0" then
+			local lbl = holder:FindFirstChild("Label")
+			if lbl and lbl:IsA("GuiObject") then
+				lbl.Visible = false
+			end
+		end
 		if childName == "Tile" and holder:IsA("GuiObject") then
 			holder.BackgroundTransparency = 1
 			local stroke = holder:FindFirstChildOfClass("UIStroke")
@@ -37324,7 +37337,7 @@ return World
 <Color3 name="BackgroundColor3"><R>1</R><G>1</G><B>1</B></Color3>
 <float name="BackgroundTransparency">1</float>
 <int name="BorderSizePixel">0</int>
-<UDim2 name="Position"><XS>0</XS><XO>10</XO><YS>1</YS><YO>-10</YO></UDim2>
+<UDim2 name="Position"><XS>0</XS><XO>3</XO><YS>1</YS><YO>-3</YO></UDim2>
 <UDim2 name="Size"><XS>0</XS><XO>150</XO><YS>0</YS><YO>264</YO></UDim2>
 <bool name="Visible">true</bool>
 <int name="ZIndex">1</int>
@@ -37343,7 +37356,7 @@ return World
 </Item>
 <Item class="UIScale" referent="RBX002385"><Properties>
 <string name="Name">Size</string>
-<float name="Scale">0.9</float>
+<float name="Scale">0.3</float>
 </Properties>
 </Item>
 <Item class="Frame" referent="RBX002386"><Properties>
