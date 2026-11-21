@@ -81876,7 +81876,7 @@ local State = require(Controllers:WaitForChild("State"))
 
 local Pets = {}
 local folder: Folder
-local shown: { [Player]: { key: string, models: { Model } } } = {}
+local shown: { [Player]: { key: string, models: { Model }, lift: { [Model]: number } } } = {}
 
 local function makePet(id: string): Model
 	local custom = ReplicatedStorage:FindFirstChild("PetModels")
@@ -81948,17 +81948,21 @@ local function sync(player: Player)
 		end
 	end
 	local models = {}
+	local lift = {}
 	local character = player.Character
 	local root = character and character:FindFirstChild("HumanoidRootPart") :: BasePart?
 	for id in tostring(key):gmatch("[^,]+") do
 		local m = makePet(id)
+		-- насколько точка опоры модели выше её низа (чтобы ставить ровно на землю)
+		local box, size = m:GetBoundingBox()
+		lift[m] = m:GetPivot().Position.Y - (box.Position.Y - size.Y / 2)
 		if root then
 			m:PivotTo(root.CFrame * CFrame.new(0, 0, 5))
 		end
 		m.Parent = folder
 		table.insert(models, m)
 	end
-	shown[player] = { key = key, models = models }
+	shown[player] = { key = key, models = models, lift = lift }
 end
 
 function Pets.Init()
@@ -81991,19 +81995,55 @@ function Pets.Init()
 		end
 	end)
 
-	RunService.RenderStepped:Connect(function()
-		local t = os.clock()
+	-- Питомцы стоят на земле: луч вниз находит пол, поэтому они не проваливаются
+	-- в холмы и ступени и не прыгают вместе с игроком.
+	local rayParams = RaycastParams.new()
+	rayParams.FilterType = Enum.RaycastFilterType.Exclude
+	rayParams.IgnoreWater = true
+
+	RunService.RenderStepped:Connect(function(dt)
+		local ignore: { Instance } = { folder }
+		for _, p in ipairs(Players:GetPlayers()) do
+			if p.Character then
+				table.insert(ignore, p.Character)
+			end
+		end
+		rayParams.FilterDescendantsInstances = ignore
+		local alpha = math.clamp(dt * 10, 0, 1)
+
 		for player, entry in pairs(shown) do
 			local character = player.Character
 			local root = character and character:FindFirstChild("HumanoidRootPart") :: BasePart?
+			local humanoid = character and character:FindFirstChildOfClass("Humanoid")
 			if root then
+				-- Поворот только вокруг вертикали (без наклонов)
+				local look = root.CFrame.LookVector
+				local flat = Vector3.new(look.X, 0, look.Z)
+				if flat.Magnitude < 0.01 then
+					flat = Vector3.new(0, 0, -1)
+				end
+				local facing = CFrame.lookAt(Vector3.zero, flat.Unit)
+				-- Уровень ног игрока (запасной вариант, если под питомцем нет пола)
+				local hip = humanoid and humanoid.HipHeight or 2
+				local feetY = root.Position.Y - root.Size.Y / 2 - hip
 				local n = #entry.models
 				for i, model in ipairs(entry.models) do
 					local spread = (i - (n + 1) / 2) * 3.2
-					local bob = math.sin(t * 4 + i) * 0.35
-					local target = root.CFrame * CFrame.new(spread, -1 + bob, 5.5)
+					local spot = root.Position + facing:VectorToWorldSpace(Vector3.new(spread, 0, 5.5))
+					local groundY = feetY
+					local hit = Workspace:Raycast(Vector3.new(spot.X, root.Position.Y + 4, spot.Z), Vector3.new(0, -60, 0), rayParams)
+					if hit then
+						groundY = hit.Position.Y
+					end
+					local lift = entry.lift[model] or 1
+					local target = CFrame.new(spot.X, groundY + lift, spot.Z) * facing.Rotation
 					local current = model:GetPivot()
-					model:PivotTo(current:Lerp(target, 0.15))
+					-- По высоте двигаемся плавно, но не уходим под землю
+					local nextCf = current:Lerp(target, alpha)
+					if nextCf.Position.Y < groundY + lift - 0.05 then
+						nextCf = CFrame.new(nextCf.Position.X, groundY + lift, nextCf.Position.Z) * nextCf.Rotation
+					end
+					model:PivotTo(nextCf)
 				end
 			end
 		end
