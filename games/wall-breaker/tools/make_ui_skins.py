@@ -94,61 +94,27 @@ def frac(box, im):
     return [round(box[0] / w, 4), round(box[1] / h, 4), round((box[2] - box[0]) / w, 4), round((box[3] - box[1]) / h, 4)]
 
 
-# Карточки: Победы / Сила / Удача — число во второй строке справа от значка
-for src, name in (("wins.webp", "card_wins"), ("strength.webp", "card_strength"), ("luck.webp", "card_luck"),
-                  ("rebirth_card.webp", "card_rebirth")):
+# Карточки без чисел (присланы автором): число игра пишет под заголовком
+for src, name in (("wins_blank.webp", "card_wins"), ("strength_blank.webp", "card_strength"), ("luck_blank.webp", "card_luck"),
+                  ("rebirth_blank.webp", "card_rebirth")):
     im = load(src)
     w, h = im.size
-    tx0 = int(w * 0.38)
-    top = text_box(im, tx0, int(w * 0.97), int(h * 0.1), int(h * 0.48))
-    num = text_box(im, tx0, int(w * 0.97), int(h * 0.5), int(h * 0.92))
-    if name == "card_rebirth":  # «0» узкий — место для числа делаем во всю ширину заголовка
-        num = (top[0] + 40, num[1], top[2] - 40, num[3])
-    area = erase(im, num, 30, top_limit=top[3] + 4, clean_tail=(top[3] + 30 if name == "card_rebirth" else False))
-    if name == "card_rebirth":
-        # остаток обводки «0» под заголовком: тёмные/белые пиксели, не соединённые с буквами заголовка
-        px2 = im.load()
-        from collections import deque
-        sx0, sx1 = area[0], area[2]
-        bad = lambda c: c[3] > 0 and (lum(c) < 70 or min(c[:3]) > 200)
-        letters = set()
-        q = deque((x, top[3] - 5) for x in range(sx0, sx1) if bad(px2[x, top[3] - 5]))
-        while q:
-            x, y = q.popleft()
-            if (x, y) in letters or not (sx0 <= x <= sx1 and top[1] <= y <= area[3]) or not bad(px2[x, y]):
-                continue
-            letters.add((x, y))
-            q.extend(((x + 1, y), (x - 1, y), (x, y + 1), (x, y - 1)))
-        for y in range(top[3] - 12, area[3]):
-            c = px2[int(w * 0.93), y]
-            for x in range(sx0, sx1 + 1):
-                if bad(px2[x, y]) and (x, y) not in letters:
-                    px2[x, y] = c
-        # точечная заплатка: верх обводки стёртого «0» под буквами «ож» (координаты на этой картинке)
-        sx, sy = w / 1362, h / 579
-        for y in range(int(254 * sy), int(284 * sy)):
-            c = px2[int(w * 0.93), y]
-            for x in range(int(805 * sx), int(905 * sx)):
-                px2[x, y] = c
-        px2 = im.load()
-        for y in range(top[3] + 2, area[1] + 2):
-            c = px2[int(w * 0.93), y]
-            if c[3] < 200 or lum(c) < 60:
-                continue
-            for x in range(area[0], area[2] + 1):
-                d = px2[x, y]
-                # не трогаем саму надпись (белые буквы и их обводку, соединённые с заголовком сверху)
-                if y <= top[3] + 6 and (lum(d) < 70 or min(d[:3]) > 200):
-                    continue
-                px2[x, y] = c
-    im.save(os.path.join(OUT, name + ".png"))
+    tx0 = int(w * 0.37)
+    top = text_box(im, tx0, int(w * 0.97), int(h * 0.05), int(h * 0.55))
+    # нижний край внутренней части карточки (над тёмной обводкой) в столбце под заголовком
+    px = im.load()
+    cx = (top[0] + top[2]) // 2
+    yb = h - 1
+    while yb > top[3] and (px[cx, yb][3] < 200 or lum(px[cx, yb]) < 70):
+        yb -= 1
+    area = (top[0], top[3] + int(h * 0.02), top[2], yb - int(h * 0.04))
     pp = im.load()
-    cols = [pp[x, y] for x in range(area[0], area[2], 7) for y in range(area[1], area[3], 7) if pp[x, y][3] > 200]
-    patch = [sum(c[i] for c in cols) // len(cols) for i in range(3)]
+
     def rowc(y):
         r = [pp[x, y] for x in range(area[0], area[2], 5) if pp[x, y][3] > 200]
         return [sum(c[i] for c in r) // len(r) for i in range(3)]
-    meta[name] = {"ratio": round(w / h, 4), "value": frac(area, im), "title": frac(top, im), "patch": patch,
+    im.save(os.path.join(OUT, name + ".png"))
+    meta[name] = {"ratio": round(w / h, 4), "value": frac(area, im), "title": frac(top, im), "patch": rowc((area[1] + area[3]) // 2),
                   "patchTop": rowc(area[1] + 3), "patchBottom": rowc(area[3] - 3), "canvas": CANVAS[src]}
 
 # Мощный удар: картинка целиком (меч + надпись)

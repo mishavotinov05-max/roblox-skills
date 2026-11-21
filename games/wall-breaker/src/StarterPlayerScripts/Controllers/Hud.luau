@@ -445,10 +445,28 @@ local function resolveUnsorted(): boolean
 	return changed
 end
 
+-- Шрифт как на нарисованных счётчиках: круглый жирный (FredokaOne)
+local COUNTER_FONT = Enum.Font.FredokaOne
+local function applyCounterFont()
+	for _, path in ipairs({
+		"Stats.WinsRow.Value", "Stats.StrengthRow.Value", "Stats.LuckRow.Value", "Stats.RebirthRow.Value",
+		"Stats.WinsRow.Title", "Stats.StrengthRow.Title", "Stats.LuckRow.Title", "Stats.RebirthRow.Title",
+		"PowerPanel.StrengthBig", "PowerPanel.LevelBar.Level", "PowerPanel.LevelBar.Xp",
+		"PowerPanel.XpButtons.XpSmallButton", "PowerPanel.XpButtons.XpMediumButton", "PowerPanel.XpButtons.XpBigButton",
+		"PowerPanel.PowerStrikeButton.Text",
+	}) do
+		local l = find(path)
+		if l and (l:IsA("TextLabel") or l:IsA("TextButton")) then
+			l.Font = COUNTER_FONT
+		end
+	end
+end
+
 function Hud.Init()
 	gui = Players.LocalPlayer:WaitForChild("PlayerGui"):WaitForChild("MainHud") :: ScreenGui
 	applyIcons()
 	applySkins()
+	applyCounterFont()
 	task.spawn(function()
 		if resolveUnsorted() then
 			applyIcons()
