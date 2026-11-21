@@ -23,7 +23,7 @@ return {
 	PetsSymbol = "rbxassetid://0", -- layer_sym_pets.png
 	AurasTile = "rbxassetid://85302115462208", -- layer_tile_auras.png
 	AurasSymbol = "rbxassetid://0", -- layer_sym_auras.png
-	RebirthTile = "rbxassetid://0", -- layer_tile_rebirth.png
+	RebirthTile = "rbxassetid://93439538729987", -- layer_tile_rebirth.png
 	RebirthSymbol = "rbxassetid://0", -- layer_sym_rebirth.png
 
 	-- Колесо фортуны
@@ -43,12 +43,12 @@ return {
 
 	-- Карточки слева внизу и полоса уровня — целые картинки (папка art/ui_ref).
 	-- Число игра пишет сама поверх картинки.
-	WinsCard = "rbxassetid://86147372644434", -- card_wins.png
-	StrengthCard = "rbxassetid://132318617791587", -- card_strength.png
-	LuckCard = "rbxassetid://93482408998552", -- card_luck.png
-	RebirthCard = "rbxassetid://119123577001004", -- card_rebirth.png
-	LevelBarEmpty = "rbxassetid://0", -- levelbar_empty.png
-	LevelBarFull = "rbxassetid://0", -- levelbar_full.png
+	WinsCard = "rbxassetid://106514880253742", -- card_wins.png
+	StrengthCard = "rbxassetid://87058252017865", -- card_strength.png
+	LuckCard = "rbxassetid://77168763153495", -- card_luck.png
+	RebirthCard = "rbxassetid://72005265785625", -- card_rebirth.png
+	LevelBarEmpty = "rbxassetid://71093757750493", -- levelbar_empty.png
+	LevelBarFull = "rbxassetid://80756915807030", -- levelbar_full.png
 	PowerButton = "rbxassetid://91365611636904", -- power_button.png
 
 	-- Показатели

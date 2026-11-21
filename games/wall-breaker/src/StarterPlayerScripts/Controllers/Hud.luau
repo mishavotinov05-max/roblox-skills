@@ -94,9 +94,10 @@ local function setSkin(holder: Instance?, key: string, hide: { string })
 			o.Visible = false
 		end
 	end
-	local patch = holder:FindFirstChild("ValueBg") -- закрывает число, напечатанное на картинке
+	-- Новые карточки без напечатанных чисел: заплатка ValueBg больше не нужна
+	local patch = holder:FindFirstChild("ValueBg")
 	if patch and patch:IsA("GuiObject") then
-		patch.Visible = true
+		patch.Visible = false
 	end
 	return true
 end
