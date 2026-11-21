@@ -81001,7 +81001,8 @@ local function watchCustomButtons(root: Instance)
 end
 
 function Hud.Init()
-	gui = Players.LocalPlayer:WaitForChild("PlayerGui"):WaitForChild("MainHud") :: ScreenGui
+	local pg = Players.LocalPlayer:WaitForChild("PlayerGui")
+	gui = (pg:WaitForChild("MainHud", 5) or Instance.new("ScreenGui", pg)) :: ScreenGui
 	applyIcons()
 	applySkins()
 	applyCounterFont()
@@ -81715,9 +81716,31 @@ function Panels.Toggle(name: string)
 	end
 end
 
+-- Если части старого интерфейса удалены — не ждём их вечно, а создаём пустой слой
+local function hudLayer(name: string): Frame
+	local pg = Players.LocalPlayer:WaitForChild("PlayerGui")
+	local gui = pg:WaitForChild("MainHud", 5)
+	if not gui then
+		gui = Instance.new("ScreenGui")
+		gui.Name = "MainHud"
+		gui.ResetOnSpawn = false
+		gui.Parent = pg
+	end
+	local layer = gui:FindFirstChild(name)
+	if not layer then
+		local f = Instance.new("Frame")
+		f.Name = name
+		f.Size = UDim2.fromScale(1, 1)
+		f.BackgroundTransparency = 1
+		f.ZIndex = 20
+		f.Parent = gui
+		layer = f
+	end
+	return layer :: Frame
+end
+
 function Panels.Init()
-	local gui = Players.LocalPlayer:WaitForChild("PlayerGui"):WaitForChild("MainHud")
-	root = gui:WaitForChild("Panels") :: Frame
+	root = hudLayer("Panels")
 	root.Visible = true -- в редакторе слой выключен, чтобы не мешал кликам
 	for _, p in ipairs(root:GetChildren()) do
 		local close = p:FindFirstChild("CloseButton", true)
@@ -82234,9 +82257,18 @@ local function runQueue()
 end
 
 function Popups.Init()
-	gui = player:WaitForChild("PlayerGui"):WaitForChild("MainHud") :: ScreenGui
-	local preview = gui:WaitForChild("EggPreview") :: Frame
-	local eggOpen = gui:WaitForChild("EggOpen") :: Frame
+	local found = player:WaitForChild("PlayerGui"):WaitForChild("MainHud", 5)
+	if not found then
+		warn("[Popups] нет MainHud — окна яиц отключены")
+		return
+	end
+	gui = found :: ScreenGui
+	local preview = gui:WaitForChild("EggPreview", 5) :: Frame
+	local eggOpen = gui:WaitForChild("EggOpen", 5) :: Frame
+	if not preview or not eggOpen then
+		warn("[Popups] нет EggPreview/EggOpen в MainHud — окна яиц отключены")
+		return
+	end
 	preview.Visible = false
 	eggOpen.Visible = false
 
@@ -82496,9 +82528,31 @@ function Toasts.Popup(text: string, color: Color3?)
 	game:GetService("Debris"):AddItem(label, 1)
 end
 
+-- Если части старого интерфейса удалены — не ждём их вечно, а создаём пустой слой
+local function hudLayer(name: string): Frame
+	local pg = Players.LocalPlayer:WaitForChild("PlayerGui")
+	local gui = pg:WaitForChild("MainHud", 5)
+	if not gui then
+		gui = Instance.new("ScreenGui")
+		gui.Name = "MainHud"
+		gui.ResetOnSpawn = false
+		gui.Parent = pg
+	end
+	local layer = gui:FindFirstChild(name)
+	if not layer then
+		local f = Instance.new("Frame")
+		f.Name = name
+		f.Size = UDim2.fromScale(1, 1)
+		f.BackgroundTransparency = 1
+		f.ZIndex = 20
+		f.Parent = gui
+		layer = f
+	end
+	return layer :: Frame
+end
+
 function Toasts.Init()
-	local gui = Players.LocalPlayer:WaitForChild("PlayerGui"):WaitForChild("MainHud")
-	container = gui:WaitForChild("Toasts")
+	container = hudLayer("Toasts")
 	container.Visible = true -- в редакторе слой выключен, чтобы не мешал кликам
 	Remotes.Event("Notify").OnClientEvent:Connect(Toasts.Show)
 end

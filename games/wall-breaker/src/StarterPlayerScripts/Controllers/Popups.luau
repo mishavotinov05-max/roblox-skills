@@ -239,9 +239,18 @@ local function runQueue()
 end
 
 function Popups.Init()
-	gui = player:WaitForChild("PlayerGui"):WaitForChild("MainHud") :: ScreenGui
-	local preview = gui:WaitForChild("EggPreview") :: Frame
-	local eggOpen = gui:WaitForChild("EggOpen") :: Frame
+	local found = player:WaitForChild("PlayerGui"):WaitForChild("MainHud", 5)
+	if not found then
+		warn("[Popups] нет MainHud — окна яиц отключены")
+		return
+	end
+	gui = found :: ScreenGui
+	local preview = gui:WaitForChild("EggPreview", 5) :: Frame
+	local eggOpen = gui:WaitForChild("EggOpen", 5) :: Frame
+	if not preview or not eggOpen then
+		warn("[Popups] нет EggPreview/EggOpen в MainHud — окна яиц отключены")
+		return
+	end
 	preview.Visible = false
 	eggOpen.Visible = false
 

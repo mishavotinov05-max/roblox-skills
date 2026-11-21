@@ -81,9 +81,31 @@ function Toasts.Popup(text: string, color: Color3?)
 	game:GetService("Debris"):AddItem(label, 1)
 end
 
+-- Если части старого интерфейса удалены — не ждём их вечно, а создаём пустой слой
+local function hudLayer(name: string): Frame
+	local pg = Players.LocalPlayer:WaitForChild("PlayerGui")
+	local gui = pg:WaitForChild("MainHud", 5)
+	if not gui then
+		gui = Instance.new("ScreenGui")
+		gui.Name = "MainHud"
+		gui.ResetOnSpawn = false
+		gui.Parent = pg
+	end
+	local layer = gui:FindFirstChild(name)
+	if not layer then
+		local f = Instance.new("Frame")
+		f.Name = name
+		f.Size = UDim2.fromScale(1, 1)
+		f.BackgroundTransparency = 1
+		f.ZIndex = 20
+		f.Parent = gui
+		layer = f
+	end
+	return layer :: Frame
+end
+
 function Toasts.Init()
-	local gui = Players.LocalPlayer:WaitForChild("PlayerGui"):WaitForChild("MainHud")
-	container = gui:WaitForChild("Toasts")
+	container = hudLayer("Toasts")
 	container.Visible = true -- в редакторе слой выключен, чтобы не мешал кликам
 	Remotes.Event("Notify").OnClientEvent:Connect(Toasts.Show)
 end

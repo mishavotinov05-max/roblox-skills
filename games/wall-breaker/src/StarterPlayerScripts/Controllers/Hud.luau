@@ -526,7 +526,8 @@ local function watchCustomButtons(root: Instance)
 end
 
 function Hud.Init()
-	gui = Players.LocalPlayer:WaitForChild("PlayerGui"):WaitForChild("MainHud") :: ScreenGui
+	local pg = Players.LocalPlayer:WaitForChild("PlayerGui")
+	gui = (pg:WaitForChild("MainHud", 5) or Instance.new("ScreenGui", pg)) :: ScreenGui
 	applyIcons()
 	applySkins()
 	applyCounterFont()
