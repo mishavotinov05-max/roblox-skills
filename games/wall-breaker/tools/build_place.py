@@ -1025,9 +1025,10 @@ def build_gui():
     eo.add(win)
     hud.add(eo)
 
-    hud.add(frame("Toasts", ((1, 0), (1, 0)), ((0, 0), (0, 0)), z=20))
+    # Слои на весь экран выключены в редакторе (иначе перехватывают клики в Studio), игра включает их сама
+    hud.add(frame("Toasts", ((1, 0), (1, 0)), ((0, 0), (0, 0)), visible=False, z=20))
 
-    panels = frame("Panels", ((1, 0), (1, 0)), ((0, 0), (0, 0)), z=10)
+    panels = frame("Panels", ((1, 0), (1, 0)), ((0, 0), (0, 0)), visible=False, z=10)
     # Магазин с вкладками
     tabs = frame("Tabs", ((1, -28), (0, 40)), ((0, 14), (0, 60)))
     tabs.add(ui_list(horizontal=True, padding=8, halign=1))

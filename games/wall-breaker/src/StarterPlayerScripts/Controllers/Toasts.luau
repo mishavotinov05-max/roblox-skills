@@ -84,6 +84,7 @@ end
 function Toasts.Init()
 	local gui = Players.LocalPlayer:WaitForChild("PlayerGui"):WaitForChild("MainHud")
 	container = gui:WaitForChild("Toasts")
+	container.Visible = true -- в редакторе слой выключен, чтобы не мешал кликам
 	Remotes.Event("Notify").OnClientEvent:Connect(Toasts.Show)
 end
 

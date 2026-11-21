@@ -81637,6 +81637,7 @@ end
 function Panels.Init()
 	local gui = Players.LocalPlayer:WaitForChild("PlayerGui"):WaitForChild("MainHud")
 	root = gui:WaitForChild("Panels") :: Frame
+	root.Visible = true -- в редакторе слой выключен, чтобы не мешал кликам
 	for _, p in ipairs(root:GetChildren()) do
 		local close = p:FindFirstChild("CloseButton", true)
 		if close and close:IsA("GuiButton") then
@@ -82417,6 +82418,7 @@ end
 function Toasts.Init()
 	local gui = Players.LocalPlayer:WaitForChild("PlayerGui"):WaitForChild("MainHud")
 	container = gui:WaitForChild("Toasts")
+	container.Visible = true -- в редакторе слой выключен, чтобы не мешал кликам
 	Remotes.Event("Notify").OnClientEvent:Connect(Toasts.Show)
 end
 
@@ -85817,7 +85819,7 @@ return World
 <int name="BorderSizePixel">0</int>
 <UDim2 name="Position"><XS>0</XS><XO>0</XO><YS>0</YS><YO>0</YO></UDim2>
 <UDim2 name="Size"><XS>1</XS><XO>0</XO><YS>1</YS><YO>0</YO></UDim2>
-<bool name="Visible">true</bool>
+<bool name="Visible">false</bool>
 <int name="ZIndex">20</int>
 <int name="LayoutOrder">0</int>
 <float name="Rotation">0</float>
@@ -85832,7 +85834,7 @@ return World
 <int name="BorderSizePixel">0</int>
 <UDim2 name="Position"><XS>0</XS><XO>0</XO><YS>0</YS><YO>0</YO></UDim2>
 <UDim2 name="Size"><XS>1</XS><XO>0</XO><YS>1</YS><YO>0</YO></UDim2>
-<bool name="Visible">true</bool>
+<bool name="Visible">false</bool>
 <int name="ZIndex">10</int>
 <int name="LayoutOrder">0</int>
 <float name="Rotation">0</float>

@@ -640,6 +640,7 @@ end
 function Panels.Init()
 	local gui = Players.LocalPlayer:WaitForChild("PlayerGui"):WaitForChild("MainHud")
 	root = gui:WaitForChild("Panels") :: Frame
+	root.Visible = true -- в редакторе слой выключен, чтобы не мешал кликам
 	for _, p in ipairs(root:GetChildren()) do
 		local close = p:FindFirstChild("CloseButton", true)
 		if close and close:IsA("GuiButton") then
