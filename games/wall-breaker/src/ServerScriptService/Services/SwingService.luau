@@ -47,10 +47,18 @@ function SwingService.Init()
 		if TrainingService.TrySwing(player, data, pos) then
 			return
 		end
+		-- опыт за каждый удар (по стене или по воздуху), чтобы шкала уровня заполнялась
+		local perSwing = Settings.Xp.PerSwing or 0
 		if WallService.TrySwing(player, data, pos) then
+			if perSwing > 0 then
+				TrainingService.AddXp(player, data, perSwing)
+			end
 			return
 		end
 		TrainingService.AirSwing(player, data)
+		if perSwing > 0 then
+			TrainingService.AddXp(player, data, perSwing)
+		end
 	end)
 
 	Players.PlayerRemoving:Connect(function(player)
