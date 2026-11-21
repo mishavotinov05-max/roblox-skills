@@ -1128,11 +1128,21 @@ ICON_MAP = [  # (путь в MainHud, картинка, ключ IconConfig, ч�
 def icon_ids():
     import re
     src = read(os.path.join(SRC, "ReplicatedStorage", "Config", "IconConfig.luau"))
+    src = re.sub(r"--\[\[.*?\]\]", "", src, flags=re.S)  # без комментариев
+    src = re.sub(r"--[^\n]*", "", src)
     return {k: v for k, v in re.findall(r'(\w+) = "(rbxassetid://\d+)"', src) if not v.endswith("://0")}
 
 
 def bake_icons(hud):
     ids = icon_ids()
+
+    # Эмодзи-заглушки на кнопках убраны: кнопки пустые, картинки ставятся через IconConfig
+    def clear_fallbacks(node):
+        for c in node.children:
+            if c.name == "Fallback" and c.cls == "TextLabel":
+                c.props = [p for p in c.props if p.name != "Text"] + [P("string", "Text", "")]
+            clear_fallbacks(c)
+    clear_fallbacks(hud)
 
     def find(node, path):
         for name in path.split("."):

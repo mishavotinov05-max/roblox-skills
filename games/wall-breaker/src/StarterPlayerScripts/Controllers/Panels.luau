@@ -97,7 +97,7 @@ local function addCard(p: Instance, o: CardOptions): Frame?
 	text("InfoLabel", o.info)
 	local fallback = card:FindFirstChild("Fallback")
 	if fallback and fallback:IsA("TextLabel") then
-		fallback.Text = o.fallback or ""
+		fallback.Text = "" -- эмодзи-заглушки убраны: картинка товара ставится через Icon
 		if o.color then
 			fallback.TextColor3 = o.color
 		end

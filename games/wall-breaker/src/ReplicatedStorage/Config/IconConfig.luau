@@ -15,27 +15,45 @@
 	3) Вставьте сюда вместо 0, например "rbxassetid://1234567890".
 ]]
 
+--[[ Прежние картинки (убраны по просьбе). Чтобы вернуть — скопируйте строку вниз, на место 0:
+		ShopTile = "rbxassetid://140134205287427"
+		PetsTile = "rbxassetid://132751927335269"
+		AurasTile = "rbxassetid://85302115462208"
+		RebirthTile = "rbxassetid://104828054521730"
+		WheelDisc = "rbxassetid://102177297594423"
+		Rewards = "rbxassetid://123604929350824"
+		Quests = "rbxassetid://110903843704268"
+		Settings = "rbxassetid://126268987946288"
+		WinsCard = "rbxassetid://136848470796336"
+		StrengthCard = "rbxassetid://110493339668819"
+		LuckCard = "rbxassetid://130168179656809"
+		RebirthCard = "rbxassetid://118608529377167"
+		LevelBarEmpty = "rbxassetid://75914233990170"
+		LevelBarFull = "rbxassetid://101270647067696"
+		PowerButton = "rbxassetid://91365611636904"
+]]
+
 return {
 	-- Слева 2×2 (фон-плитка и символ отдельно — символ анимируется)
-	ShopTile = "rbxassetid://140134205287427", -- layer_tile_shop.png
+	ShopTile = "rbxassetid://0", -- layer_tile_shop.png
 	ShopSymbol = "rbxassetid://0", -- layer_sym_shop.png
-	PetsTile = "rbxassetid://132751927335269", -- layer_tile_pets.png
+	PetsTile = "rbxassetid://0", -- layer_tile_pets.png
 	PetsSymbol = "rbxassetid://0", -- layer_sym_pets.png
-	AurasTile = "rbxassetid://85302115462208", -- layer_tile_auras.png
+	AurasTile = "rbxassetid://0", -- layer_tile_auras.png
 	AurasSymbol = "rbxassetid://0", -- layer_sym_auras.png
-	RebirthTile = "rbxassetid://104828054521730", -- layer_tile_rebirth.png
+	RebirthTile = "rbxassetid://0", -- layer_tile_rebirth.png
 	RebirthSymbol = "rbxassetid://0", -- layer_sym_rebirth.png
 
 	-- Колесо фортуны
 	WheelBase = "rbxassetid://0", -- layer_wheel_base.png
-	WheelDisc = "rbxassetid://102177297594423", -- layer_wheel_disc.png
+	WheelDisc = "rbxassetid://0", -- layer_wheel_disc.png
 	WheelTop = "rbxassetid://0", -- layer_wheel_top.png
 
 	-- Правый верхний угол
 	Achievements = "rbxassetid://0", -- bar_achievements.png
-	Rewards = "rbxassetid://123604929350824", -- bar_rewards.png
-	Quests = "rbxassetid://110903843704268", -- bar_daily.png (свиток)
-	Settings = "rbxassetid://126268987946288", -- bar_settings.png
+	Rewards = "rbxassetid://0", -- bar_rewards.png
+	Quests = "rbxassetid://0", -- bar_daily.png (свиток)
+	Settings = "rbxassetid://0", -- bar_settings.png
 
 	-- Меч на полосе уровня и на кнопке «Мощный удар»
 	LevelSword = "rbxassetid://0", -- icon_sword.png
@@ -43,13 +61,13 @@ return {
 
 	-- Карточки слева внизу и полоса уровня — целые картинки (папка art/ui_ref).
 	-- Число игра пишет сама поверх картинки.
-	WinsCard = "rbxassetid://136848470796336", -- card_wins.png
-	StrengthCard = "rbxassetid://110493339668819", -- card_strength.png
-	LuckCard = "rbxassetid://130168179656809", -- card_luck.png
-	RebirthCard = "rbxassetid://118608529377167", -- card_rebirth.png
-	LevelBarEmpty = "rbxassetid://75914233990170", -- levelbar_empty.png
-	LevelBarFull = "rbxassetid://101270647067696", -- levelbar_full.png
-	PowerButton = "rbxassetid://91365611636904", -- power_button.png
+	WinsCard = "rbxassetid://0", -- card_wins.png
+	StrengthCard = "rbxassetid://0", -- card_strength.png
+	LuckCard = "rbxassetid://0", -- card_luck.png
+	RebirthCard = "rbxassetid://0", -- card_rebirth.png
+	LevelBarEmpty = "rbxassetid://0", -- levelbar_empty.png
+	LevelBarFull = "rbxassetid://0", -- levelbar_full.png
+	PowerButton = "rbxassetid://0", -- power_button.png
 
 	-- Показатели
 	Strength = "rbxassetid://0", -- stat_strength.png (рука)
