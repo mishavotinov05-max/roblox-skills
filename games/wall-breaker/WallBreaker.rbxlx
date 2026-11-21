@@ -80938,6 +80938,68 @@ local function applyCounterFont()
 	end
 end
 
+-- Свои кнопки: любой кнопке или картинке в StarterGui добавьте атрибут OpenPanel
+-- (Properties › Attributes › + › имя OpenPanel, тип string) со значением, например, Shop.
+-- Игра сама откроет нужное окно по нажатию — скрипт в кнопку вставлять не нужно.
+local PANEL_ALIASES = {
+	shop = "ShopPanel", ["магазин"] = "ShopPanel",
+	pets = "PetsPanel", ["питомцы"] = "PetsPanel",
+	auras = "AurasPanel", ["ауры"] = "AurasPanel",
+	rebirth = "RebirthPanel", ["перерождение"] = "RebirthPanel",
+	wheel = "WheelPanel", ["колесо"] = "WheelPanel",
+	rewards = "RewardsPanel", ["подарки"] = "RewardsPanel", ["подарок"] = "RewardsPanel",
+	quests = "QuestsPanel", ["задания"] = "QuestsPanel",
+	settings = "SettingsPanel", ["настройки"] = "SettingsPanel",
+	achievements = "AchievementsPanel", ["достижения"] = "AchievementsPanel",
+}
+
+local function panelFromAttribute(value: any): string?
+	if typeof(value) ~= "string" or value == "" then
+		return nil
+	end
+	local key = string.lower(value)
+	return PANEL_ALIASES[key] or (string.sub(value, -5) == "Panel" and value) or (value .. "Panel")
+end
+
+local bound = setmetatable({}, { __mode = "k" })
+local function bindCustom(obj: Instance)
+	if bound[obj] or not obj:IsA("GuiObject") then
+		return
+	end
+	if obj:GetAttribute("OpenPanel") == nil then
+		return
+	end
+	bound[obj] = true
+	local function open()
+		local name = panelFromAttribute(obj:GetAttribute("OpenPanel"))
+		if name then
+			Panels.Toggle(name)
+		else
+			warn("[OpenPanel] у", obj:GetFullName(), "пустой атрибут OpenPanel")
+		end
+	end
+	if obj:IsA("GuiButton") then
+		obj.Activated:Connect(open)
+	else
+		obj.Active = true
+		obj.InputBegan:Connect(function(input)
+			local t = input.UserInputType
+			if t == Enum.UserInputType.MouseButton1 or t == Enum.UserInputType.Touch then
+				open()
+			end
+		end)
+	end
+end
+
+local function watchCustomButtons(root: Instance)
+	for _, d in ipairs(root:GetDescendants()) do
+		bindCustom(d)
+	end
+	root.DescendantAdded:Connect(function(d)
+		task.defer(bindCustom, d)
+	end)
+end
+
 function Hud.Init()
 	gui = Players.LocalPlayer:WaitForChild("PlayerGui"):WaitForChild("MainHud") :: ScreenGui
 	applyIcons()
@@ -80959,6 +81021,7 @@ function Hud.Init()
 	bindButton("TopRight.RewardsButton", "RewardsPanel")
 	bindButton("TopRight.QuestsButton", "QuestsPanel")
 	bindButton("TopRight.SettingsButton", "SettingsPanel")
+	watchCustomButtons(Players.LocalPlayer:WaitForChild("PlayerGui"))
 
 	State.Changed:Connect(function()
 		refreshStats()
