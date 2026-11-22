@@ -68,9 +68,9 @@ return {
 			Pets = { { "magic_cat", 50 }, { "bat", 30 }, { "deer", 15 }, { "unicorn", 5 } } },
 		{ Id = "admin", Name = "Админское яйцо", Tag = "Легендарное", Price = 2000, Color = rgb(255, 170, 20),
 			Pets = { { "robot", 50 }, { "cyber_wolf", 30 }, { "mecha_dragon", 15 }, { "admin_lion", 5 } } },
-		{ Id = "divine", Name = "Божественное яйцо", Tag = "Божественное", RobuxProduct = "egg_divine", RobuxPrice = 199, Color = rgb(150, 120, 255),
+		{ Id = "divine", Name = "Божественное яйцо", Tag = "Божественное", RobuxProduct = "egg_divine", RobuxPrice = 99, Color = rgb(150, 120, 255),
 			Pets = { { "angel_fox", 50 }, { "light_deer", 30 }, { "winged_wolf", 15 }, { "archangel", 5 } } },
-		{ Id = "devil", Name = "Дьявольское яйцо", Tag = "Божественное", RobuxProduct = "egg_devil", RobuxPrice = 250, Color = rgb(230, 30, 50),
+		{ Id = "devil", Name = "Дьявольское яйцо", Tag = "Божественное", RobuxProduct = "egg_devil", RobuxPrice = 150, Color = rgb(230, 30, 50),
 			Pets = { { "hell_dog", 50 }, { "fire_bull", 30 }, { "demon_wolf", 15 }, { "devil_dragon", 5 } } },
 	},
 }

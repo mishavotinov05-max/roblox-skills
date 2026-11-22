@@ -46,8 +46,13 @@ return {
 		{ Key = "xp_medium", Id = 0, Name = "Опыт: средний", XpFactor = 3, Hidden = true },
 		{ Key = "xp_big", Id = 0, Name = "Опыт: большой", XpFactor = 15, Hidden = true },
 		-- Яйца за Robux (PetConfig → RobuxProduct)
-		-- Цена в Robux задаётся при создании товара в Creator Dashboard: божественное 199, дьявольское 250
-		{ Key = "egg_divine", Id = 0, Name = "Божественное яйцо", Hidden = true },
-		{ Key = "egg_devil", Id = 0, Name = "Дьявольское яйцо", Hidden = true },
+		-- Цена в Robux задаётся при создании товара в Creator Dashboard (цены — как в магазине игры)
+		{ Key = "egg_divine", Id = 0, Name = "Божественное яйцо ×1", Hidden = true }, -- 99 R$
+		{ Key = "egg_devil", Id = 0, Name = "Дьявольское яйцо ×1", Hidden = true }, -- 150 R$
+		-- Наборы: Egg — какое яйцо, Count — сколько штук открыть
+		{ Key = "egg_divine_3", Id = 0, Name = "Божественное яйцо ×3", Egg = "divine", Count = 3, Hidden = true }, -- 250 R$
+		{ Key = "egg_divine_5", Id = 0, Name = "Божественное яйцо ×5", Egg = "divine", Count = 5, Hidden = true }, -- 449 R$
+		{ Key = "egg_devil_3", Id = 0, Name = "Дьявольское яйцо ×3", Egg = "devil", Count = 3, Hidden = true }, -- 399 R$
+		{ Key = "egg_devil_5", Id = 0, Name = "Дьявольское яйцо ×5", Egg = "devil", Count = 5, Hidden = true }, -- 650 R$
 	},
 }

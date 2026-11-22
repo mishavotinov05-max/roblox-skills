@@ -68,7 +68,7 @@ local function rollPet(egg): string
 end
 
 -- Выдать питомца из яйца (после оплаты победами или Robux)
-local function hatch(player: Player, data, egg)
+local function hatch(player: Player, data, egg, silent: boolean?)
 	local petId = rollPet(egg)
 	local uid = data.NextPetUid
 	data.NextPetUid += 1
@@ -80,7 +80,9 @@ local function hatch(player: Player, data, egg)
 	PetService.UpdateAttribute(player)
 	DataService.MarkDirty(player)
 	-- клиент показывает анимацию-рулетку, а после неё — сообщение
-	Remotes.Event("Effect"):FireClient(player, "Egg", egg.Id, petId)
+	if not silent then
+		Remotes.Event("Effect"):FireClient(player, "Egg", egg.Id, petId)
+	end
 	return petId
 end
 
@@ -201,6 +203,25 @@ function PetService.Init()
 		if egg.RobuxProduct then
 			MonetizationService.RegisterProductHandler(egg.RobuxProduct, function(player, data)
 				hatch(player, data, egg)
+				return true
+			end)
+		end
+	end
+	-- Наборы яиц за Robux (ShopConfig.Products: Egg = id яйца, Count = сколько штук)
+	for _, product in ipairs(ShopConfig.Products) do
+		local egg = product.Egg and Catalog.Eggs[product.Egg]
+		if egg and product.Count then
+			MonetizationService.RegisterProductHandler(product.Key, function(player, data)
+				local best, bestMult = nil, -1
+				for _ = 1, product.Count do
+					local petId = hatch(player, data, egg, true)
+					local def = Catalog.Pets[petId]
+					if def and def.Multiplier > bestMult then
+						best, bestMult = petId, def.Multiplier
+					end
+				end
+				-- рулетку показываем один раз — на лучшего из выпавших
+				Remotes.Event("Effect"):FireClient(player, "Egg", egg.Id, best)
 				return true
 			end)
 		end
