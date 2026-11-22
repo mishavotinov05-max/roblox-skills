@@ -46,6 +46,7 @@ return {
 		{ Key = "xp_medium", Id = 0, Name = "Опыт: средний", XpFactor = 3, Hidden = true },
 		{ Key = "xp_big", Id = 0, Name = "Опыт: большой", XpFactor = 15, Hidden = true },
 		-- Яйца за Robux (PetConfig → RobuxProduct)
+		-- Цена в Robux задаётся при создании товара в Creator Dashboard: божественное 199, дьявольское 250
 		{ Key = "egg_divine", Id = 0, Name = "Божественное яйцо", Hidden = true },
 		{ Key = "egg_devil", Id = 0, Name = "Дьявольское яйцо", Hidden = true },
 	},

@@ -491,11 +491,20 @@ local function bindCustom(obj: Instance)
 	if bound[obj] or not obj:IsA("GuiObject") then
 		return
 	end
-	if obj:GetAttribute("OpenPanel") == nil then
+	if obj:GetAttribute("OpenPanel") == nil and obj:GetAttribute("BuyProduct") == nil then
 		return
 	end
 	bound[obj] = true
 	local function open()
+		-- BuyProduct = ключ товара из ShopConfig.Products (например egg_divine) — покупка за Robux
+		local product = obj:GetAttribute("BuyProduct")
+		if typeof(product) == "string" and product ~= "" then
+			local res = State.Request("BuyProduct", product)
+			if res and res.msg then
+				Toasts.Show(res.msg, res.ok and "info" or "error")
+			end
+			return
+		end
 		local name = panelFromAttribute(obj:GetAttribute("OpenPanel"))
 		if name then
 			Panels.Toggle(name)
