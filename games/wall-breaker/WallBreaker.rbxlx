@@ -76257,9 +76257,9 @@ return {
 			Pets = { { "magic_cat", 50 }, { "bat", 30 }, { "deer", 15 }, { "unicorn", 5 } } },
 		{ Id = "admin", Name = "Админское яйцо", Tag = "Легендарное", Price = 2000, Color = rgb(255, 170, 20),
 			Pets = { { "robot", 50 }, { "cyber_wolf", 30 }, { "mecha_dragon", 15 }, { "admin_lion", 5 } } },
-		{ Id = "divine", Name = "Божественное яйцо", Tag = "Божественное", RobuxProduct = "egg_divine", RobuxPrice = 100, Color = rgb(150, 120, 255),
+		{ Id = "divine", Name = "Божественное яйцо", Tag = "Божественное", RobuxProduct = "egg_divine", RobuxPrice = 199, Color = rgb(150, 120, 255),
 			Pets = { { "angel_fox", 50 }, { "light_deer", 30 }, { "winged_wolf", 15 }, { "archangel", 5 } } },
-		{ Id = "devil", Name = "Дьявольское яйцо", Tag = "Божественное", RobuxProduct = "egg_devil", RobuxPrice = 150, Color = rgb(230, 30, 50),
+		{ Id = "devil", Name = "Дьявольское яйцо", Tag = "Божественное", RobuxProduct = "egg_devil", RobuxPrice = 250, Color = rgb(230, 30, 50),
 			Pets = { { "hell_dog", 50 }, { "fire_bull", 30 }, { "demon_wolf", 15 }, { "devil_dragon", 5 } } },
 	},
 }
@@ -76464,6 +76464,7 @@ return {
 		{ Key = "xp_medium", Id = 0, Name = "Опыт: средний", XpFactor = 3, Hidden = true },
 		{ Key = "xp_big", Id = 0, Name = "Опыт: большой", XpFactor = 15, Hidden = true },
 		-- Яйца за Robux (PetConfig → RobuxProduct)
+		-- Цена в Robux задаётся при создании товара в Creator Dashboard: божественное 199, дьявольское 250
 		{ Key = "egg_divine", Id = 0, Name = "Божественное яйцо", Hidden = true },
 		{ Key = "egg_devil", Id = 0, Name = "Дьявольское яйцо", Hidden = true },
 	},
@@ -80975,11 +80976,20 @@ local function bindCustom(obj: Instance)
 	if bound[obj] or not obj:IsA("GuiObject") then
 		return
 	end
-	if obj:GetAttribute("OpenPanel") == nil then
+	if obj:GetAttribute("OpenPanel") == nil and obj:GetAttribute("BuyProduct") == nil then
 		return
 	end
 	bound[obj] = true
 	local function open()
+		-- BuyProduct = ключ товара из ShopConfig.Products (например egg_divine) — покупка за Robux
+		local product = obj:GetAttribute("BuyProduct")
+		if typeof(product) == "string" and product ~= "" then
+			local res = State.Request("BuyProduct", product)
+			if res and res.msg then
+				Toasts.Show(res.msg, res.ok and "info" or "error")
+			end
+			return
+		end
 		local name = panelFromAttribute(obj:GetAttribute("OpenPanel"))
 		if name then
 			Panels.Toggle(name)
