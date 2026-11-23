@@ -13,6 +13,7 @@ local Debris = game:GetService("Debris")
 local Config = ReplicatedStorage:WaitForChild("Config")
 local PitConfig = require(Config:WaitForChild("PitConfig"))
 local LevelConfig = require(Config:WaitForChild("LevelConfig"))
+local IconConfig = require(Config:WaitForChild("IconConfig"))
 local Shared = ReplicatedStorage:WaitForChild("Shared")
 local Format = require(Shared:WaitForChild("Format"))
 local Remotes = require(Shared:WaitForChild("Remotes"))
@@ -239,7 +240,9 @@ function World.Init()
 	State.Changed:Connect(refresh)
 	Remotes.Event("Effect").OnClientEvent:Connect(function(kind, a, b)
 		if kind == "Strength" then
-			Toasts.Popup("+" .. Format.Short(a) .. " силы")
+			-- иконка бицепса: IconConfig.StrengthPopup (если не задано — стандартная)
+			local icon = IconConfig.StrengthPopup or "rbxassetid://91307015361127"
+			Toasts.IconPopup("+" .. Format.Short(a), icon)
 		elseif kind == "Break" then
 			breakEffect(a, b)
 		elseif kind == "LevelUp" then

@@ -159,6 +159,17 @@ function PetService.Unequip(player: Player, uid: number)
 	return { ok = true }
 end
 
+function PetService.UnequipAll(player: Player)
+	local data = DataService.Get(player)
+	if not data then
+		return { ok = false }
+	end
+	data.EquippedPets = {}
+	PetService.UpdateAttribute(player)
+	DataService.MarkDirty(player)
+	return { ok = true }
+end
+
 function PetService.EquipBest(player: Player)
 	local data = DataService.Get(player)
 	local sorted = table.clone(data.Pets)
@@ -192,6 +203,7 @@ function PetService.Init()
 	RequestService.Register("EquipPet", PetService.Equip)
 	RequestService.Register("UnequipPet", PetService.Unequip)
 	RequestService.Register("EquipBestPets", PetService.EquipBest)
+	RequestService.Register("UnequipAllPets", PetService.UnequipAll)
 	RequestService.Register("DeletePet", PetService.Delete)
 
 	DataService.OnLoaded(function(player)

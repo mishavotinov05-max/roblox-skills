@@ -75991,8 +75991,8 @@ return {
 	-- ТЕСТ: бесконечные победы и сила (прогресс таких игроков НЕ сохраняется,
 	-- чтобы настоящее сохранение не испортилось). Перед релизом выключите.
 	Infinite = {
-		InStudio = true, -- у всех, кто тестирует в Studio
-		ForOwner = true, -- у владельца игры и в опубликованной игре
+		InStudio = false, -- у всех, кто тестирует в Studio
+		ForOwner = false, -- у владельца игры и в опубликованной игре
 		UserIds = {}, -- можно добавить номера аккаунтов, например { 123456 }
 		Amount = 1e15,
 	},
@@ -76099,6 +76099,9 @@ return {
 	LevelBarEmpty = "rbxassetid://0", -- levelbar_empty.png
 	LevelBarFull = "rbxassetid://0", -- levelbar_full.png
 	PowerButton = "rbxassetid://0", -- power_button.png
+
+	-- Иконка у летящего «+сила» при ударе (бицепс)
+	StrengthPopup = "rbxassetid://91307015361127",
 
 	-- Показатели
 	Strength = "rbxassetid://0", -- stat_strength.png (рука)
@@ -78502,6 +78505,17 @@ function PetService.Unequip(player: Player, uid: number)
 	return { ok = true }
 end
 
+function PetService.UnequipAll(player: Player)
+	local data = DataService.Get(player)
+	if not data then
+		return { ok = false }
+	end
+	data.EquippedPets = {}
+	PetService.UpdateAttribute(player)
+	DataService.MarkDirty(player)
+	return { ok = true }
+end
+
 function PetService.EquipBest(player: Player)
 	local data = DataService.Get(player)
 	local sorted = table.clone(data.Pets)
@@ -78535,6 +78549,7 @@ function PetService.Init()
 	RequestService.Register("EquipPet", PetService.Equip)
 	RequestService.Register("UnequipPet", PetService.Unequip)
 	RequestService.Register("EquipBestPets", PetService.EquipBest)
+	RequestService.Register("UnequipAllPets", PetService.UnequipAll)
 	RequestService.Register("DeletePet", PetService.Delete)
 
 	DataService.OnLoaded(function(player)
@@ -82613,6 +82628,49 @@ function Toasts.Popup(text: string, color: Color3?)
 	game:GetService("Debris"):AddItem(label, 1)
 end
 
+-- Летящее число с иконкой (например, бицепс у «+сила»)
+function Toasts.IconPopup(text: string, icon: string, color: Color3?)
+	local holder = Instance.new("Frame")
+	holder.BackgroundTransparency = 1
+	holder.AnchorPoint = Vector2.new(0.5, 0.5)
+	holder.Size = UDim2.new(0, 220, 0, 44)
+	local x = 0.5 + (math.random() - 0.5) * 0.16
+	holder.Position = UDim2.new(x, 0, 0.62, 0)
+	local layout = Instance.new("UIListLayout")
+	layout.FillDirection = Enum.FillDirection.Horizontal
+	layout.HorizontalAlignment = Enum.HorizontalAlignment.Center
+	layout.VerticalAlignment = Enum.VerticalAlignment.Center
+	layout.Padding = UDim.new(0, 4)
+	layout.Parent = holder
+	local img = Instance.new("ImageLabel")
+	img.BackgroundTransparency = 1
+	img.Size = UDim2.new(0, 40, 0, 40)
+	img.Image = icon
+	img.LayoutOrder = 1
+	img.Parent = holder
+	local label = Instance.new("TextLabel")
+	label.BackgroundTransparency = 1
+	label.AutomaticSize = Enum.AutomaticSize.X
+	label.Size = UDim2.new(0, 0, 0, 36)
+	label.FontFace = Font.new("rbxasset://fonts/families/FredokaOne.json", Enum.FontWeight.Bold)
+	label.TextSize = 34
+	label.Text = text
+	label.TextColor3 = color or Color3.fromRGB(255, 225, 77)
+	label.LayoutOrder = 2
+	label.Parent = holder
+	local stroke = Instance.new("UIStroke")
+	stroke.Thickness = 3
+	stroke.Color = Color3.new(0, 0, 0)
+	stroke.Parent = label
+	holder.Parent = container
+	local info = TweenInfo.new(0.9, Enum.EasingStyle.Quad)
+	TweenService:Create(holder, info, { Position = UDim2.new(x, 0, 0.48, 0) }):Play()
+	TweenService:Create(label, info, { TextTransparency = 1 }):Play()
+	TweenService:Create(stroke, info, { Transparency = 1 }):Play()
+	TweenService:Create(img, info, { ImageTransparency = 1 }):Play()
+	game:GetService("Debris"):AddItem(holder, 1)
+end
+
 -- Если части старого интерфейса удалены — не ждём их вечно, а создаём пустой слой
 local function hudLayer(name: string): Frame
 	local pg = Players.LocalPlayer:WaitForChild("PlayerGui")
@@ -82663,6 +82721,7 @@ local Debris = game:GetService("Debris")
 local Config = ReplicatedStorage:WaitForChild("Config")
 local PitConfig = require(Config:WaitForChild("PitConfig"))
 local LevelConfig = require(Config:WaitForChild("LevelConfig"))
+local IconConfig = require(Config:WaitForChild("IconConfig"))
 local Shared = ReplicatedStorage:WaitForChild("Shared")
 local Format = require(Shared:WaitForChild("Format"))
 local Remotes = require(Shared:WaitForChild("Remotes"))
@@ -82889,7 +82948,9 @@ function World.Init()
 	State.Changed:Connect(refresh)
 	Remotes.Event("Effect").OnClientEvent:Connect(function(kind, a, b)
 		if kind == "Strength" then
-			Toasts.Popup("+" .. Format.Short(a) .. " силы")
+			-- иконка бицепса: IconConfig.StrengthPopup (если не задано — стандартная)
+			local icon = IconConfig.StrengthPopup or "rbxassetid://91307015361127"
+			Toasts.IconPopup("+" .. Format.Short(a), icon)
 		elseif kind == "Break" then
 			breakEffect(a, b)
 		elseif kind == "LevelUp" then

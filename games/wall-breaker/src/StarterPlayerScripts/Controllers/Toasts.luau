@@ -81,6 +81,49 @@ function Toasts.Popup(text: string, color: Color3?)
 	game:GetService("Debris"):AddItem(label, 1)
 end
 
+-- Летящее число с иконкой (например, бицепс у «+сила»)
+function Toasts.IconPopup(text: string, icon: string, color: Color3?)
+	local holder = Instance.new("Frame")
+	holder.BackgroundTransparency = 1
+	holder.AnchorPoint = Vector2.new(0.5, 0.5)
+	holder.Size = UDim2.new(0, 220, 0, 44)
+	local x = 0.5 + (math.random() - 0.5) * 0.16
+	holder.Position = UDim2.new(x, 0, 0.62, 0)
+	local layout = Instance.new("UIListLayout")
+	layout.FillDirection = Enum.FillDirection.Horizontal
+	layout.HorizontalAlignment = Enum.HorizontalAlignment.Center
+	layout.VerticalAlignment = Enum.VerticalAlignment.Center
+	layout.Padding = UDim.new(0, 4)
+	layout.Parent = holder
+	local img = Instance.new("ImageLabel")
+	img.BackgroundTransparency = 1
+	img.Size = UDim2.new(0, 40, 0, 40)
+	img.Image = icon
+	img.LayoutOrder = 1
+	img.Parent = holder
+	local label = Instance.new("TextLabel")
+	label.BackgroundTransparency = 1
+	label.AutomaticSize = Enum.AutomaticSize.X
+	label.Size = UDim2.new(0, 0, 0, 36)
+	label.FontFace = Font.new("rbxasset://fonts/families/FredokaOne.json", Enum.FontWeight.Bold)
+	label.TextSize = 34
+	label.Text = text
+	label.TextColor3 = color or Color3.fromRGB(255, 225, 77)
+	label.LayoutOrder = 2
+	label.Parent = holder
+	local stroke = Instance.new("UIStroke")
+	stroke.Thickness = 3
+	stroke.Color = Color3.new(0, 0, 0)
+	stroke.Parent = label
+	holder.Parent = container
+	local info = TweenInfo.new(0.9, Enum.EasingStyle.Quad)
+	TweenService:Create(holder, info, { Position = UDim2.new(x, 0, 0.48, 0) }):Play()
+	TweenService:Create(label, info, { TextTransparency = 1 }):Play()
+	TweenService:Create(stroke, info, { Transparency = 1 }):Play()
+	TweenService:Create(img, info, { ImageTransparency = 1 }):Play()
+	game:GetService("Debris"):AddItem(holder, 1)
+end
+
 -- Если части старого интерфейса удалены — не ждём их вечно, а создаём пустой слой
 local function hudLayer(name: string): Frame
 	local pg = Players.LocalPlayer:WaitForChild("PlayerGui")

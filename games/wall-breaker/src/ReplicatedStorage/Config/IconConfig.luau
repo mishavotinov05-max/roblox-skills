@@ -69,6 +69,9 @@ return {
 	LevelBarFull = "rbxassetid://0", -- levelbar_full.png
 	PowerButton = "rbxassetid://0", -- power_button.png
 
+	-- Иконка у летящего «+сила» при ударе (бицепс)
+	StrengthPopup = "rbxassetid://91307015361127",
+
 	-- Показатели
 	Strength = "rbxassetid://0", -- stat_strength.png (рука)
 	Luck = "rbxassetid://0", -- stat_luck.png
