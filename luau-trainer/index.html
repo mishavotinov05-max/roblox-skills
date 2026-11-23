@@ -1,0 +1,1214 @@
+<!doctype html><html lang="ru"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{padding-top:env(safe-area-inset-top);padding-bottom:env(safe-area-inset-bottom)}body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style></head><body>
+<title>Тропа Luau</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Unbounded:wght@500;700;800&family=Golos+Text:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap">
+<style>
+/* Layout: one narrow app column (like a phone app), sticky stat bar on top, tab bar at the bottom, lessons open as a full-screen layer. */
+:root{
+  --bg:#EEF1F8; --surface:#FFFFFF; --surface-2:#F5F7FC; --line:#DCE2EF;
+  --ink:#162033; --muted:#5B6782;
+  --accent:#3454E8; --accent-deep:#2238B3; --accent-soft:#E3E9FF;
+  --good:#1F9D57; --good-deep:#157541; --good-soft:#DDF5E7;
+  --bad:#D93C47; --bad-deep:#A52833; --bad-soft:#FCE3E5;
+  --gold:#E8A200; --gold-deep:#B27C00; --gold-soft:#FFF1CC;
+  --locked:#C9D0DF; --locked-deep:#A9B2C6;
+  --code-bg:#1B2236; --code-ink:#E6EAF5; --code-kw:#FF9E64; --code-str:#9ECE6A; --code-num:#E0AF68; --code-com:#7C86A6; --code-fn:#7DCFFF;
+  --f-display:"Unbounded", "Golos Text", system-ui, sans-serif;
+  --f-body:"Golos Text", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --f-mono:"JetBrains Mono", ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
+  --r:16px;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#0E1322; --surface:#171E31; --surface-2:#1D2540; --line:#2A3452;
+  --ink:#E8ECF6; --muted:#98A3C0;
+  --accent:#6F87FF; --accent-deep:#4258D6; --accent-soft:#232E5A;
+  --good:#37C878; --good-deep:#22924F; --good-soft:#163A2A;
+  --bad:#FF6B73; --bad-deep:#C2414A; --bad-soft:#41202A;
+  --gold:#FFC23D; --gold-deep:#C38D10; --gold-soft:#3B3017;
+  --locked:#36405E; --locked-deep:#262E47;
+  --code-bg:#0A0E1A; color-scheme:dark;
+}}
+:root[data-theme="dark"]{
+  --bg:#0E1322; --surface:#171E31; --surface-2:#1D2540; --line:#2A3452;
+  --ink:#E8ECF6; --muted:#98A3C0;
+  --accent:#6F87FF; --accent-deep:#4258D6; --accent-soft:#232E5A;
+  --good:#37C878; --good-deep:#22924F; --good-soft:#163A2A;
+  --bad:#FF6B73; --bad-deep:#C2414A; --bad-soft:#41202A;
+  --gold:#FFC23D; --gold-deep:#C38D10; --gold-soft:#3B3017;
+  --locked:#36405E; --locked-deep:#262E47;
+  --code-bg:#0A0E1A; color-scheme:dark;
+}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:16px;line-height:1.5;-webkit-font-smoothing:antialiased}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--surface)}
+button{font:inherit;color:inherit;cursor:pointer}
+button:focus-visible,input:focus-visible,a:focus-visible,select:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+h1,h2,h3{font-family:var(--f-display);text-wrap:balance;margin:0;line-height:1.2}
+code,.mono{font-family:var(--f-mono)}
+.wrap{max-width:600px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+
+/* top bar */
+.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--surface);border-bottom:2px solid var(--line)}
+.top .wrap{display:flex;align-items:center;gap:12px;padding-block:10px}
+.brand{font-family:var(--f-display);font-weight:800;font-size:17px;letter-spacing:-.01em;margin-right:auto;display:flex;align-items:center;gap:8px}
+.brand-mark{width:28px;height:28px;border-radius:8px;background:var(--accent);display:grid;place-items:center;color:#fff;font-size:13px;transform:rotate(-8deg)}
+.stat{display:flex;align-items:center;gap:4px;font-weight:700;font-variant-numeric:tabular-nums;font-size:15px}
+.stat svg{width:22px;height:22px}
+.s-streak{color:var(--gold)} .s-xp{color:var(--accent)} .s-heart{color:var(--bad)}
+.s-streak.off{color:var(--muted)}
+
+main{padding-bottom:calc(96px + env(safe-area-inset-bottom,0px))}
+.view{padding-block:20px;display:flex;flex-direction:column;gap:20px}
+
+/* bottom nav */
+.nav{position:fixed;left:0;right:0;bottom:0;z-index:5;background:var(--surface);border-top:2px solid var(--line);padding-bottom:env(safe-area-inset-bottom,0px)}
+.nav .wrap{display:grid;grid-template-columns:repeat(4,1fr);gap:4px;padding-block:6px}
+.nav button{background:none;border:2px solid transparent;border-radius:12px;padding:6px 4px;display:flex;flex-direction:column;align-items:center;gap:2px;font-size:12px;font-weight:600;color:var(--muted)}
+.nav button svg{width:24px;height:24px}
+.nav button[aria-current="page"]{color:var(--accent);background:var(--accent-soft);border-color:var(--accent)}
+
+/* chunky buttons */
+.btn{border:none;border-radius:14px;padding:13px 20px;font-weight:700;font-size:15px;letter-spacing:.04em;text-transform:uppercase;background:var(--accent);color:#fff;box-shadow:0 4px 0 var(--accent-deep);transition:transform .06s,box-shadow .06s;display:inline-flex;align-items:center;justify-content:center;gap:8px}
+.btn:active:not(:disabled){transform:translateY(3px);box-shadow:0 1px 0 var(--accent-deep)}
+.btn:disabled{background:var(--locked);box-shadow:0 4px 0 var(--locked-deep);color:var(--muted);cursor:not-allowed}
+.btn.good{background:var(--good);box-shadow:0 4px 0 var(--good-deep)}
+.btn.bad{background:var(--bad);box-shadow:0 4px 0 var(--bad-deep)}
+.btn.gold{background:var(--gold);box-shadow:0 4px 0 var(--gold-deep);color:#2a1d00}
+.btn.ghost{background:var(--surface);color:var(--accent);box-shadow:0 4px 0 var(--line);border:2px solid var(--line)}
+.btn.wide{width:100%}
+.btn.sm{padding:9px 14px;font-size:13px}
+
+/* today card */
+.today{background:var(--surface);border:2px solid var(--line);border-radius:var(--r);padding:16px;display:flex;gap:16px;align-items:center}
+.ring{width:64px;height:64px;flex:none}
+.today h2{font-size:16px}
+.today p{margin:2px 0 0;color:var(--muted);font-size:14px}
+
+/* unit band */
+.unit{display:flex;flex-direction:column;gap:18px}
+.band{border-radius:var(--r);padding:16px 18px;color:#fff;background:var(--accent);box-shadow:0 4px 0 var(--accent-deep);display:flex;gap:12px;align-items:flex-start;justify-content:space-between}
+.band.locked{background:var(--locked);box-shadow:0 4px 0 var(--locked-deep);color:var(--ink)}
+.band.complete{background:var(--good);box-shadow:0 4px 0 var(--good-deep)}
+.band .eyebrow{font-size:12px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;opacity:.85}
+.band h2{font-size:19px;margin-top:2px}
+.band p{margin:4px 0 0;font-size:14px;opacity:.92}
+.band .acts{display:flex;flex-direction:column;gap:8px;flex:none}
+.band-btn{background:rgba(255,255,255,.18);border:2px solid rgba(255,255,255,.4);color:inherit;border-radius:12px;padding:6px 10px;font-weight:700;font-size:12px;letter-spacing:.04em;text-transform:uppercase;white-space:nowrap}
+.band.locked .band-btn{background:var(--surface);border-color:var(--line)}
+
+.path{display:flex;flex-direction:column;align-items:center;gap:14px;padding-block:6px}
+.node-wrap{display:flex;flex-direction:column;align-items:center;gap:6px;position:relative}
+.node{width:72px;height:66px;border-radius:50%;border:none;display:grid;place-items:center;background:var(--accent);box-shadow:0 6px 0 var(--accent-deep);color:#fff;transition:transform .06s,box-shadow .06s}
+.node svg{width:30px;height:30px}
+.node:active{transform:translateY(4px);box-shadow:0 2px 0 var(--accent-deep)}
+.node.done{background:var(--gold);box-shadow:0 6px 0 var(--gold-deep);color:#3a2800}
+.node.locked{background:var(--locked);box-shadow:0 6px 0 var(--locked-deep);color:var(--muted)}
+.node.test{border-radius:22px}
+.node.test.done{background:var(--good);box-shadow:0 6px 0 var(--good-deep);color:#fff}
+.node.practice{width:60px;height:56px;background:var(--surface);color:var(--accent);box-shadow:0 5px 0 var(--line);border:2px solid var(--line)}
+.node.practice.done{color:var(--good);border-color:var(--good)}
+.node-label{font-size:13px;font-weight:600;color:var(--muted);text-align:center;max-width:180px;line-height:1.3}
+.node-wrap.current .node{animation:bob 1.6s ease-in-out infinite}
+.start-tag{position:absolute;top:-34px;background:var(--surface);border:2px solid var(--line);color:var(--accent);font-weight:800;font-size:12px;letter-spacing:.08em;text-transform:uppercase;padding:4px 10px;border-radius:10px;white-space:nowrap}
+.start-tag::after{content:"";position:absolute;left:50%;bottom:-7px;width:10px;height:10px;background:var(--surface);border-right:2px solid var(--line);border-bottom:2px solid var(--line);transform:translateX(-50%) rotate(45deg)}
+.node-wrap.current{margin-top:26px}
+@keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-4px)}}
+@media (prefers-reduced-motion:reduce){.node-wrap.current .node{animation:none}*{transition:none!important}}
+
+.final{background:var(--surface);border:2px dashed var(--line);border-radius:var(--r);padding:18px;display:flex;flex-direction:column;gap:10px;align-items:flex-start}
+.final h2{font-size:18px}
+.final p{margin:0;color:var(--muted)}
+
+/* cards & sections */
+.card{background:var(--surface);border:2px solid var(--line);border-radius:var(--r);padding:18px;display:flex;flex-direction:column;gap:12px}
+.card h2{font-size:18px}
+.card h3{font-size:15px}
+.card p{margin:0}
+.muted{color:var(--muted)}
+.small{font-size:14px}
+.h-page{font-size:24px}
+.lead{margin:0;color:var(--muted);max-width:60ch}
+
+/* plan */
+.ctrl{display:flex;flex-direction:column;gap:6px}
+.ctrl label{font-weight:600;font-size:14px;display:flex;justify-content:space-between}
+.ctrl output{font-family:var(--f-display);font-weight:700;color:var(--accent)}
+input[type=range]{width:100%;accent-color:var(--accent)}
+.seg{display:flex;gap:6px;flex-wrap:wrap}
+.seg button{border:2px solid var(--line);background:var(--surface);border-radius:10px;padding:7px 12px;font-weight:600;font-size:14px}
+.seg button[aria-pressed="true"]{border-color:var(--accent);background:var(--accent-soft);color:var(--accent)}
+.big-est{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.est{background:var(--surface-2);border-radius:12px;padding:12px;display:flex;flex-direction:column;gap:2px}
+.est .k{font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.est .v{font-family:var(--f-display);font-weight:700;font-size:22px;font-variant-numeric:tabular-nums}
+.est .d{font-size:13px;color:var(--muted)}
+.tbl-wrap{overflow-x:auto;margin-inline:-4px}
+table{border-collapse:collapse;width:100%;font-size:14px;font-variant-numeric:tabular-nums}
+th,td{text-align:left;padding:9px 6px;border-bottom:1px solid var(--line);vertical-align:top}
+th{font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);font-weight:700}
+td.n{white-space:nowrap;font-weight:600}
+tr.hl td{background:var(--accent-soft)}
+.bar{height:12px;border-radius:99px;background:var(--surface-2);overflow:hidden;border:1px solid var(--line)}
+.bar i{display:block;height:100%;background:var(--good);border-radius:99px}
+ul.plain{margin:0;padding-left:20px;display:flex;flex-direction:column;gap:6px}
+
+/* stats */
+.stats{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
+.st{background:var(--surface);border:2px solid var(--line);border-radius:14px;padding:12px 14px;display:flex;gap:10px;align-items:center}
+.st svg{width:28px;height:28px;flex:none}
+.st b{font-family:var(--f-display);font-size:19px;display:block;font-variant-numeric:tabular-nums}
+.st span{font-size:13px;color:var(--muted)}
+.week{display:grid;grid-template-columns:repeat(7,1fr);gap:6px;align-items:end;height:120px}
+.week div{display:flex;flex-direction:column;align-items:center;gap:4px;height:100%;justify-content:flex-end;font-size:12px;color:var(--muted)}
+.week i{width:100%;max-width:30px;background:var(--accent);border-radius:6px 6px 2px 2px;min-height:3px}
+.week i.met{background:var(--good)}
+
+/* sheet (modal) */
+.scrim{position:fixed;inset:0;background:rgba(10,14,30,.5);z-index:20;display:flex;align-items:flex-end;justify-content:center}
+.sheet{background:var(--surface);width:100%;max-width:600px;border-radius:22px 22px 0 0;padding:22px max(18px,env(safe-area-inset-left,0px)) calc(22px + env(safe-area-inset-bottom,0px));display:flex;flex-direction:column;gap:14px;max-height:88vh;overflow-y:auto}
+.sheet h2{font-size:20px}
+.sheet .row{display:flex;gap:10px;flex-wrap:wrap}
+.sheet .row .btn{flex:1}
+.checklist{margin:0;padding:0;list-style:none;display:flex;flex-direction:column;gap:8px}
+.checklist li{display:flex;gap:10px;align-items:flex-start;background:var(--surface-2);border-radius:10px;padding:10px 12px}
+.checklist input{margin-top:4px;width:18px;height:18px;accent-color:var(--good);flex:none}
+
+/* lesson layer */
+.layer{position:fixed;inset:0;z-index:30;background:var(--bg);display:flex;flex-direction:column;padding-top:env(safe-area-inset-top,0px)}
+.l-top .wrap{display:flex;align-items:center;gap:14px;padding-block:14px}
+.x{background:none;border:none;color:var(--muted);padding:4px;display:grid;place-items:center;border-radius:8px}
+.x svg{width:26px;height:26px}
+.prog{flex:1;height:16px;border-radius:99px;background:var(--line);overflow:hidden}
+.prog i{display:block;height:100%;background:var(--good);border-radius:99px;transition:width .3s ease;box-shadow:inset 0 -4px 0 rgba(0,0,0,.12)}
+.l-body{flex:1;overflow-y:auto}
+.l-body .wrap{padding-block:8px 24px;display:flex;flex-direction:column;gap:16px}
+.kind{font-size:12px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:var(--accent);display:flex;align-items:center;gap:6px}
+.q{font-family:var(--f-display);font-size:20px;font-weight:700;line-height:1.3}
+.l-foot{border-top:2px solid var(--line);background:var(--surface);padding-bottom:env(safe-area-inset-bottom,0px)}
+.l-foot .wrap{padding-block:14px;display:flex;flex-direction:column;gap:12px}
+.l-foot.ok{background:var(--good-soft);border-color:var(--good)}
+.l-foot.no{background:var(--bad-soft);border-color:var(--bad)}
+.fb{display:flex;flex-direction:column;gap:4px}
+.fb h3{font-size:18px;display:flex;align-items:center;gap:8px}
+.l-foot.ok .fb h3{color:var(--good)} .l-foot.no .fb h3{color:var(--bad)}
+.fb p{margin:0;font-size:15px}
+.fb .ans{font-family:var(--f-mono);font-weight:600;white-space:pre-wrap;word-break:break-word}
+
+pre.code{background:var(--code-bg);color:var(--code-ink);border-radius:12px;padding:14px 16px;margin:0;overflow-x:auto;font-family:var(--f-mono);font-size:14px;line-height:1.6;tab-size:4}
+.k{color:var(--code-kw);font-weight:600} .s{color:var(--code-str)} .nm{color:var(--code-num)} .cm{color:var(--code-com);font-style:italic} .fn{color:var(--code-fn)}
+pre.code input.blank{font-family:var(--f-mono);font-size:14px;background:rgba(255,255,255,.1);color:#fff;border:none;border-bottom:2px solid var(--code-fn);border-radius:4px 4px 0 0;padding:1px 6px;width:9ch;min-width:5ch}
+code.in{background:var(--surface-2);border:1px solid var(--line);border-radius:6px;padding:1px 5px;font-size:.9em}
+
+.theory{background:var(--surface);border:2px solid var(--line);border-radius:var(--r);padding:18px;display:flex;flex-direction:column;gap:12px}
+.theory p{margin:0;max-width:65ch}
+.tip{background:var(--gold-soft);border-radius:12px;padding:10px 14px;font-size:15px;display:flex;gap:10px}
+.tip b{color:var(--gold-deep)}
+:root[data-theme="dark"] .tip b{color:var(--gold)}
+
+.opts{display:flex;flex-direction:column;gap:10px}
+.opt{background:var(--surface);border:2px solid var(--line);border-radius:14px;padding:13px 14px;text-align:left;box-shadow:0 3px 0 var(--line);display:flex;gap:12px;align-items:flex-start;font-size:16px}
+.opt .num{flex:none;width:26px;height:26px;border-radius:8px;border:2px solid var(--line);display:grid;place-items:center;font-size:13px;font-weight:700;color:var(--muted)}
+.opt .t{white-space:pre-wrap;word-break:break-word;min-width:0}
+.opt.mono .t{font-family:var(--f-mono);font-size:15px}
+.opt[aria-pressed="true"]{border-color:var(--accent);background:var(--accent-soft);box-shadow:0 3px 0 var(--accent)}
+.opt[aria-pressed="true"] .num{border-color:var(--accent);color:var(--accent)}
+.opt.right{border-color:var(--good);background:var(--good-soft);box-shadow:0 3px 0 var(--good)}
+.opt.wrong{border-color:var(--bad);background:var(--bad-soft);box-shadow:0 3px 0 var(--bad)}
+.opt:disabled{cursor:default}
+
+.answer-line{min-height:64px;border-bottom:2px solid var(--line);display:flex;flex-wrap:wrap;gap:8px;padding:8px 0;align-content:flex-start}
+.bank{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;padding-top:8px}
+.chip{font-family:var(--f-mono);font-size:15px;background:var(--surface);border:2px solid var(--line);border-radius:12px;padding:8px 12px;box-shadow:0 3px 0 var(--line)}
+.chip.used{visibility:hidden}
+.chip:disabled{cursor:default}
+
+.result{display:flex;flex-direction:column;align-items:center;text-align:center;gap:18px;padding-top:24px}
+.result h2{font-size:26px}
+.medal{width:120px;height:120px}
+.tiles{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;width:100%}
+.tile{border-radius:14px;border:2px solid var(--gold);overflow:hidden;background:var(--surface)}
+.tile .k{display:block;background:var(--gold);color:#2a1d00;font-size:11px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;padding:4px}
+.tile .v{display:block;font-family:var(--f-display);font-weight:700;font-size:20px;padding:10px 4px;font-variant-numeric:tabular-nums}
+.tile.b{border-color:var(--accent)} .tile.b .k{background:var(--accent);color:#fff}
+.tile.g{border-color:var(--good)} .tile.g .k{background:var(--good);color:#fff}
+
+.toast{position:fixed;left:50%;bottom:calc(100px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:10px 16px;border-radius:12px;font-weight:600;z-index:40;font-size:14px;max-width:90vw;text-align:center}
+.ref-unit{display:flex;flex-direction:column;gap:10px}
+.ref-unit h3{font-size:15px;margin-top:6px}
+@media (max-width:420px){.band{flex-direction:column}.band .acts{flex-direction:row}.q{font-size:18px}.stat{font-size:14px}.brand span.full{display:none}}
+</style>
+
+<header class="top"><div class="wrap">
+  <div class="brand"><div class="brand-mark">lu</div><span class="full">Тропа Luau</span></div>
+  <div class="stat s-streak" id="st-streak" title="Серия дней"></div>
+  <div class="stat s-xp" id="st-xp" title="Опыт (XP)"></div>
+  <div class="stat s-heart" id="st-heart" title="Сердца"></div>
+</div></header>
+
+<main><div class="wrap" id="view"></div></main>
+
+<nav class="nav" aria-label="Разделы"><div class="wrap">
+  <button data-tab="path" aria-current="page"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11l9-7 9 7v9a1 1 0 0 1-1 1h-5v-6h-6v6H4a1 1 0 0 1-1-1z"/></svg>Обучение</button>
+  <button data-tab="practice"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 6v12M18 6v12M3 9v6M21 9v6M6 12h12"/></svg>Тренировка</button>
+  <button data-tab="plan"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="13" r="8"/><path d="M12 9v4l3 2M9 2h6"/></svg>План</button>
+  <button data-tab="profile"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21c1.5-4 4.5-6 8-6s6.5 2 8 6"/></svg>Профиль</button>
+</div></nav>
+
+<div id="layer-root"></div>
+<div id="sheet-root"></div>
+
+<script>
+/* ================= КУРС ================= */
+const C=(q,code,o,a,e)=>({t:'c',q,code,o,a,e});
+const I=(q,code,a,e)=>({t:'i',q,code,a:[].concat(a),e});
+const O=(q,p,x,e)=>({t:'o',q,p,x:x||[],e});
+
+const COURSE=[
+{title:"Первые шаги",desc:"print, комментарии, переменные и типы данных",
+ practice:{min:20,tasks:["Открой Roblox Studio → Baseplate. В ServerScriptService создай Script.","Выведи через print своё имя и возраст.","Объяви три переменные разных типов (число, строка, boolean).","Выведи typeof каждой переменной и проверь окно Output (View → Output)."]},
+ lessons:[
+ {title:"print и комментарии",theory:[
+  "Luau — язык скриптов Roblox. Он вырос из Lua 5.1, но быстрее и умеет проверять типы. Всё, что ты пишешь в Script и LocalScript, — это Luau.",
+  "Функция [[print]] выводит значение в окно Output. Это твой главный инструмент отладки.",
+  {c:'print("Привет, Roblox!") -- выведет текст в Output\n\n--[[ Многострочный\n     комментарий ]]'},
+  "Всё после [[--]] до конца строки — комментарий: Luau его игнорирует.",
+  {tip:"Окно Output в Studio открывается через вкладку View → Output."}],
+ ex:[
+  C("Какая функция выводит текст в окно Output?",null,["print","echo","console.log","write"],0,"В Luau для вывода используется print(...)."),
+  C("С чего начинается однострочный комментарий в Luau?",null,["--","//","#","/*"],0,"Комментарии начинаются с двух дефисов: -- текст."),
+  O("Собери строку, которая выведет Hello",["print","(",'"Hello"',")"],["echo","["],"Вызов функции: имя, затем аргументы в круглых скобках."),
+  I("Допиши, чтобы вывести текст в Output","___(\"Игра началась\")","print","print — встроенная функция вывода."),
+  C("Что появится в Output?",'-- print("A")\nprint("B")',["B","A\nB","A","Ничего"],0,"Первая строка — комментарий, она не выполняется."),
+  C("Что такое Luau?",null,["Язык скриптов Roblox на основе Lua","Язык разметки интерфейса","Библиотека JavaScript","Физический движок Roblox"],0,"Luau — это развитие Lua 5.1 от Roblox: быстрее и с типами.")]},
+ {title:"Переменные",theory:[
+  "Переменная — именованная ячейка для значения. Объявляй её через [[local]]: так она видна только в своём блоке и работает быстрее.",
+  {c:'local coins = 10\nlocal playerName = "Миша"\ncoins = coins + 5   -- повторно local не пишем\nprint(coins)        --> 15'},
+  "Имена состоят из букв, цифр и [[_]], но не начинаются с цифры. Регистр важен: [[Score]] и [[score]] — разные переменные.",
+  {tip:"Переменная, которой не присвоили значение, равна nil — «ничего»."}],
+ ex:[
+  C("Какое ключевое слово объявляет локальную переменную?",null,["local","var","let","dim"],0,"В Luau переменные объявляют через local."),
+  I("Объяви переменную speed","___ speed = 16","local","local speed = 16"),
+  C("Какое имя переменной недопустимо?",null,["2player","player2","_hp","maxHealth"],0,"Имя не может начинаться с цифры."),
+  C("Что выведет код?","local a = 5\na = a * 2\nprint(a)",["10","5","25","a"],0,"a стала 5 * 2 = 10."),
+  O("Объяви переменную health со значением 100",["local","health","=","100"],["var",":="],"Шаблон: local имя = значение"),
+  C("Что выведет код?","local Score = 1\nprint(score)",["nil","1","Ошибку","Score"],0,"score с маленькой буквы — другая, не объявленная переменная. Её значение nil.")]},
+ {title:"Типы данных",theory:[
+  "Основные типы Luau: [[nil]] (ничего), [[boolean]] (true/false), [[number]] (любое число, целое или дробное), [[string]] (текст), [[table]] и [[function]].",
+  {c:'print(typeof(42))     --> number\nprint(typeof(3.5))    --> number\nprint(typeof("hi"))   --> string\nprint(typeof(true))   --> boolean\nprint(typeof(nil))    --> nil'},
+  "[[typeof]] возвращает название типа строкой. В Roblox он знает и движковые типы, например [[Vector3]].",
+  "Строки можно переводить в числа и обратно: [[tonumber(\"42\")]] и [[tostring(42)]]."],
+ ex:[
+  C("Что вернёт typeof(3.14)?",null,["number","float","double","decimal"],0,"В Luau один числовой тип — number."),
+  C("Какое значение означает «ничего»?",null,["nil","null","undefined","None"],0,"В Luau это nil."),
+  C("Что вернёт typeof(\"10\")?",null,["string","number","text","nil"],0,"В кавычках — это строка, даже если внутри цифры."),
+  I("Присвой логическое значение «истина»","local isAlive = ___","true","Логические значения — true и false."),
+  C("Что выведет код?",'print(tonumber("42") + 1)',["43","421","Ошибку","nil"],0,"tonumber превращает строку \"42\" в число 42."),
+  C("Какие значения бывают у типа boolean?",null,["true и false","yes и no","1 и 0","on и off"],0,"Только true и false.")]}
+ ]},
+{title:"Операторы",desc:"Арифметика, строки, сравнение и логика",
+ practice:{min:20,tasks:["Создай переменную coins = 100.","Сделай три «покупки» по 15, 30 и 25 монет через -=.","Выведи остаток через интерполяцию: `Осталось: {coins}`.","Посчитай, сколько полных пакетов по 12 монет можно купить (оператор //) и сколько останется (%)."]},
+ lessons:[
+ {title:"Арифметика",theory:[
+  "Операторы: [[+]] [[-]] [[*]] [[/]], возведение в степень [[^]], остаток от деления [[%]] и деление с округлением вниз [[//]].",
+  {c:'print(10 / 4)   --> 2.5\nprint(7 // 2)   --> 3\nprint(7 % 3)    --> 1\nprint(2 ^ 3)    --> 8'},
+  "Luau поддерживает составное присваивание: [[+=]] [[-=]] [[*=]] [[/=]] [[..=]].",
+  {c:'local coins = 50\ncoins += 10   -- то же, что coins = coins + 10'},
+  {tip:"Порядок как в математике: сначала ^, потом * / // %, потом + -."}],
+ ex:[
+  C("Что выведет код?","print(7 % 3)",["1","2","2.33","0"],0,"7 = 3·2 + 1, остаток 1."),
+  C("Что выведет код?","print(2 ^ 3)",["8","6","5","23"],0,"^ — возведение в степень: 2³ = 8."),
+  C("Что выведет код?","print(7 // 2)",["3","3.5","4","1"],0,"// делит и округляет вниз."),
+  C("Что выведет код?","print(10 / 4)",["2.5","2","3","2.4"],0,"/ — обычное деление."),
+  I("Увеличь coins на 10 короткой записью","coins ___ 10","+=","coins += 10 — то же, что coins = coins + 10."),
+  C("Что выведет код?","print(2 + 3 * 4)",["14","20","24","9"],0,"Сначала умножение: 3 * 4 = 12, потом + 2.")]},
+ {title:"Работа со строками",theory:[
+  "Строки склеиваются оператором [[..]] (две точки). Длину строки даёт [[#]].",
+  {c:'local name = "Миша"\nprint("Привет, " .. name)   --> Привет, Миша\nprint(#"Luau")             --> 4'},
+  "Удобнее всего — интерполяция: строка в обратных кавычках, а выражения в фигурных скобках.",
+  {c:'local hp = 75\nprint(`Здоровье: {hp}%`)   --> Здоровье: 75%'}],
+ ex:[
+  C("Что выведет код?",'print("Ro" .. "blox")',["Roblox","Ro blox","Ro..blox","Ошибку"],0,".. склеивает строки без пробела."),
+  C("Какой оператор склеивает строки?",null,["..","+","&",","],0,"В Luau для конкатенации служит .."),
+  C("Что выведет код?",'print(#"Luau")',["4","3","5","Luau"],0,"# — длина строки, в Luau 4 символа."),
+  I("Склей текст и число",'print("Очки: " ___ score)',"..","Оператор .. сам превратит число в строку."),
+  C("Что выведет код?","local n = 3\nprint(`Жизни: {n}`)",["Жизни: 3","Жизни: {n}","Жизни: n","Ошибку"],0,"В обратных кавычках {n} заменяется значением."),
+  C("Какие кавычки нужны для интерполяции {…}?",null,["Обратные `…`","Двойные \"…\"","Одинарные '…'","Любые"],0,"Интерполяция работает только в обратных кавычках.")]},
+ {title:"Сравнение и логика",theory:[
+  "Сравнение: [[==]] [[~=]] (не равно) [[<]] [[>]] [[<=]] [[>=]]. Результат — true или false.",
+  "Логика: [[and]], [[or]], [[not]]. Важно: ложными считаются только [[false]] и [[nil]]. Число 0 и пустая строка — истинны.",
+  {c:'print(5 ~= 3)              --> true\nprint(not nil)             --> true\nlocal name = nil\nprint(name or "Гость")     --> Гость'},
+  {tip:"a or b — классический способ задать значение по умолчанию."}],
+ ex:[
+  C("Как в Luau записать «не равно»?",null,["~=","!=","<>","=/="],0,"В Luau «не равно» — это ~="),
+  C("Что выведет код?",'print(5 == "5")',["false","true","Ошибку","nil"],0,"Число и строка — разные типы, они не равны."),
+  C("Что выведет код?","print(not nil)",["true","false","nil","Ошибку"],0,"nil ложен, not nil = true."),
+  C("Что выведет код?",'print(nil or "по умолчанию")',["по умолчанию","nil","true","false"],0,"or возвращает второе значение, если первое ложно."),
+  C("Что выведет код?",'print(0 and "да" or "нет")',["да","нет","0","false"],0,"0 в Luau истинен, поэтому and вернёт \"да\"."),
+  O("Собери условие: уровень не меньше 10 и игрок не забанен",["level",">=","10","and","not","banned"],["&&","!"],"Логические операторы в Luau — слова and, or, not.")]}
+ ]},
+{title:"Условия",desc:"if, elseif, else и правда о «правде»",
+ practice:{min:20,tasks:["Создай переменную level.","Если level >= 10 — выведи «Ветеран», если >= 5 — «Опытный», иначе — «Новичок».","Перепиши ту же логику через if-выражение в одну строку.","Проверь, что 0 и \"\" дают true в условии."]},
+ lessons:[
+ {title:"if … then … end",theory:[
+  "Условие выполняет код, только если выражение истинно.",
+  {c:'local hp = 0\nif hp <= 0 then\n    print("Игрок погиб")\nend'},
+  "Структура: [[if]] условие [[then]] … [[end]]. Отступы не обязательны, но делают код читаемым.",
+  {tip:"Для сравнения используй ==. Одиночный = — это присваивание, в условии будет ошибка."}],
+ ex:[
+  C("Какое слово ставится после условия в if?",null,["then","do",":","{"],0,"if условие then …"),
+  C("Чем заканчивается блок if?",null,["end","fi","}","endif"],0,"Все блоки в Luau закрываются словом end."),
+  I("Допиши условие","if score > 100 ___\n    print(\"Рекорд!\")\nend","then","После условия идёт then."),
+  C("Что выведет код?",'local x = 5\nif x > 3 then\n    print("big")\nend',["big","Ничего","5","Ошибку"],0,"5 > 3 — истина, поэтому print выполнится."),
+  O("Собери начало проверки: если монет хотя бы 50",["if","coins",">=","50","then"],["do","=="],"if условие then"),
+  C("Что не так в строке if x = 5 then?",null,["Нужно == вместо =","Нужно do вместо then","Нужны скобки","Всё правильно"],0,"= присваивает, == сравнивает.")]},
+ {title:"elseif и else",theory:[
+  "Для нескольких вариантов используют [[elseif]] (одним словом) и [[else]]. Выполняется первая подходящая ветка.",
+  {c:'local score = 75\nif score >= 90 then\n    print("A")\nelseif score >= 70 then\n    print("B")\nelse\n    print("C")\nend'},
+  "Вся цепочка закрывается одним [[end]].",
+  "В Luau есть и if-выражение — короткая запись для выбора значения:",
+  {c:'local hp = 30\nlocal label = if hp > 50 then "ok" else "low"'}],
+ ex:[
+  C("Как в Luau пишется ветка «иначе если» одним словом?",null,["elseif","elif","elsif","otherwise"],0,"Именно elseif."),
+  C("Что выведет код?",'local s = 75\nif s >= 90 then print("A")\nelseif s >= 70 then print("B")\nelse print("C") end',["B","A","C","B и C"],0,"75 не >= 90, но >= 70 → B."),
+  C("Что выведет код?",'local t = -5\nif t > 0 then print("тепло")\nelseif t == 0 then print("ноль")\nelse print("холодно") end',["холодно","тепло","ноль","Ничего"],0,"-5 не больше и не равно 0 → else."),
+  I("Допиши ветку «во всех остальных случаях»",'if ready then\n    start()\n___\n    wait()\nend',"else","else срабатывает, если ни одно условие не подошло."),
+  C("Сколько end нужно для цепочки if / elseif / elseif / else?",null,["1","2","3","4"],0,"Вся цепочка — один блок с одним end."),
+  C("Чему равно label?",'local hp = 30\nlocal label = if hp > 50 then "ok" else "low"',["low","ok","nil","Ошибка"],0,"30 > 50 ложно → \"low\".")]},
+ {title:"Истинность значений",theory:[
+  "В условии Luau проверяет «истинность». Ложны только два значения: [[false]] и [[nil]]. Всё остальное истинно, включая [[0]], [[\"\"]] и пустую таблицу.",
+  {c:'if 0 then print("0 — это правда") end\nlocal tool = nil\nif not tool then\n    print("Нет предмета")\nend'},
+  {tip:"Это частая ловушка для тех, кто знает Python или JavaScript: там 0 и \"\" ложны."}],
+ ex:[
+  C("Какие значения в Luau считаются ложными?",null,["Только false и nil","false, nil, 0 и \"\"","Только false","false и 0"],0,"Только false и nil."),
+  C("Что выведет код?",'if 0 then print("да") else print("нет") end',["да","нет","0","Ошибку"],0,"0 — истинное значение."),
+  C("Что выведет код?",'if "" then print("да") else print("нет") end',["да","нет","Ничего","Ошибку"],0,"Пустая строка тоже истинна."),
+  C("Что выведет код?",'local tool = nil\nif not tool then print("нет предмета") end',["нет предмета","Ничего","nil","Ошибку"],0,"not nil = true."),
+  I("Задай имя «Гость», если input пустой (nil)",'local name = input ___ "Гость"',"or","a or b вернёт b, если a равно nil или false."),
+  C("Что выведет код?","local a = false\nlocal b = a == false\nprint(b)",["true","false","nil","Ошибку"],0,"a == false — истина, она и записывается в b.")]}
+ ]},
+{title:"Циклы",desc:"for, while, repeat, break и continue",
+ practice:{min:25,tasks:["Выведи таблицу умножения на 7 через for.","Сделай обратный отсчёт от 10 до 1 с task.wait(1) между числами.","С помощью while найди первую степень двойки больше 1000.","Выведи только нечётные числа от 1 до 20 через continue."]},
+ lessons:[
+ {title:"Числовой for",theory:[
+  "[[for]] повторяет код заданное число раз: [[for i = начало, конец, шаг do … end]]. Шаг по умолчанию 1, конец включается.",
+  {c:'for i = 1, 3 do\n    print(i)       --> 1, 2, 3\nend\n\nfor i = 10, 1, -1 do\n    print(i)       -- обратный отсчёт\nend'}],
+ ex:[
+  C("Что выведет код?","for i = 1, 3 do\n    print(i)\nend",["1\n2\n3","0\n1\n2","1\n2","1 2 3 4"],0,"Конец (3) включается."),
+  C("Сколько раз выполнится тело цикла for i = 1, 10, 2?",null,["5","10","4","6"],0,"i = 1, 3, 5, 7, 9 — пять раз."),
+  C("Что выведет код?","for i = 3, 1, -1 do\n    print(i)\nend",["3\n2\n1","1\n2\n3","Ничего","3"],0,"Шаг -1 идёт вниз."),
+  I("Допиши заголовок цикла","for i = 1, 5 ___\n    print(i)\nend","do","for … do … end"),
+  O("Собери цикл от 1 до 10",["for","i","=","1",",","10","do"],["then","in"],"for i = 1, 10 do"),
+  C("Что выведет код?","local sum = 0\nfor i = 1, 4 do\n    sum += i\nend\nprint(sum)",["10","4","15","6"],0,"1 + 2 + 3 + 4 = 10.")]},
+ {title:"while и repeat",theory:[
+  "[[while]] повторяет, пока условие истинно. [[repeat … until]] выполняет тело хотя бы один раз и останавливается, когда условие станет истинным.",
+  {c:'local n = 1\nwhile n < 100 do\n    n *= 2\nend\n\nlocal tries = 0\nrepeat\n    tries += 1\nuntil tries >= 3'},
+  {tip:"В Roblox бесконечный цикл обязательно делает паузу: while true do … task.wait(1) end. Без неё скрипт зависнет."}],
+ ex:[
+  C("Что выведет код?","local n = 1\nwhile n < 5 do\n    n *= 2\nend\nprint(n)",["8","4","5","16"],0,"1 → 2 → 4 → 8, и 8 < 5 уже ложно."),
+  C("Сколько раз минимум выполнится тело repeat … until?",null,["1","0","2","Зависит от условия"],0,"Условие проверяется после тела."),
+  I("Допиши конец цикла repeat","repeat\n    count += 1\n___ count >= 3","until","repeat … until условие"),
+  C("Что случится с while true do end без паузы в Roblox?",null,["Скрипт зависнет и будет прерван","Цикл выполнится один раз","Ничего","Roblox сам добавит паузу"],0,"Бесконечный цикл без task.wait блокирует поток."),
+  C("Что выведет код?","local i = 0\nrepeat\n    i += 1\nuntil i == 3\nprint(i)",["3","2","4","0"],0,"Цикл остановится, когда i станет 3."),
+  C("Что ставить внутрь бесконечного цикла в Roblox?",null,["task.wait()","sleep()","pause()","delay"],0,"task.wait() отдаёт управление движку.")]},
+ {title:"break и continue",theory:[
+  "[[break]] сразу выходит из цикла. [[continue]] пропускает остаток текущей итерации и переходит к следующей (это фишка Luau, в обычном Lua её нет).",
+  {c:'for i = 1, 10 do\n    if i % 2 == 0 then\n        continue    -- пропускаем чётные\n    end\n    if i > 7 then\n        break       -- выходим совсем\n    end\n    print(i)        --> 1, 3, 5, 7\nend'}],
+ ex:[
+  C("Что выведет код?","for i = 1, 10 do\n    if i == 4 then break end\n    print(i)\nend",["1\n2\n3","1\n2\n3\n4","4","1…10"],0,"На i = 4 цикл прерывается до print."),
+  C("Что выведет код?","for i = 1, 5 do\n    if i % 2 == 0 then continue end\n    print(i)\nend",["1\n3\n5","2\n4","1\n2\n3\n4\n5","1"],0,"Чётные пропускаются."),
+  C("Что делает break?",null,["Выходит из цикла","Пропускает итерацию","Останавливает скрипт","Ставит паузу"],0,"break завершает ближайший цикл."),
+  I("Пропусти итерацию, если игрок мёртв","for _, p in players do\n    if p.dead then ___ end\n    heal(p)\nend","continue","continue переходит к следующему элементу."),
+  C("break внутри вложенного цикла выходит из…",null,["Только внутреннего цикла","Обоих циклов","Функции","Скрипта"],0,"break действует на ближайший цикл."),
+  C("Что выведет код?","local found\nfor i = 1, 100 do\n    if i * i > 50 then\n        found = i\n        break\n    end\nend\nprint(found)",["8","7","50","100"],0,"7² = 49, 8² = 64 > 50.")]}
+ ]},
+{title:"Функции",desc:"Параметры, return, анонимные функции и замыкания",
+ practice:{min:25,tasks:["Напиши calculateDamage(base, multiplier), где multiplier по умолчанию 1.","Напиши getMinMax(a, b, c), которая возвращает два значения: min и max.","Сделай makeCounter() — функцию-счётчик на замыкании.","Передай функцию как аргумент в другую функцию."]},
+ lessons:[
+ {title:"Объявление и вызов",theory:[
+  "Функция — именованный кусок кода, который можно вызывать много раз.",
+  {c:'local function greet(name)\n    print("Привет, " .. name)\nend\n\ngreet("Миша")   --> Привет, Миша\ngreet("Аня")    --> Привет, Аня'},
+  "[[name]] — параметр, [[\"Миша\"]] — аргумент. Если аргумент не передан, параметр равен [[nil]].",
+  {tip:"Пиши local function: так функция не попадёт в глобальную область."}],
+ ex:[
+  C("Каким словом объявляют функцию?",null,["function","def","func","fn"],0,"local function имя(…) … end"),
+  I("Объяви функцию heal","local ___ heal(amount)\n    hp += amount\nend","function","local function heal(amount)"),
+  C("Что выведет код?","local function double(x)\n    return x * 2\nend\nprint(double(7))",["14","7","72","nil"],0,"double(7) вернёт 14."),
+  O("Собери функцию сложения",["local","function","add(a, b)","return","a + b","end"],["def","then"],"local function add(a, b) return a + b end"),
+  C("Что вернёт функция без return?",null,["nil","0","false","Ошибку"],0,"Без return функция возвращает «ничего»."),
+  C("Что выведет код?","local function f(a, b)\n    print(b)\nend\nf(1)",["nil","1","0","Ошибку"],0,"Второй аргумент не передан → b = nil.")]},
+ {title:"return и несколько значений",theory:[
+  "[[return]] возвращает результат и завершает функцию. Luau умеет возвращать сразу несколько значений.",
+  {c:'local function minMax(a, b)\n    if a < b then\n        return a, b\n    end\n    return b, a\nend\n\nlocal lo, hi = minMax(9, 4)\nprint(lo, hi)   --> 4 9'},
+  "Значение по умолчанию для параметра задают через [[or]]:",
+  {c:'local function hit(dmg)\n    dmg = dmg or 10\n    return dmg\nend'}],
+ ex:[
+  C("Что выведет код?","local function mm()\n    return 1, 2\nend\nlocal a, b = mm()\nprint(a + b)",["3","1","2","12"],0,"a = 1, b = 2."),
+  C("Что вернёт isAdult(20)?","local function isAdult(age)\n    return age >= 18\nend",["true","false","20","nil"],0,"20 >= 18 — истина."),
+  I("Верни квадрат числа","local function square(x)\n    ___ x * x\nend","return","return x * x"),
+  C("Что выведет код?",'local function f()\n    return "a", "b", "c"\nend\nlocal x = f()\nprint(x)',["a","a b c","c","nil"],0,"Одна переменная получает первое значение."),
+  C("Что выведет код?","local function hit(dmg)\n    dmg = dmg or 10\n    return dmg\nend\nprint(hit())",["10","nil","0","Ошибку"],0,"dmg = nil, поэтому сработает or 10."),
+  C("Что такое параметр функции?",null,["Имя в объявлении, которое получает значение аргумента","Значение, которое возвращает функция","Имя самой функции","Глобальная переменная"],0,"Параметр — «слот», аргумент — то, что в него кладут.")]},
+ {title:"Анонимные функции и область видимости",theory:[
+  "Функции — обычные значения: их можно класть в переменные, передавать в другие функции и возвращать.",
+  {c:'local square = function(x) return x * x end\n\nlocal function apply(f, v)\n    return f(v)\nend\nprint(apply(square, 5))   --> 25'},
+  "Локальная переменная видна только внутри своего блока ([[do … end]], функции, цикла). Функция, созданная внутри другой, «помнит» её переменные — это замыкание.",
+  {c:'local function makeCounter()\n    local c = 0\n    return function()\n        c += 1\n        return c\n    end\nend'}],
+ ex:[
+  C("Что выведет код?","local square = function(x) return x * x end\nprint(square(5))",["25","10","5","nil"],0,"Анонимная функция в переменной работает как обычная."),
+  C("Что выведет код?","local x = 1\ndo\n    local x = 2\nend\nprint(x)",["1","2","nil","Ошибку"],0,"Внутренний x живёт только внутри do … end."),
+  C("Можно ли передать функцию как аргумент?",null,["Да, функции — это значения","Нет","Только встроенные","Только глобальные"],0,"Так работают события: :Connect(function() … end)."),
+  C("Что выведет код?","local function makeCounter()\n    local c = 0\n    return function()\n        c += 1\n        return c\n    end\nend\nlocal nxt = makeCounter()\nnxt()\nprint(nxt())",["2","1","0","nil"],0,"Замыкание хранит c между вызовами."),
+  C("Что выведет код?","local function apply(f, v)\n    return f(v)\nend\nprint(apply(function(n) return n + 1 end, 9))",["10","9","nil","Ошибку"],0,"apply вызовет переданную функцию с 9."),
+  C("Зачем писать local function вместо function?",null,["Быстрее и не засоряет глобальную область","Так короче","Иначе функция не вызовется","Разницы нет"],0,"Локальные функции — стандарт хорошего кода в Roblox.")]}
+ ]},
+{title:"Таблицы",desc:"Массивы, словари и перебор",
+ practice:{min:30,tasks:["Создай массив inventory из 3 предметов, добавь и удали предмет.","Выведи инвентарь через ipairs с номерами.","Сделай словарь prices = { Меч = 100, … } и посчитай общую стоимость через pairs.","Сделай вложенную таблицу player = { name, stats = { hp, speed } }."]},
+ lessons:[
+ {title:"Массивы",theory:[
+  "Таблица — главная структура данных Luau. Как массив она хранит значения по номерам. Нумерация начинается с 1.",
+  {c:'local fruits = {"яблоко", "банан", "вишня"}\nprint(fruits[1])    --> яблоко\nprint(#fruits)      --> 3\n\ntable.insert(fruits, "груша")   -- в конец\ntable.remove(fruits, 1)         -- удалить первый'},
+  {tip:"Обращение к несуществующему индексу не вызывает ошибку, а возвращает nil."}],
+ ex:[
+  C("С какого индекса начинаются массивы в Luau?",null,["1","0","-1","Любого"],0,"В Luau индексы начинаются с 1."),
+  C("Что выведет код?","local t = {10, 20, 30}\nprint(t[2])",["20","10","30","nil"],0,"t[2] — второй элемент."),
+  C("Что выведет код?",'print(#{"a", "b", "c", "d"})',["4","3","5","0"],0,"# — длина массива."),
+  I("Добавь меч в конец инвентаря",'table.___(inventory, "Меч")',"insert","table.insert(t, значение) добавляет в конец."),
+  C("Что выведет код?","local t = {1, 2, 3}\ntable.remove(t, 1)\nprint(t[1])",["2","1","nil","3"],0,"После удаления первого элементы сдвигаются."),
+  C("Что выведет код?",'local t = {"a", "b"}\nprint(t[3])',["nil","b","Ошибку","\"\""],0,"Третьего элемента нет — nil.")]},
+ {title:"Словари",theory:[
+  "Таблица может хранить значения по ключам-строкам. Так описывают объекты: игрока, предмет, настройки.",
+  {c:'local player = { name = "Миша", level = 5 }\nprint(player.name)       --> Миша\nplayer.coins = 100       -- новое поле\nplayer["level"] = 6      -- то же, что player.level = 6\nplayer.coins = nil       -- удалить поле'}],
+ ex:[
+  C("Что выведет код?","local p = { hp = 100 }\nprint(p.hp)",["100","hp","nil","Ошибку"],0,"p.hp читает поле hp."),
+  C("Какие записи равнозначны?",null,['p.hp и p["hp"]','p.hp и p[hp]','p:hp и p.hp','p->hp и p.hp'],0,'Точка — сокращение для ["ключ"].'),
+  I("Удали поле coins",'player.coins = ___',"nil","Присвоение nil удаляет поле."),
+  C("Что выведет код?",'local stats = {}\nstats.kills = 3\nprint(stats["kills"])',["3","nil","kills","Ошибку"],0,'stats.kills и stats["kills"] — одно поле.'),
+  O("Собери таблицу настроек со скоростью 16",["local","config","=","{","speed","=","16","}"],["[","]"],"local config = { speed = 16 }"),
+  C("Что выведет код?","local t = { a = 1, b = 2 }\nprint(#t)",["0","2","1","nil"],0,"# считает только элементы массива (1, 2, 3…), а не ключи-строки.")]},
+ {title:"Перебор таблиц",theory:[
+  "[[ipairs]] перебирает массив по порядку: 1, 2, 3… [[pairs]] — все ключи, но порядок не гарантирован.",
+  {c:'local items = {"Меч", "Щит"}\nfor i, item in ipairs(items) do\n    print(i, item)      --> 1 Меч / 2 Щит\nend\n\nlocal prices = { sword = 100, shield = 60 }\nfor name, price in pairs(prices) do\n    print(name, price)\nend'},
+  {tip:"В Luau можно писать просто for k, v in t do — это обобщённый перебор."}],
+ ex:[
+  C("Для чего лучше ipairs?",null,["Массив по порядку","Словарь по ключам","Строки","Числа от 1 до N"],0,"ipairs идёт по индексам 1, 2, 3…"),
+  C("Что выведет код?",'local t = {"x", "y"}\nfor i, v in ipairs(t) do\n    print(i, v)\nend',["1 x\n2 y","x\ny","0 x\n1 y","1\n2"],0,"i — индекс, v — значение."),
+  C("Гарантирован ли порядок у pairs?",null,["Нет","Да, алфавитный","Да, по порядку добавления","Да, по значениям"],0,"Не полагайся на порядок pairs."),
+  I("Перебери словарь scores","for key, value in ___(scores) do\n    print(key, value)\nend","pairs","pairs — для ключей-строк."),
+  C("Что выведет код?","local t = {5, 10, 15}\nlocal s = 0\nfor _, v in ipairs(t) do\n    s += v\nend\nprint(s)",["30","15","3","0"],0,"5 + 10 + 15 = 30. _ — имя для ненужной переменной."),
+  C("Что выведет код?","local map = { player = { hp = 50 } }\nprint(map.player.hp)",["50","nil","player","Ошибку"],0,"Таблицы можно вкладывать друг в друга.")]}
+ ]},
+{title:"Строки и математика",desc:"Методы строк, math и форматирование",
+ practice:{min:25,tasks:["Напиши функцию, которая превращает секунды в таймер «мм:сс» через string.format(\"%02d:%02d\", …).","Сгенерируй случайный код из 4 цифр через math.random.","Раздели строку \"меч,щит,лук\" через :split и выведи каждый предмет.","Ограничь здоровье от 0 до 100 через math.clamp."]},
+ lessons:[
+ {title:"Методы строк",theory:[
+  "У строк есть методы, их вызывают через двоеточие: [[s:upper()]] — то же, что [[string.upper(s)]].",
+  {c:'local s = "Roblox"\nprint(s:upper())        --> ROBLOX\nprint(s:sub(1, 3))      --> Rob\nprint(s:len())          --> 6\nprint(string.rep("ab", 3))  --> ababab\nlocal parts = ("a,b,c"):split(",")   -- {"a", "b", "c"}'},
+  "[[string.format]] подставляет значения в шаблон: [[%d]] — целое, [[%s]] — строка, [[%.2f]] — дробное с 2 знаками."],
+ ex:[
+  C("Что выведет код?",'print(("luau"):upper())',["LUAU","luau","Luau","Ошибку"],0,"upper переводит в верхний регистр."),
+  C("Что выведет код?",'local s = "Roblox"\nprint(s:sub(1, 3))',["Rob","Ro","obl","blox"],0,"sub(1, 3) — символы с 1-го по 3-й включительно."),
+  C("Что выведет код?",'print(string.rep("ab", 3))',["ababab","ab3","ab ab ab","aaabbb"],0,"rep повторяет строку."),
+  I("Подставь целое число в шаблон",'string.format("Очки: %___", 50)',"d","%d — целое число."),
+  C("Чему равно s:upper()?",null,["string.upper(s)","s.upper()","upper(s)","string:upper(s)"],0,"Двоеточие передаёт s первым аргументом."),
+  C("Что выведет код?",'local parts = ("a,b,c"):split(",")\nprint(#parts)',["3","5","1","2"],0,"split разбивает строку на массив из 3 частей.")]},
+ {title:"Библиотека math",theory:[
+  "[[math]] — набор математических функций.",
+  {c:'math.floor(3.7)        --> 3 (вниз)\nmath.ceil(3.2)         --> 4 (вверх)\nmath.round(2.5)        --> 3\nmath.max(4, 9, 2)      --> 9\nmath.random(1, 6)      --> случайное целое 1…6\nmath.clamp(150, 0, 100) --> 100\nmath.sqrt(16)          --> 4'}],
+ ex:[
+  C("Что вернёт math.floor(3.7)?",null,["3","4","3.7","3.5"],0,"floor округляет вниз."),
+  C("Что вернёт math.ceil(3.2)?",null,["4","3","3.2","5"],0,"ceil округляет вверх."),
+  C("Что вернёт math.random(1, 6)?",null,["Случайное целое от 1 до 6","Случайное дробное от 1 до 6","Всегда 1","Таблицу чисел"],0,"Как бросок кубика: 1…6 включительно."),
+  C("Что вернёт math.max(4, 9, 2)?",null,["9","4","2","15"],0,"max — наибольшее значение."),
+  C("Что вернёт math.clamp(150, 0, 100)?",null,["100","150","0","50"],0,"clamp зажимает число в рамки от 0 до 100."),
+  I("Получи 4 из 16","print(math.___(16))","sqrt","math.sqrt — квадратный корень.")]},
+ {title:"Интерполяция и форматирование",theory:[
+  "Интерполяция в обратных кавычках — самый читаемый способ собрать текст. Внутри [[{}]] можно писать любое выражение.",
+  {c:'local name, lvl = "Аня", 7\nprint(`{name} — уровень {lvl}`)\nprint(`Через год: {lvl + 1}`)\nprint(string.format("%.2f", 3.14159))   --> 3.14'},
+  "[[tostring]] превращает значение в строку, [[tonumber]] — строку в число (или [[nil]], если не получилось)."],
+ ex:[
+  C("Какие кавычки нужны для интерполяции?",null,["Обратные `","Двойные \"","Одинарные '","Квадратные [[ ]]"],0,"Только обратные."),
+  C("Что выведет код?",'local name = "Аня"\nlocal lvl = 7\nprint(`{name} — уровень {lvl}`)',["Аня — уровень 7","{name} — уровень {lvl}","name — уровень lvl","Ошибку"],0,"{…} заменяется значением."),
+  C("Что выведет код?","print(`{2 + 3}`)",["5","2 + 3","{5}","23"],0,"В скобках вычисляется выражение."),
+  C("Что вернёт string.format(\"%.2f\", 3.14159)?",null,["3.14","3.14159","3","3.1"],0,"%.2f — два знака после точки."),
+  C("Что вернёт tonumber(\"abc\")?",null,["nil","0","Ошибку","\"abc\""],0,"Если строку нельзя перевести в число, будет nil."),
+  I("Склей число с восклицательным знаком",'print(___(12) .. "!")',"tostring","tostring(12) → \"12\". (Оператор .. справится и сам, но явное преобразование понятнее.)")]}
+ ]},
+{title:"Типы в Luau",desc:"Аннотации, --!strict, свои типы",
+ practice:{min:30,tasks:["Добавь в начало скрипта --!strict.","Перепиши инвентарь из раздела «Таблицы» с типами: {string}, {[string]: number}.","Опиши type PlayerData = { name: string, coins: number }.","Нарочно ошибись в типе и посмотри на подчёркивание в Script Editor."]},
+ lessons:[
+ {title:"Аннотации типов",theory:[
+  "Luau умеет проверять типы ещё до запуска. Тип пишется через двоеточие после имени.",
+  {c:'--!strict\nlocal hp: number = 100\nlocal name: string = "Миша"\n\nlocal function add(a: number, b: number): number\n    return a + b\nend'},
+  "[[--!strict]] в первой строке включает строгую проверку. Ошибки типов подчёркиваются в редакторе Studio.",
+  {tip:"Типы не меняют работу программы. Это подсказки для анализатора, которые ловят ошибки заранее."}],
+ ex:[
+  C("Как указать тип переменной?",null,["local hp: number = 100","local number hp = 100","local hp = number(100)","local hp :: = 100"],0,"имя: тип"),
+  C("Какая строка включает строгую проверку типов?",null,["--!strict","--strict","#strict","use strict"],0,"--!strict в первой строке скрипта."),
+  I("Укажи тип для текста",'local name: ___ = "Миша"',"string","Текст — тип string."),
+  C("Как указать тип результата функции?",null,["function f(a: number): number","function f(a: number) -> number","function f(a: number) => number","function number f(a)"],0,"После скобок — двоеточие и тип."),
+  C("Влияют ли аннотации типов на выполнение кода?",null,["Нет, их проверяет только анализатор","Да, код ускоряется вдвое","Да, без них код не запустится","Только в LocalScript"],0,"Код работает так же, но ошибки видны раньше."),
+  O("Объяви скорость с типом number",["local","speed",":","number","=","16"],["::","->"],"local speed: number = 16")]},
+ {title:"Опциональные и составные типы",theory:[
+  "[[?]] после типа значит «или nil». [[|]] — «или»: значение одного из типов.",
+  {c:'local target: Player? = nil        -- Player или nil\nlocal id: number | string = 42     -- число или строка\nlocal anything: any = "что угодно"  -- без проверки'}],
+ ex:[
+  C("Что означает тип «string?» (со знаком вопроса)?",null,["string или nil","Строка с ошибкой","Пустая строка","Любой тип"],0,"? — опциональный тип."),
+  C("Что означает number | string?",null,["Число или строка","Число и строка вместе","Число, превращённое в строку","Ошибка"],0,"| — объединение типов."),
+  I("Сделай тип «Tool или nil»","local weapon: Tool___ = nil","?","Tool? = Tool | nil"),
+  C("Какое значение подходит под number | boolean?",null,["true","\"5\"","{}","nil"],0,"true — boolean."),
+  C("Что делает тип any?",null,["Отключает проверку для значения","Разрешает только числа","Делает значение nil","Запрещает изменение"],0,"any — «доверься мне», используй редко."),
+  C("Что будет с local n: number = \"5\" под --!strict?",null,["Анализатор покажет ошибку типа","Строка станет числом","Ничего","Скрипт удалится"],0,"Строка не подходит под number.")]},
+ {title:"Свои типы",theory:[
+  "Через [[type]] можно дать имя сложному типу, например форме таблицы.",
+  {c:'type PlayerData = {\n    name: string,\n    coins: number,\n}\n\nlocal data: PlayerData = { name = "Миша", coins = 0 }\n\ntype Inventory = {string}          -- массив строк\ntype Prices = {[string]: number}   -- словарь\ntype Check = (number) -> boolean   -- функция'},
+  "В ModuleScript тип можно отдать наружу через [[export type]]."],
+ ex:[
+  C("Каким словом объявляют свой тип?",null,["type","typedef","interface","class"],0,"type Имя = …"),
+  C("Что будет, если в data: PlayerData не указать coins (под --!strict)?",null,["Предупреждение анализатора","coins станет 0","Ничего","Ошибка при запуске игры"],0,"Анализатор потребует все поля."),
+  C("Как отдать тип из ModuleScript?",null,["export type","public type","return type","module type"],0,"export type Имя = …"),
+  I("Объяви тип для точки",'___ Vector2D = { x: number, y: number }',"type","type Vector2D = { … }"),
+  C("Как записать тип «массив чисел»?",null,["{number}","[number]","number[]","Array<number>"],0,"В Luau массив — {Тип}."),
+  C("Что означает (number) -> boolean?",null,["Функция: принимает число, возвращает boolean","Таблица чисел","Число или boolean","Приведение типа"],0,"Тип функции: (параметры) -> результат.")]}
+ ]},
+{title:"Объекты Roblox",desc:"Иерархия, Instance.new, свойства, Vector3 и CFrame",
+ practice:{min:45,tasks:["Скриптом создай 10 Part и выстрой из них лестницу (Position растёт по Y и Z).","Покрась каждую ступеньку в свой цвет через Color3.fromHSV(i/10, 1, 1).","Закрепи части (Anchored = true).","Сделай одну часть плавно движущейся вверх-вниз через TweenService."]},
+ lessons:[
+ {title:"Иерархия игры",theory:[
+  "Всё в Roblox — объекты (Instance), вложенные друг в друга. Корень — [[game]]. Внутри — сервисы: [[Workspace]] (3D-мир), [[Players]], [[ReplicatedStorage]] и другие.",
+  {c:'local Players = game:GetService("Players")\nlocal door = workspace:FindFirstChild("Door")   -- nil, если нет\nlocal gui = player:WaitForChild("PlayerGui")    -- ждёт появления\nprint(door.Name, door.Parent)'},
+  {tip:"Сервисы получай через game:GetService(\"Имя\") — это надёжнее, чем game.Имя."}],
+ ex:[
+  C("Какой объект — корень всей игры?",null,["game","workspace","script","Players"],0,"game — корень иерархии."),
+  C("Где находятся объекты 3D-мира?",null,["Workspace","ServerStorage","StarterGui","Lighting"],0,"Всё видимое в мире лежит в Workspace."),
+  I("Получи сервис Players",'local Players = game:___("Players")',"GetService","game:GetService(\"Players\")"),
+  C("Что вернёт FindFirstChild, если объекта нет?",null,["nil","Ошибку","Пустой объект","false"],0,"Поэтому результат стоит проверять через if."),
+  C("Чем WaitForChild отличается от FindFirstChild?",null,["Ждёт, пока объект появится","Ищет быстрее","Создаёт объект","Ничем"],0,"Полезно на клиенте, когда объекты ещё загружаются."),
+  O("Найди дверь в Workspace",["local","door","=","workspace",":FindFirstChild(","\"Door\"",")"],[".FindFirstChild(","game"],"local door = workspace:FindFirstChild(\"Door\")")]},
+ {title:"Создание объектов и свойства",theory:[
+  "[[Instance.new]] создаёт объект. Он появится в игре, только когда ты задашь ему [[Parent]].",
+  {c:'local part = Instance.new("Part")\npart.Size = Vector3.new(4, 1, 4)\npart.Position = Vector3.new(0, 10, 0)\npart.Color = Color3.fromRGB(255, 0, 0)\npart.Anchored = true     -- не падает\npart.Parent = workspace  -- теперь видно\n\n-- part:Destroy()  -- удалить'},
+  {tip:"Ставь Parent последним: так движок не пересчитывает объект после каждого свойства."}],
+ ex:[
+  C("Где появится Instance.new(\"Part\") без Parent?",null,["Нигде, пока не задан Parent","В Workspace","В ServerStorage","В руках игрока"],0,"Объект существует в памяти, но не в игре."),
+  C("Что делает Anchored = true?",null,["Часть не двигается физикой","Часть становится прозрачной","Часть нельзя удалить","Часть светится"],0,"Закреплённая часть не падает."),
+  I("Помести часть в мир","part.___ = workspace","Parent","part.Parent = workspace"),
+  C("Что такое Vector3.new(4, 1, 4)?",null,["Трёхмерный вектор X, Y, Z","Цвет","Поворот","Массив"],0,"Vector3 — позиция или размер в 3D."),
+  C("Какой цвет у Color3.fromRGB(255, 0, 0)?",null,["Красный","Зелёный","Синий","Белый"],0,"RGB: максимум красного."),
+  C("Как удалить объект?",null,["part:Destroy()","part = nil","delete part","part.Remove"],0,"Destroy удаляет объект и его детей.")]},
+ {title:"CFrame и движение",theory:[
+  "[[CFrame]] хранит позицию и поворот. Углы задаются в радианах, поэтому переводи градусы через [[math.rad]].",
+  {c:'part.CFrame = CFrame.new(0, 5, 0)\npart.CFrame = part.CFrame * CFrame.Angles(0, math.rad(90), 0)\n\nlocal TweenService = game:GetService("TweenService")\nlocal info = TweenInfo.new(2)\nTweenService:Create(part, info, { Position = Vector3.new(0, 20, 0) }):Play()'},
+  "[[TweenService]] плавно меняет свойства — так делают двери, лифты и анимацию интерфейса."],
+ ex:[
+  C("Что хранит CFrame?",null,["Позицию и поворот","Только цвет","Только размер","Скорость"],0,"Coordinate Frame — позиция + ориентация."),
+  C("В чём задаются углы в CFrame.Angles?",null,["В радианах","В градусах","В процентах","В оборотах"],0,"Используй math.rad(градусы)."),
+  I("Переведи 90 градусов в радианы","CFrame.Angles(0, math.___(90), 0)","rad","math.rad(90) ≈ 1.57"),
+  C("Чему равно Vector3.new(1, 2, 3) + Vector3.new(1, 1, 1)?",null,["2, 3, 4","1, 2, 3","3, 3, 3","Ошибка"],0,"Векторы складываются покомпонентно."),
+  C("Что делает TweenService?",null,["Плавно меняет свойства объекта","Сохраняет данные","Создаёт части","Проигрывает звуки"],0,"Твины — плавные переходы."),
+  C("Что запускает созданный твин?",null,[":Play()",":Start()",":Run()",":Fire()"],0,"TweenService:Create(…):Play()")]}
+ ]},
+{title:"События",desc:"Connect, Touched, игроки и библиотека task",
+ practice:{min:60,tasks:["Сделай лава-блок: при касании Humanoid.Health = 0.","Создай leaderstats с IntValue «Coins» для каждого игрока.","Сделай монетку: при касании +1 монета, монетка исчезает на 5 секунд (task.wait) и возвращается.","Добавь debounce, чтобы монетка не давала 10 монет за одно касание."]},
+ lessons:[
+ {title:"Подписка на события",theory:[
+  "Событие — сигнал «что-то случилось». Метод [[:Connect]] подписывает функцию, которая сработает при каждом сигнале.",
+  {c:'local lava = workspace.Lava\n\nlava.Touched:Connect(function(hit)\n    local humanoid = hit.Parent:FindFirstChild("Humanoid")\n    if humanoid then\n        humanoid.Health = 0\n    end\nend)'},
+  "[[hit]] — часть, которая коснулась. Если это нога персонажа, [[hit.Parent]] — модель персонажа с Humanoid.",
+  {tip:":Connect возвращает соединение. connection:Disconnect() отписывает функцию."}],
+ ex:[
+  C("Каким методом подписаться на событие?",null,[":Connect",":Listen",":On",":Subscribe"],0,"Событие:Connect(функция)"),
+  C("Что Touched передаёт в функцию?",null,["Часть, которая коснулась","Игрока","Позицию касания","Ничего"],0,"Аргумент — BasePart."),
+  C("Если коснулась нога персонажа, что такое hit.Parent?",null,["Модель персонажа","Игрок (Player)","Workspace","Humanoid"],0,"Части тела лежат внутри модели персонажа."),
+  I("Подпиши функцию onTouch","part.Touched:___(onTouch)","Connect","part.Touched:Connect(onTouch)"),
+  C("Как отписаться от события?",null,["connection:Disconnect()","connection:Destroy()","event:Stop()","connection = nil"],0,"Disconnect разрывает соединение."),
+  C("Зачем проверять, есть ли Humanoid?",null,["Коснуться может не игрок, а любая часть","Чтобы было быстрее","Так требует Roblox","Незачем"],0,"Иначе будет ошибка при касании обычной части.")]},
+ {title:"Игроки и leaderstats",theory:[
+  "[[Players.PlayerAdded]] срабатывает, когда игрок заходит. Папка с именем [[leaderstats]] внутри игрока показывает значения в таблице лидеров.",
+  {c:'local Players = game:GetService("Players")\n\nPlayers.PlayerAdded:Connect(function(player)\n    local stats = Instance.new("Folder")\n    stats.Name = "leaderstats"\n    stats.Parent = player\n\n    local coins = Instance.new("IntValue")\n    coins.Name = "Coins"\n    coins.Parent = stats\n\n    player.CharacterAdded:Connect(function(character)\n        print(player.Name .. " появился")\n    end)\nend)'}],
+ ex:[
+  C("Когда срабатывает Players.PlayerAdded?",null,["Когда игрок заходит в игру","Когда игрок прыгает","Когда игрок выходит","Каждую секунду"],0,"Для выхода есть PlayerRemoving."),
+  C("Как должна называться папка для таблицы лидеров?",null,["leaderstats","Leaderboard","stats","LeaderStats"],0,"Ровно leaderstats, маленькими буквами."),
+  I("Допиши параметр события",'Players.PlayerAdded:Connect(function(___)\n    print(player.Name)\nend)',"player","Событие передаёт объект Player."),
+  C("Какой объект хранит целое число монет?",null,["IntValue","NumberText","Folder","Script"],0,"IntValue.Value — целое число."),
+  C("Когда срабатывает CharacterAdded?",null,["При каждом появлении персонажа","Один раз за игру","При выходе","При покупке"],0,"После каждой смерти персонаж создаётся заново."),
+  O("Создай папку",["local","stats","=","Instance.new(",'"Folder"',")"],["new Folder","Folder.new("],"Instance.new(\"Folder\")")]},
+ {title:"task и debounce",theory:[
+  "Библиотека [[task]] управляет временем: [[task.wait(s)]] — пауза, [[task.spawn(f)]] — запустить параллельно, [[task.delay(s, f)]] — вызвать позже.",
+  "Debounce — флаг, который не даёт событию сработать много раз подряд. Touched срабатывает десятки раз за одно касание!",
+  {c:'local debounce = false\ncoin.Touched:Connect(function(hit)\n    if debounce then return end\n    debounce = true\n    -- выдать монету…\n    task.wait(1)\n    debounce = false\nend)'},
+  {tip:"Старые wait(), spawn() и delay() устарели — используй task.wait, task.spawn, task.delay."}],
+ ex:[
+  C("Что делает task.wait(2)?",null,["Пауза на 2 секунды","Ждёт 2 кадра","Ждёт 2 игроков","Повторяет код 2 раза"],0,"Поток засыпает на 2 секунды."),
+  C("Что использовать вместо устаревшего wait()?",null,["task.wait()","sleep()","os.wait()","game:Wait()"],0,"task.wait точнее и рекомендуется Roblox."),
+  C("Что делает task.spawn(f)?",null,["Запускает f сразу, не дожидаясь её конца","Создаёт часть","Вызывает f через секунду","Удаляет f"],0,"Код после task.spawn продолжает выполняться."),
+  C("Зачем нужен debounce?",null,["Чтобы событие не срабатывало много раз подряд","Для ускорения","Для сохранения данных","Для анимации"],0,"Защита от многократного срабатывания."),
+  I("Выйди из функции, если debounce включён","if debounce then ___ end","return","return сразу завершает функцию."),
+  C("Что делает task.delay(3, f)?",null,["Вызовет f через 3 секунды","Вызовет f 3 раза","Остановит f на 3 секунды","Удалит f через 3 секунды"],0,"Отложенный вызов, текущий код не ждёт.")]}
+ ]},
+{title:"Клиент и сервер",desc:"Script и LocalScript, RemoteEvent, ModuleScript",
+ practice:{min:60,tasks:["Сделай ScreenGui с кнопкой «Получить монету».","В LocalScript по нажатию вызови RemoteEvent:FireServer().","На сервере в OnServerEvent добавь монету, но не чаще раза в 2 секунды (проверка на сервере!).","Вынеси настройки (награда, кулдаун) в ModuleScript в ReplicatedStorage."]},
+ lessons:[
+ {title:"Script и LocalScript",theory:[
+  "[[Script]] работает на сервере: там правила игры, монеты, урон. [[LocalScript]] работает на устройстве игрока: интерфейс, камера, ввод.",
+  "Серверные скрипты кладут в [[ServerScriptService]]. LocalScript запускается в [[StarterPlayerScripts]], [[StarterGui]], [[StarterCharacterScripts]].",
+  {c:'-- LocalScript\nlocal player = game:GetService("Players").LocalPlayer\nprint("Я — " .. player.Name)'},
+  {tip:"Никогда не доверяй клиенту: читер может изменить любой LocalScript. Всё важное проверяй на сервере."}],
+ ex:[
+  C("Где выполняется обычный Script?",null,["На сервере","У игрока","В Studio только","Везде одновременно"],0,"Script — серверный код."),
+  C("Где выполняется LocalScript?",null,["На устройстве игрока","На сервере","В облаке Roblox","Нигде"],0,"LocalScript — клиентский код."),
+  C("Где LocalScript точно запустится?",null,["StarterPlayerScripts","ServerScriptService","ServerStorage","Lighting"],0,"В ServerScriptService LocalScript не работает."),
+  C("Где доступен Players.LocalPlayer?",null,["Только в LocalScript","Только в Script","В обоих","Нигде"],0,"У сервера нет «локального» игрока."),
+  C("Почему нельзя доверять клиенту выдачу монет?",null,["Читер может изменить клиентский код","Клиент медленный","Клиент не видит монет","Так быстрее"],0,"Сервер — единственный источник правды."),
+  C("Куда класть серверные скрипты?",null,["ServerScriptService","StarterGui","ReplicatedFirst","Workspace.Camera"],0,"Клиент не видит содержимое ServerScriptService.")]},
+ {title:"RemoteEvent",theory:[
+  "[[RemoteEvent]] передаёт сообщения между клиентом и сервером. Его кладут в [[ReplicatedStorage]], чтобы его видели обе стороны.",
+  {c:'-- LocalScript (клиент)\nlocal remote = game.ReplicatedStorage:WaitForChild("BuyItem")\nremote:FireServer("Меч")\n\n-- Script (сервер)\nlocal remote = game.ReplicatedStorage.BuyItem\nremote.OnServerEvent:Connect(function(player, itemName)\n    -- player подставляется автоматически!\n    print(player.Name .. " хочет " .. itemName)\nend)'},
+  "Сервер отвечает клиенту через [[remote:FireClient(player, …)]]. Если нужен ответ сразу — используют [[RemoteFunction]] и [[InvokeServer]]."],
+ ex:[
+  C("Куда положить RemoteEvent?",null,["ReplicatedStorage","ServerStorage","ServerScriptService","StarterPack"],0,"Его должны видеть и клиент, и сервер."),
+  C("Каким методом клиент отправляет сообщение серверу?",null,[":FireServer()",":FireClient()",":Send()",":InvokeClient()"],0,"FireServer — от клиента к серверу."),
+  C("Какой первый аргумент получает OnServerEvent?",null,["Игрок, который отправил","Первый аргумент FireServer","Сам RemoteEvent","Время"],0,"player подставляется автоматически, подделать его нельзя."),
+  I("Подпишись на сообщения от клиентов","remote.___:Connect(function(player, item)\nend)","OnServerEvent","OnServerEvent срабатывает на сервере."),
+  C("Как сервер отправит сообщение одному игроку?",null,["remote:FireClient(player, …)","remote:FireServer(player)","remote:Fire(player)","player:Fire()"],0,"FireClient — от сервера к клиенту."),
+  C("Чем RemoteFunction отличается от RemoteEvent?",null,["Возвращает ответ вызывающему","Работает быстрее","Только для сервера","Ничем"],0,"InvokeServer ждёт и получает результат.")]},
+ {title:"ModuleScript",theory:[
+  "[[ModuleScript]] хранит общий код. Он возвращает одно значение (обычно таблицу), а другие скрипты получают его через [[require]].",
+  {c:'-- ModuleScript «Config» в ReplicatedStorage\nlocal Config = {}\nConfig.COIN_REWARD = 5\nfunction Config.format(n)\n    return `{n} монет`\nend\nreturn Config\n\n-- Script\nlocal Config = require(game.ReplicatedStorage.Config)\nprint(Config.format(Config.COIN_REWARD))'},
+  {tip:"require выполняет модуль один раз и кэширует результат: все скрипты на одной стороне получают одну и ту же таблицу."}],
+ ex:[
+  C("Что должен делать ModuleScript в конце?",null,["Вернуть ровно одно значение (return)","Вызвать print","Ничего","Вызвать require"],0,"Обычно return ИмяМодуля."),
+  C("Как подключить модуль?",null,["require(модуль)","import модуль","include(модуль)","load(модуль)"],0,"local M = require(путь)"),
+  I("Подключи модуль",'local M = ___(script.Parent.Module)',"require","require возвращает то, что вернул модуль."),
+  C("Что будет при втором require того же модуля?",null,["Вернётся та же таблица, код не выполнится снова","Модуль выполнится заново","Ошибка","nil"],0,"Результат кэшируется."),
+  C("Какая строка должна стоять последней в модуле Utils?",null,["return Utils","end Utils","export Utils","Utils()"],0,"Модуль отдаёт свою таблицу."),
+  C("Куда класть модуль, нужный и клиенту, и серверу?",null,["ReplicatedStorage","ServerScriptService","ServerStorage","StarterGui"],0,"ReplicatedStorage виден обеим сторонам.")]}
+ ]},
+{title:"ООП и надёжный код",desc:"Метатаблицы, классы, pcall",
+ practice:{min:60,tasks:["Сделай класс Pet с конструктором Pet.new(name) и методом :feed().","Создай два питомца и проверь, что у каждого своё состояние.","Сохраняй монеты игрока в DataStore при выходе, оборачивая запрос в pcall.","Загружай монеты при входе и обработай случай ошибки."]},
+ lessons:[
+ {title:"Метатаблицы",theory:[
+  "Метатаблица меняет поведение таблицы. Главное поле — [[__index]]: туда Luau заглядывает, если ключа в таблице нет.",
+  {c:'local defaults = { hp = 100, speed = 16 }\nlocal p = setmetatable({}, { __index = defaults })\nprint(p.hp)       --> 100 (взято из defaults)\np.hp = 50\nprint(p.hp)       --> 50 (своё значение)'},
+  "Есть и другие метаметоды: [[__add]] (оператор +), [[__eq]] (==), [[__tostring]]."],
+ ex:[
+  C("Какая функция задаёт метатаблицу?",null,["setmetatable","metatable","setmeta","table.meta"],0,"setmetatable(таблица, мета)"),
+  C("Когда срабатывает __index?",null,["Когда ключа нет в таблице","При каждом чтении","При записи","При удалении"],0,"Это «запасное место» для поиска ключей."),
+  C("Что выведет код?","local defaults = { hp = 100 }\nlocal p = setmetatable({}, { __index = defaults })\nprint(p.hp)",["100","nil","Ошибку","0"],0,"hp нет в p, поэтому берётся из defaults."),
+  I("Сделай так, чтобы obj искал недостающие ключи в Base","setmetatable(obj, { ___ = Base })","__index","{ __index = Base }"),
+  C("Какой метаметод отвечает за оператор +?",null,["__add","__plus","__sum","__index"],0,"__add(a, b)"),
+  C("Что вернёт getmetatable(t)?",null,["Метатаблицу t","Копию t","Длину t","Ключи t"],0,"Или nil, если метатаблицы нет.")]},
+ {title:"Классы",theory:[
+  "Классов в Luau нет, но их делают из таблицы и метатаблицы. Двоеточие при объявлении метода добавляет скрытый параметр [[self]].",
+  {c:'local Car = {}\nCar.__index = Car\n\nfunction Car.new(speed)\n    local self = setmetatable({}, Car)\n    self.speed = speed\n    return self\nend\n\nfunction Car:drive()\n    print("Еду со скоростью " .. self.speed)\nend\n\nlocal c = Car.new(50)\nc:drive()   --> Еду со скоростью 50'}],
+ ex:[
+  C("Чему равно c:drive()?",null,["c.drive(c)","Car.drive()","c.drive()","drive(Car)"],0,"Двоеточие передаёт объект как self."),
+  C("Что выведет код?",'local Car = {}\nCar.__index = Car\nfunction Car.new(s)\n    local self = setmetatable({}, Car)\n    self.speed = s\n    return self\nend\nfunction Car:drive()\n    print("Еду " .. self.speed)\nend\nCar.new(50):drive()',["Еду 50","Еду nil","Ошибку","Еду speed"],0,"Метод находится через __index = Car."),
+  I("Допиши строку, чтобы объекты находили методы","local Car = {}\nCar.___ = Car","__index","Car.__index = Car"),
+  C("Что будет при вызове c.drive() (через точку)?",null,["Ошибка: self = nil","То же, что c:drive()","Ничего","Вызов Car.new"],0,"Через точку self не передаётся."),
+  C("Как называют функцию Car.new?",null,["Конструктор","Деструктор","Метатаблица","Событие"],0,"Она создаёт новый объект."),
+  O("Создай объект с метатаблицей Car",["local","self","=","setmetatable(","{}",",","Car",")"],["new","Car.new("],"local self = setmetatable({}, Car)")]},
+ {title:"Ошибки и pcall",theory:[
+  "[[error(\"текст\")]] бросает ошибку. [[pcall]] вызывает функцию «под защитой»: ошибка не роняет скрипт, а возвращается как результат.",
+  {c:'local ok, result = pcall(function()\n    return store:GetAsync("player_" .. player.UserId)\nend)\n\nif ok then\n    print("Загружено:", result)\nelse\n    warn("Ошибка DataStore:", result)\nend'},
+  {tip:"Запросы к DataStore и другим сервисам могут не пройти. Всегда оборачивай их в pcall."}],
+ ex:[
+  C("Что возвращает pcall?",null,["Успех (true/false) и результат или текст ошибки","Только результат","Только текст ошибки","Ничего"],0,"local ok, res = pcall(f)"),
+  C("Что выведет код?",'local ok, err = pcall(function()\n    error("Упс")\nend)\nprint(ok)',["false","true","Упс","nil"],0,"Функция упала, ok = false."),
+  C("Что делает error(\"msg\")?",null,["Бросает ошибку с текстом msg","Выводит текст красным, не останавливая код","Сохраняет лог","Закрывает игру"],0,"Без pcall она остановит выполнение."),
+  I("Защити запрос к DataStore",'local ok, data = ___(function()\n    return store:GetAsync(key)\nend)',"pcall","pcall перехватывает ошибку."),
+  C("Зачем оборачивать DataStore в pcall?",null,["Запросы могут не пройти из-за сети или лимитов","Так быстрее","Иначе данные не сохранятся никогда","Это украшение"],0,"Без pcall сбой сломает весь скрипт."),
+  C("Что делает assert(false, \"нет игрока\")?",null,["Бросает ошибку «нет игрока»","Возвращает false","Ничего","Выводит предупреждение"],0,"assert бросает ошибку, если условие ложно.")]}
+ ]}
+];
+
+/* ================= НАСТРОЙКИ ОЦЕНКИ ВРЕМЕНИ ================= */
+const EST={lesson:10, test:10, final:30, review:0.15, project:30*60, confident:100*60};
+const TEST_N=10, FINAL_N=30, PASS=0.8, MAX_HEARTS=5, HEART_REGEN_MIN=20;
+
+/* ================= СОСТОЯНИЕ ================= */
+const KEY='luau-tropa-v1';
+const fresh=()=>({done:{},tests:{},practice:{},final:0,xp:0,hearts:MAX_HEARTS,heartTs:Date.now(),streak:0,lastDay:null,days:{},mistakes:[],goal:45,dpw:7,sound:true,answered:0,correct:0});
+let S=fresh();
+try{const raw=localStorage.getItem(KEY);if(raw)S=Object.assign(fresh(),JSON.parse(raw));}catch(e){}
+function save(){try{localStorage.setItem(KEY,JSON.stringify(S));}catch(e){}}
+
+const today=()=>{const d=new Date();return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');};
+const dayDiff=(a,b)=>Math.round((new Date(b+'T12:00')-new Date(a+'T12:00'))/864e5);
+function regenHearts(){
+  if(S.hearts>=MAX_HEARTS){S.heartTs=Date.now();return;}
+  const gained=Math.floor((Date.now()-S.heartTs)/(HEART_REGEN_MIN*6e4));
+  if(gained>0){S.hearts=Math.min(MAX_HEARTS,S.hearts+gained);S.heartTs+=gained*HEART_REGEN_MIN*6e4;if(S.hearts>=MAX_HEARTS)S.heartTs=Date.now();save();}
+}
+function streakNow(){ if(!S.lastDay)return 0; const d=dayDiff(S.lastDay,today()); return d<=1?S.streak:0; }
+function markActivity(minutes){
+  const t=today();
+  if(S.lastDay!==t){ S.streak=(S.lastDay&&dayDiff(S.lastDay,t)===1)?S.streak+1:1; S.lastDay=t; }
+  S.days[t]=(S.days[t]||0)+minutes;
+}
+
+/* ================= ЛОГИКА ПРОГРЕССА ================= */
+const lk=(u,l)=>u+'-'+l;
+const passed=u=>(S.tests[u]||0)>=Math.ceil(TEST_N*PASS);
+const unitOpen=u=>u===0||passed(u-1);
+const lessonOpen=(u,l)=>unitOpen(u)&&(l===0||!!S.done[lk(u,l-1)]||passed(u));
+const lessonsDone=u=>COURSE[u].lessons.every((_,l)=>S.done[lk(u,l)]);
+const firstLocked=()=>{for(let u=0;u<COURSE.length;u++)if(!unitOpen(u))return u;return -1;};
+const allPassed=()=>COURSE.every((_,u)=>passed(u));
+function current(){
+  for(let u=0;u<COURSE.length;u++){
+    if(!unitOpen(u))return null;
+    for(let l=0;l<COURSE[u].lessons.length;l++) if(!S.done[lk(u,l)]&&!passed(u)) return {u,l};
+    if(!passed(u))return {u,test:true};
+  }
+  return allPassed()&&S.final<Math.ceil(FINAL_N*PASS)?{final:true}:null;
+}
+const exById=id=>{const [u,l,i]=id.split('.').map(Number);return COURSE[u].lessons[l].ex[i];};
+const totalLessons=COURSE.reduce((a,u)=>a+u.lessons.length,0);
+const totalEx=COURSE.reduce((a,u)=>a+u.lessons.reduce((b,l)=>b+l.ex.length,0),0);
+
+/* ================= УТИЛИТЫ ================= */
+const $=s=>document.querySelector(s);
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const shuffle=a=>{a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;};
+const plural=(n,a,b,c)=>{n=Math.abs(n)%100;const n1=n%10;if(n>10&&n<20)return c;if(n1>1&&n1<5)return b;if(n1===1)return a;return c;};
+const fmtMin=m=>{m=Math.round(m);if(m<60)return m+' мин';const h=Math.floor(m/60),r=m%60;return h+' ч'+(r?' '+r+' мин':'');};
+const fmtHours=m=>{const h=m/60;return (h<10?h.toFixed(1).replace('.',','):Math.round(h))+' ч';};
+const KW=new Set('and break continue do else elseif end false for function if in local nil not or repeat return then true until while type export'.split(' '));
+const BI=new Set('print warn error pcall assert require typeof type tostring tonumber setmetatable getmetatable pairs ipairs game workspace script task math string table Instance Vector3 CFrame Color3 TweenInfo Enum'.split(' '));
+function hl(src){
+  let out='',i=0;const n=src.length;
+  while(i<n){
+    const ch=src[i],rest=src.slice(i);
+    let m;
+    if(rest.startsWith('--[[')){const e=src.indexOf(']]',i+4);const j=e<0?n:e+2;out+='<span class="cm">'+esc(src.slice(i,j))+'</span>';i=j;continue;}
+    if(rest.startsWith('--')){const e=src.indexOf('\n',i);const j=e<0?n:e;out+='<span class="cm">'+esc(src.slice(i,j))+'</span>';i=j;continue;}
+    if(ch==='"'||ch==="'"||ch==='`'){let j=i+1;while(j<n&&src[j]!==ch&&src[j]!=='\n'){if(src[j]==='\\')j++;j++;}j=Math.min(n,j+1);out+='<span class="s">'+esc(src.slice(i,j))+'</span>';i=j;continue;}
+    if((m=rest.match(/^\d+(\.\d+)?/))){out+='<span class="nm">'+m[0]+'</span>';i+=m[0].length;continue;}
+    if((m=rest.match(/^[A-Za-z_][A-Za-z0-9_]*/))){const w=m[0];out+=KW.has(w)?'<span class="k">'+w+'</span>':BI.has(w)?'<span class="fn">'+w+'</span>':w;i+=w.length;continue;}
+    out+=esc(ch);i++;
+  }
+  return out;
+}
+const inl=s=>esc(s).replace(/\[\[(.+?)\]\]/g,(_,c)=>'<code class="in">'+c+'</code>');
+function toast(msg){const t=document.createElement('div');t.className='toast';t.textContent=msg;document.body.appendChild(t);setTimeout(()=>t.remove(),2200);}
+
+/* звук */
+let AC=null;
+function beep(ok){
+  if(!S.sound)return;
+  try{AC=AC||new (window.AudioContext||window.webkitAudioContext)();const notes=ok?[660,880]:[300,220];
+    notes.forEach((f,k)=>{const o=AC.createOscillator(),g=AC.createGain();o.type=ok?'triangle':'square';o.frequency.value=f;g.gain.setValueAtTime(0.0001,AC.currentTime+k*.09);g.gain.exponentialRampToValueAtTime(ok?.18:.07,AC.currentTime+k*.09+.02);g.gain.exponentialRampToValueAtTime(0.0001,AC.currentTime+k*.09+.16);o.connect(g).connect(AC.destination);o.start(AC.currentTime+k*.09);o.stop(AC.currentTime+k*.09+.18);});
+  }catch(e){}
+}
+
+/* иконки */
+const IC={
+ flame:'<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2c1 3.5 5 6 5 11a5 5 0 0 1-10 0c0-2.2 1.1-3.6 2.2-4.6.2 1.6.9 2.6 1.8 3.1C10.6 8.6 11 5 12 2z"/></svg>',
+ bolt:'<svg viewBox="0 0 24 24" fill="currentColor"><path d="M13 2L4 14h6l-1 8 9-12h-6z"/></svg>',
+ heart:'<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 21s-7.5-4.6-9.5-9.2C1.2 8.6 3.3 5 6.8 5c2.1 0 3.5 1.1 4.2 2.3h2C13.7 6.1 15.1 5 17.2 5c3.5 0 5.6 3.6 4.3 6.8C19.5 16.4 12 21 12 21z"/></svg>',
+ star:'<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.5l2.9 6 6.6.8-4.9 4.6 1.3 6.6L12 17.3l-5.9 3.2 1.3-6.6L2.5 9.3l6.6-.8z"/></svg>',
+ check:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>',
+ lock:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><rect x="5" y="11" width="14" height="10" rx="2.5" fill="currentColor" stroke="none"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg>',
+ trophy:'<svg viewBox="0 0 24 24" fill="currentColor"><path d="M7 3h10v2h3v3a4 4 0 0 1-4 4h-.3A5 5 0 0 1 13 14.9V18h3v3H8v-3h3v-3.1A5 5 0 0 1 8.3 12H8a4 4 0 0 1-4-4V5h3zm-1 4v1a2 2 0 0 0 1.2 1.8A5 5 0 0 1 7 8V7zm12 0v1c0 .6-.1 1.2-.2 1.8A2 2 0 0 0 19 8V7z"/></svg>',
+ hammer:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M14 4l6 6-3 3-6-6zM12.5 8.5L4 17l3 3 8.5-8.5"/></svg>',
+ x:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg>',
+ book:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linejoin="round"><path d="M4 5a2 2 0 0 1 2-2h13v16H6a2 2 0 0 0-2 2z"/><path d="M4 21V5"/></svg>',
+ clock:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>',
+ target:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1.5" fill="currentColor"/></svg>'
+};
+
+/* ================= ВЕРХНЯЯ ПАНЕЛЬ ================= */
+function renderTop(){
+  regenHearts();
+  const st=streakNow();
+  $('#st-streak').className='stat s-streak'+(S.lastDay===today()?'':' off');
+  $('#st-streak').innerHTML=IC.flame+st;
+  $('#st-xp').innerHTML=IC.bolt+S.xp;
+  $('#st-heart').innerHTML=IC.heart+S.hearts;
+}
+
+/* ================= ВКЛАДКИ ================= */
+let TAB='path';
+document.querySelectorAll('.nav button').forEach(b=>b.addEventListener('click',()=>{TAB=b.dataset.tab;render();window.scrollTo(0,0);}));
+function render(){
+  renderTop();
+  document.querySelectorAll('.nav button').forEach(b=>{if(b.dataset.tab===TAB)b.setAttribute('aria-current','page');else b.removeAttribute('aria-current');});
+  const v=$('#view');
+  v.innerHTML=TAB==='path'?viewPath():TAB==='plan'?viewPlan():TAB==='practice'?viewPractice():viewProfile();
+  bindView();
+}
+
+function ringSvg(frac,color){
+  const r=26,c=2*Math.PI*r,f=Math.max(0,Math.min(1,frac));
+  return `<svg class="ring" viewBox="0 0 64 64"><circle cx="32" cy="32" r="${r}" fill="none" stroke="var(--line)" stroke-width="8"/><circle cx="32" cy="32" r="${r}" fill="none" stroke="${color}" stroke-width="8" stroke-linecap="round" stroke-dasharray="${c}" stroke-dashoffset="${c*(1-f)}" transform="rotate(-90 32 32)"/><text x="32" y="37" text-anchor="middle" font-family="Unbounded, sans-serif" font-weight="700" font-size="14" fill="var(--ink)">${Math.round(f*100)}%</text></svg>`;
+}
+
+function viewPath(){
+  const cur=current();
+  const tmin=S.days[today()]||0;
+  let h=`<section class="today">${ringSvg(tmin/S.goal,tmin>=S.goal?'var(--good)':'var(--accent)')}<div><h2>${tmin>=S.goal?'Цель на сегодня выполнена':'Цель на сегодня: '+S.goal+' мин'}</h2><p>Сегодня: ${fmtMin(tmin)} · пройдено уроков: ${Object.keys(S.done).length} из ${totalLessons}</p></div></section>`;
+  const fl=firstLocked();
+  COURSE.forEach((U,u)=>{
+    const open=unitOpen(u),comp=passed(u);
+    h+=`<section class="unit"><div class="band ${!open?'locked':comp?'complete':''}"><div><div class="eyebrow">Раздел ${u+1}</div><h2>${esc(U.title)}</h2><p>${esc(U.desc)}</p></div><div class="acts"><button class="band-btn" data-ref="${u}">${'Справка'}</button>${(!comp&&(open&&!lessonsDone(u)||u===fl))?`<button class="band-btn" data-test="${u}">Тест досрочно</button>`:''}</div></div><div class="path">`;
+    const offs=[0,-70,-100,-60,0,60];
+    U.lessons.forEach((L,l)=>{
+      const done=!!S.done[lk(u,l)],can=lessonOpen(u,l),isCur=cur&&cur.u===u&&cur.l===l;
+      const x=offs[(l)%offs.length];
+      h+=`<div class="node-wrap ${isCur?'current':''}" style="transform:translateX(${x}px)">${isCur?'<span class="start-tag">Начать</span>':''}<button class="node ${done?'done':can?'':'locked'}" data-lesson="${u}-${l}" aria-label="Урок: ${esc(L.title)}">${done?IC.check:can?IC.star:IC.lock}</button><span class="node-label">${esc(L.title)}</span></div>`;
+    });
+    const tCur=cur&&cur.u===u&&cur.test;const tOpen=open&&lessonsDone(u);
+    h+=`<div class="node-wrap ${tCur?'current':''}" style="transform:translateX(30px)">${tCur?'<span class="start-tag">Тест</span>':''}<button class="node test ${comp?'done':tOpen?'':'locked'}" data-test="${u}" aria-label="Тест раздела">${IC.trophy}</button><span class="node-label">Тест раздела${S.tests[u]!=null?' · лучший '+S.tests[u]+'/'+TEST_N:''}</span></div>`;
+    h+=`<div class="node-wrap" style="transform:translateX(-40px)"><button class="node practice ${S.practice[u]?'done':''}" data-prac="${u}" aria-label="Практика в Studio">${S.practice[u]?IC.check:IC.hammer}</button><span class="node-label">Практика в Studio · ${U.practice.min} мин</span></div>`;
+    h+=`</div></section>`;
+  });
+  const fp=S.final>=Math.ceil(FINAL_N*PASS);
+  h+=`<section class="final"><div class="kind">${IC.trophy} Итоговый экзамен</div><h2>${fp?'Экзамен сдан: '+S.final+'/'+FINAL_N:'Итоговый экзамен по Luau'}</h2><p>${FINAL_N} вопросов из всех разделов. Для зачёта нужно ${Math.ceil(FINAL_N*PASS)} правильных. Открывается после тестов всех разделов.</p><button class="btn ${allPassed()?'gold':''}" data-final ${allPassed()?'':'disabled'}>${fp?'Пересдать':'Начать экзамен'}</button></section>`;
+  return h;
+}
+
+/* ===== План / расчёт времени ===== */
+function remainingMinutes(){
+  let m=0;
+  COURSE.forEach((U,u)=>{
+    U.lessons.forEach((_,l)=>{if(!S.done[lk(u,l)]&&!passed(u))m+=EST.lesson*(1+EST.review);});
+    if(!passed(u))m+=EST.test*(1+EST.review);
+    if(!S.practice[u])m+=U.practice.min;
+  });
+  if(S.final<Math.ceil(FINAL_N*PASS))m+=EST.final;
+  return m;
+}
+function totalMinutes(){
+  const lessons=totalLessons*EST.lesson*(1+EST.review), tests=COURSE.length*EST.test*(1+EST.review), prac=COURSE.reduce((a,U)=>a+U.practice.min,0);
+  return {lessons,tests,prac,final:EST.final,sum:lessons+tests+prac+EST.final};
+}
+const daysFor=(min,perDay,dpw)=>Math.ceil(min/perDay)*7/dpw;
+function fmtDays(d){d=Math.ceil(d);if(d<14)return d+' '+plural(d,'день','дня','дней');const w=Math.round(d/7*2)/2;return (Number.isInteger(w)?w:w.toFixed(1).replace('.',','))+' нед.';}
+function fmtDaysLong(d){d=Math.ceil(d);if(d<60)return fmtDays(d);const mo=Math.round(d/30.4*2)/2;return (Number.isInteger(mo)?mo:mo.toFixed(1).replace('.',','))+' мес.';}
+function finishDate(d){const dt=new Date();dt.setDate(dt.getDate()+Math.ceil(d));return dt.toLocaleDateString('ru-RU',{day:'numeric',month:'long',year:'numeric'});}
+function viewPlan(){
+  const T=totalMinutes(),R=remainingMinutes();
+  const doneFrac=1-R/T.sum;
+  const stages=[
+    {name:"Синтаксис Luau",note:"Разделы 1–8: можешь читать и писать любые скрипты",min:COURSE.slice(0,8).reduce((a,U)=>a+U.lessons.length*EST.lesson*(1+EST.review)+EST.test*(1+EST.review)+U.practice.min,0)},
+    {name:"Весь курс",note:"Разделы 1–12, практика и итоговый экзамен",min:T.sum},
+    {name:"Первая своя игра",note:"Курс + ~30 ч на свой проект (обби, симулятор, тайкун)",min:T.sum+EST.project},
+    {name:"Уверенный скриптер",note:"Курс + ~100 ч практики: системы, DataStore, UI",min:T.sum+EST.confident}
+  ];
+  const perDay=S.goal,dpw=S.dpw;
+  const rows=stages.map(s=>`<tr><td><b>${s.name}</b><br><span class="muted small">${s.note}</span></td><td class="n">${fmtHours(s.min)}</td><td class="n">${fmtDaysLong(daysFor(s.min,30,dpw))}</td><td class="n">${fmtDaysLong(daysFor(s.min,60,dpw))}</td></tr>`).join('');
+  const days=Object.keys(S.days).length,spent=Object.values(S.days).reduce((a,b)=>a+b,0);
+  const pace=days?spent/days:0;
+  return `<div><h1 class="h-page">План обучения</h1></div>
+  <p class="lead">Сколько времени займёт путь, если заниматься 30–60 минут в день. Расчёт обновляется по мере прохождения.</p>
+  <section class="card">
+    <div class="ctrl"><label for="goal">Минут в день <output id="goal-out">${perDay} мин</output></label><input type="range" id="goal" min="30" max="60" step="5" value="${perDay}"></div>
+    <div class="ctrl"><label>Дней в неделю</label><div class="seg" id="dpw">${[3,5,6,7].map(n=>`<button aria-pressed="${n===dpw}" data-dpw="${n}">${n}</button>`).join('')}</div></div>
+    <div class="big-est">
+      <div class="est"><span class="k">Осталось курса</span><span class="v">${fmtDaysLong(daysFor(R,perDay,dpw))}</span><span class="d">${fmtHours(R)} занятий</span></div>
+      <div class="est"><span class="k">Финиш примерно</span><span class="v" style="font-size:17px">${finishDate(daysFor(R,perDay,dpw))}</span><span class="d">при ${perDay} мин × ${dpw} дн./нед.</span></div>
+    </div>
+    <div class="bar" aria-label="Пройдено курса"><i style="width:${Math.max(2,doneFrac*100).toFixed(1)}%"></i></div>
+    <p class="small muted">Пройдено ${Math.round(doneFrac*100)}% курса по времени.</p>
+  </section>
+  <section class="card">
+    <h2>Этапы и сроки</h2>
+    <div class="tbl-wrap"><table><thead><tr><th>Этап</th><th>Часов</th><th>30 мин/день</th><th>60 мин/день</th></tr></thead><tbody>${rows}</tbody></table></div>
+    <p class="small muted">Сроки в таблице — с нуля, при ${dpw} ${plural(dpw,'дне','днях','днях')} занятий в неделю.</p>
+  </section>
+  <section class="card">
+    <h2>Из чего складывается курс</h2>
+    <div class="tbl-wrap"><table><tbody>
+      <tr><td>${totalLessons} уроков × ~${EST.lesson} мин (теория + ${Math.round(totalEx/totalLessons)} заданий)</td><td class="n">${fmtMin(totalLessons*EST.lesson)}</td></tr>
+      <tr><td>${COURSE.length} тестов разделов × ~${EST.test} мин</td><td class="n">${fmtMin(COURSE.length*EST.test)}</td></tr>
+      <tr><td>Повторение ошибок (+${EST.review*100}%)</td><td class="n">${fmtMin((T.lessons+T.tests)-(totalLessons*EST.lesson+COURSE.length*EST.test))}</td></tr>
+      <tr><td>Практика в Roblox Studio (${COURSE.length} заданий)</td><td class="n">${fmtMin(T.prac)}</td></tr>
+      <tr><td>Итоговый экзамен</td><td class="n">${fmtMin(EST.final)}</td></tr>
+      <tr><td><b>Итого</b></td><td class="n"><b>${fmtHours(T.sum)}</b></td></tr>
+    </tbody></table></div>
+  </section>
+  <section class="card">
+    <h2>Твой реальный темп</h2>
+    ${spent>=20?`<p>Ты занимался ${days} ${plural(days,'день','дня','дней')}, в среднем ${fmtMin(pace)} в день. С таким темпом курс закончится через <b>${fmtDaysLong(Math.ceil(R/Math.max(pace,5)))}</b> (если заниматься каждый день).</p>`:`<p class="muted">Позанимайся хотя бы 20 минут — и здесь появится прогноз по твоему настоящему темпу.</p>`}
+  </section>
+  <section class="card">
+    <h2>Как учиться быстрее</h2>
+    <ul class="plain">
+      <li>Каждый день лучше, чем 3 часа раз в неделю: серия дней помогает запоминать.</li>
+      <li>После каждого раздела делай практику в Studio. Код, набранный руками, запоминается в разы лучше.</li>
+      <li>Начинай занятие с «Тренировки»: 5 минут на свои ошибки.</li>
+      <li>Если уже знаешь тему — сдай тест раздела досрочно и сэкономь время.</li>
+    </ul>
+  </section>`;
+}
+
+/* ===== Тренировка ===== */
+function viewPractice(){
+  const n=S.mistakes.length;
+  const doneIds=[];COURSE.forEach((U,u)=>U.lessons.forEach((L,l)=>{if(S.done[lk(u,l)])L.ex.forEach((_,i)=>doneIds.push(u+'.'+l+'.'+i));}));
+  return `<div><h1 class="h-page">Тренировка</h1></div>
+  <p class="lead">Повторение того, в чём ты ошибался. Каждая тренировка восстанавливает одно сердце.</p>
+  <section class="card"><div class="kind">${IC.target} Работа над ошибками</div><h2>${n?n+' '+plural(n,'задание','задания','заданий')+' на повторение':'Ошибок пока нет'}</h2><p class="muted">${n?'Правильный ответ убирает задание из списка.':'Когда ошибёшься в уроке, задание попадёт сюда.'}</p><button class="btn" data-review="mistakes" ${n?'':'disabled'}>Повторить ошибки</button></section>
+  <section class="card"><div class="kind">${IC.star} Случайное повторение</div><h2>8 заданий из пройденных уроков</h2><p class="muted">${doneIds.length?'Доступно '+doneIds.length+' '+plural(doneIds.length,'задание','задания','заданий')+'.':'Пройди хотя бы один урок.'}</p><button class="btn ghost" data-review="random" ${doneIds.length?'':'disabled'}>Начать</button></section>
+  <section class="card"><div class="kind">${IC.book} Справочник</div><h2>Вся теория курса</h2><p class="muted">Короткие конспекты всех уроков с примерами кода.</p><div class="seg">${COURSE.map((U,u)=>`<button data-ref="${u}">${u+1}. ${esc(U.title)}</button>`).join('')}</div></section>`;
+}
+
+/* ===== Профиль ===== */
+function viewProfile(){
+  const acc=S.answered?Math.round(S.correct/S.answered*100):0;
+  const spent=Object.values(S.days).reduce((a,b)=>a+b,0);
+  const wk=[];for(let k=6;k>=0;k--){const d=new Date();d.setDate(d.getDate()-k);const key=d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');wk.push({lab:d.toLocaleDateString('ru-RU',{weekday:'short'}),m:S.days[key]||0});}
+  const mx=Math.max(S.goal,...wk.map(w=>w.m));
+  return `<div><h1 class="h-page">Профиль</h1></div>
+  <div class="stats">
+    <div class="st" style="color:var(--gold)">${IC.flame}<div><b style="color:var(--ink)">${streakNow()}</b><span>${plural(streakNow(),'день','дня','дней')} подряд</span></div></div>
+    <div class="st" style="color:var(--accent)">${IC.bolt}<div><b style="color:var(--ink)">${S.xp}</b><span>опыта (XP)</span></div></div>
+    <div class="st" style="color:var(--good)">${IC.check}<div><b style="color:var(--ink)">${Object.keys(S.done).length}/${totalLessons}</b><span>уроков</span></div></div>
+    <div class="st" style="color:var(--accent)">${IC.clock}<div><b style="color:var(--ink)">${fmtMin(spent)}</b><span>всего занятий</span></div></div>
+    <div class="st" style="color:var(--gold)">${IC.trophy}<div><b style="color:var(--ink)">${COURSE.filter((_,u)=>passed(u)).length}/${COURSE.length}</b><span>тестов сдано</span></div></div>
+    <div class="st" style="color:var(--bad)">${IC.target}<div><b style="color:var(--ink)">${acc}%</b><span>точность ответов</span></div></div>
+  </div>
+  <section class="card"><h2>Последние 7 дней</h2><div class="week">${wk.map(w=>`<div><span>${w.m?Math.round(w.m):''}</span><i class="${w.m>=S.goal?'met':''}" style="height:${(w.m/mx*80).toFixed(0)}%"></i><span>${w.lab}</span></div>`).join('')}</div><p class="small muted">Зелёный столбик — дневная цель (${S.goal} мин) выполнена.</p></section>
+  <section class="card"><h2>Настройки</h2>
+    <div class="ctrl"><label>Звуки</label><div class="seg"><button data-sound="1" aria-pressed="${S.sound}">Включены</button><button data-sound="0" aria-pressed="${!S.sound}">Выключены</button></div></div>
+    <div class="ctrl"><label>Тема</label><div class="seg">${[['','Как в системе'],['light','Светлая'],['dark','Тёмная']].map(([k,t])=>`<button data-theme-set="${k}" aria-pressed="${(document.documentElement.dataset.theme||'')===k}">${t}</button>`).join('')}</div></div>
+    <p class="small muted">Прогресс хранится в этом браузере.</p>
+    <div><button class="btn ghost sm" id="reset">Сбросить прогресс</button></div>
+  </section>`;
+}
+
+/* ===== обработчики вида ===== */
+function bindView(){
+  const v=$('#view');
+  v.querySelectorAll('[data-lesson]').forEach(b=>b.onclick=()=>{const [u,l]=b.dataset.lesson.split('-').map(Number);openLessonSheet(u,l);});
+  v.querySelectorAll('[data-test]').forEach(b=>b.onclick=()=>openTestSheet(+b.dataset.test));
+  v.querySelectorAll('[data-prac]').forEach(b=>b.onclick=()=>openPracticeSheet(+b.dataset.prac));
+  v.querySelectorAll('[data-ref]').forEach(b=>b.onclick=()=>openRefSheet(+b.dataset.ref));
+  const f=v.querySelector('[data-final]');if(f)f.onclick=()=>startSession('final');
+  v.querySelectorAll('[data-review]').forEach(b=>b.onclick=()=>startSession(b.dataset.review==='mistakes'?'mistakes':'random'));
+  const g=v.querySelector('#goal');if(g){g.oninput=()=>{S.goal=+g.value;save();const y=window.scrollY;render();window.scrollTo(0,y);const ng=$('#goal');if(ng)ng.focus();};}
+  v.querySelectorAll('[data-dpw]').forEach(b=>b.onclick=()=>{S.dpw=+b.dataset.dpw;save();const y=window.scrollY;render();window.scrollTo(0,y);});
+  v.querySelectorAll('[data-sound]').forEach(b=>b.onclick=()=>{S.sound=b.dataset.sound==='1';save();render();});
+  v.querySelectorAll('[data-theme-set]').forEach(b=>b.onclick=()=>{const k=b.dataset.themeSet;if(k)document.documentElement.dataset.theme=k;else delete document.documentElement.dataset.theme;try{localStorage.setItem(KEY+'-theme',k);}catch(e){}render();});
+  const r=v.querySelector('#reset');if(r)r.onclick=()=>sheet(`<h2>Сбросить весь прогресс?</h2><p class="muted">Уроки, тесты, XP и серия дней будут удалены. Это нельзя отменить.</p><div class="row"><button class="btn ghost" data-close>Отмена</button><button class="btn bad" id="do-reset">Сбросить</button></div>`,el=>{el.querySelector('#do-reset').onclick=()=>{S=fresh();save();closeSheet();render();toast('Прогресс сброшен');};});
+}
+
+/* ================= ЛИСТЫ (модальные) ================= */
+function sheet(html,bind){
+  const root=$('#sheet-root');
+  root.innerHTML=`<div class="scrim"><div class="sheet" role="dialog" aria-modal="true">${html}</div></div>`;
+  const sc=root.querySelector('.scrim');
+  sc.addEventListener('click',e=>{if(e.target===sc)closeSheet();});
+  root.querySelectorAll('[data-close]').forEach(b=>b.onclick=closeSheet);
+  if(bind)bind(root.querySelector('.sheet'));
+  const fb=root.querySelector('.btn:not([disabled])');if(fb)fb.focus();
+}
+function closeSheet(){$('#sheet-root').innerHTML='';}
+function openLessonSheet(u,l){
+  const L=COURSE[u].lessons[l],can=lessonOpen(u,l),done=S.done[lk(u,l)];
+  regenHearts();
+  sheet(`<div class="kind">Раздел ${u+1} · урок ${l+1} из ${COURSE[u].lessons.length}</div><h2>${esc(L.title)}</h2>
+  <p class="muted">${can?`Теория и ${L.ex.length} заданий · ~${EST.lesson} мин · +${done?5:10} XP`:'Сначала пройди предыдущий урок.'}</p>
+  ${can&&S.hearts<=0?`<p style="color:var(--bad)">Сердца закончились. Новое появится через ${HEART_REGEN_MIN-Math.floor((Date.now()-S.heartTs)/6e4)} мин, или пройди тренировку.</p>`:''}
+  <div class="row"><button class="btn ghost" data-close>Закрыть</button><button class="btn" id="go" ${can&&S.hearts>0?'':'disabled'}>${done?'Повторить':'Начать'}</button></div>`,
+  el=>{const g=el.querySelector('#go');if(g)g.onclick=()=>{closeSheet();startSession('lesson',u,l);};});
+}
+function openTestSheet(u){
+  const open=unitOpen(u)&&lessonsDone(u),early=!lessonsDone(u)&&(unitOpen(u)||u===firstLocked());
+  const can=open||early||passed(u);
+  sheet(`<div class="kind">${IC.trophy} Тест раздела ${u+1}</div><h2>${esc(COURSE[u].title)}</h2>
+  <p class="muted">${can?`${TEST_N} вопросов из всех уроков раздела. Для зачёта нужно ${Math.ceil(TEST_N*PASS)} правильных. Сердца не тратятся.${early?' <b>Досрочно:</b> при успехе все уроки раздела засчитаются.':''}`:'Тест откроется, когда ты пройдёшь уроки этого раздела.'}</p>
+  ${S.tests[u]!=null?`<p>Лучший результат: <b>${S.tests[u]}/${TEST_N}</b></p>`:''}
+  <div class="row"><button class="btn ghost" data-close>Закрыть</button><button class="btn" id="go" ${can?'':'disabled'}>Начать тест</button></div>`,
+  el=>{const g=el.querySelector('#go');if(g)g.onclick=()=>{closeSheet();startSession('test',u);};});
+}
+function openPracticeSheet(u){
+  const P=COURSE[u].practice;
+  sheet(`<div class="kind">${IC.hammer} Практика в Roblox Studio · ~${P.min} мин</div><h2>${esc(COURSE[u].title)}</h2>
+  <p class="muted">Сделай это в Studio. Отметь пункты, а когда закончишь — нажми «Готово». Время зачтётся в дневную цель.</p>
+  <ul class="checklist">${P.tasks.map((t,i)=>`<li><input type="checkbox" id="pt-${u}-${i}" ${S.practice[u]?'checked':''}><label for="pt-${u}-${i}">${esc(t)}</label></li>`).join('')}</ul>
+  <div class="row"><button class="btn ghost" data-close>Закрыть</button><button class="btn good" id="go" ${S.practice[u]?'disabled':''}>${S.practice[u]?'Уже выполнено':'Готово · +'+P.min+' мин'}</button></div>`,
+  el=>{const g=el.querySelector('#go');if(g&&!S.practice[u])g.onclick=()=>{S.practice[u]=true;S.xp+=15;markActivity(P.min);save();closeSheet();render();toast('Практика засчитана: +15 XP, +'+P.min+' мин');};});
+}
+function openRefSheet(u){
+  const U=COURSE[u];
+  sheet(`<div class="kind">${IC.book} Справка · раздел ${u+1}</div><h2>${esc(U.title)}</h2>${U.lessons.map(L=>`<div class="ref-unit"><h3>${esc(L.title)}</h3>${theoryHtml(L.theory)}</div>`).join('')}<button class="btn wide" data-close>Закрыть</button>`);
+}
+function theoryHtml(T){
+  return T.map(x=>typeof x==='string'?`<p>${inl(x)}</p>`:x.c?`<pre class="code">${hl(x.c)}</pre>`:`<div class="tip"><b>Совет</b><span>${inl(x.tip)}</span></div>`).join('');
+}
+
+/* ================= СЕССИЯ (урок/тест) ================= */
+let SS=null;
+function startSession(kind,u,l){
+  regenHearts();
+  let ids=[];
+  if(kind==='lesson'){ids=COURSE[u].lessons[l].ex.map((_,i)=>u+'.'+l+'.'+i);}
+  else if(kind==='test'){const all=[];COURSE[u].lessons.forEach((L,ll)=>L.ex.forEach((_,i)=>all.push(u+'.'+ll+'.'+i)));ids=shuffle(all).slice(0,TEST_N);}
+  else if(kind==='final'){const all=[];COURSE.forEach((U,uu)=>U.lessons.forEach((L,ll)=>L.ex.forEach((_,i)=>all.push(uu+'.'+ll+'.'+i))));
+    // равномерно по разделам
+    const per=shuffle(COURSE.map((_,uu)=>shuffle(all.filter(id=>id.startsWith(uu+'.')))));ids=[];let k=0;while(ids.length<FINAL_N){const p=per[k%per.length];if(p.length)ids.push(p.pop());k++;}ids=shuffle(ids);}
+  else if(kind==='mistakes'){ids=shuffle(S.mistakes).slice(0,8);}
+  else if(kind==='random'){const all=[];COURSE.forEach((U,uu)=>U.lessons.forEach((L,ll)=>{if(S.done[lk(uu,ll)])L.ex.forEach((_,i)=>all.push(uu+'.'+ll+'.'+i));}));ids=shuffle(all).slice(0,8);}
+  if(!ids.length)return;
+  SS={kind,u,l,queue:ids.slice(),unique:ids.length,solved:0,correct:0,wrong:0,phase:kind==='lesson'?'theory':'ex',cur:null,checked:false,start:Date.now(),failed:false};
+  if(SS.phase==='ex')nextEx();
+  drawLayer();
+}
+const usesHearts=()=>SS.kind==='lesson';
+const requeue=()=>SS.kind==='lesson'||SS.kind==='mistakes'||SS.kind==='random';
+
+function nextEx(){
+  const id=SS.queue.shift();
+  if(!id){finish();return;}
+  const ex=exById(id);
+  SS.cur={id,ex,order:ex.t==='c'?shuffle(ex.o.map((_,k)=>k)):null,sel:null,
+    bank:ex.t==='o'?shuffle([...ex.p,...ex.x].map((t,k)=>({t,k}))):null,line:[],val:''};
+  SS.checked=false;SS.lastOk=null;
+}
+
+function drawLayer(){
+  const root=$('#layer-root');
+  if(!SS){root.innerHTML='';document.body.style.overflow='';return;}
+  document.body.style.overflow='hidden';
+  const pct=SS.phase==='theory'?0:SS.phase==='done'?100:(SS.solved/SS.unique*100);
+  const heartHtml=usesHearts()?`<div class="stat s-heart">${IC.heart}${S.hearts}</div>`:'';
+  let body='',foot='';
+  if(SS.phase==='theory'){
+    const L=COURSE[SS.u].lessons[SS.l];
+    body=`<div class="kind">${IC.book} Теория · раздел ${SS.u+1}</div><h2 class="q">${esc(L.title)}</h2><div class="theory">${theoryHtml(L.theory)}</div>`;
+    foot=`<button class="btn wide" id="act">Перейти к заданиям</button>`;
+  }else if(SS.phase==='done'){
+    body=resultHtml();
+    foot=`<button class="btn wide ${SS.failed?'':'good'}" id="act">Продолжить</button>`;
+  }else{
+    body=exHtml();
+    if(!SS.checked){foot=`<button class="btn wide" id="act" ${canCheck()?'':'disabled'}>Проверить</button>`;}
+    else{
+      const ex=SS.cur.ex;
+      foot=`<div class="fb"><h3>${SS.lastOk?IC.check.replace('<svg','<svg width="24" height="24"')+' Верно!':IC.x.replace('<svg','<svg width="24" height="24"')+' Неверно'}</h3>
+      ${SS.lastOk?'':`<p>Правильный ответ: <span class="ans">${esc(answerText(ex))}</span></p>`}
+      ${ex.e?`<p>${esc(ex.e)}</p>`:''}</div><button class="btn wide ${SS.lastOk?'good':'bad'}" id="act">Дальше</button>`;
+    }
+  }
+  const kindName={lesson:'',test:'Тест',final:'Экзамен',mistakes:'Ошибки',random:'Повторение'}[SS.kind];
+  root.innerHTML=`<div class="layer" role="dialog" aria-modal="true" aria-label="Урок">
+   <div class="l-top"><div class="wrap"><button class="x" id="quit" aria-label="Выйти">${IC.x}</button><div class="prog" role="progressbar" aria-valuenow="${Math.round(pct)}" aria-valuemin="0" aria-valuemax="100"><i style="width:${pct}%"></i></div>${kindName?`<span class="small muted" style="font-weight:700">${kindName}</span>`:''}${heartHtml}</div></div>
+   <div class="l-body"><div class="wrap">${body}</div></div>
+   <div class="l-foot ${SS.checked&&SS.phase==='ex'?(SS.lastOk?'ok':'no'):''}"><div class="wrap">${foot}</div></div></div>`;
+  bindLayer();
+}
+
+function exHtml(){
+  const {ex}=SS.cur;
+  const label={c:'Выбери ответ',i:'Впиши пропущенное',o:'Собери код'}[ex.t];
+  let h=`<div class="kind">${label}</div><div class="q">${esc(ex.q)}</div>`;
+  if(ex.t==='c'){
+    if(ex.code)h+=`<pre class="code">${hl(ex.code)}</pre>`;
+    const mono=!!ex.code||ex.o.some(o=>/[(){}=.:"`]/.test(o)&&!/[а-яё]{4,}\s[а-яё]{4,}/i.test(o));
+    h+=`<div class="opts">${SS.cur.order.map((k,pos)=>{
+      let cls='opt'+(mono?' mono':'');
+      if(SS.checked){if(k===ex.a)cls+=' right';else if(k===SS.cur.sel)cls+=' wrong';}
+      return `<button class="${cls}" data-opt="${k}" aria-pressed="${SS.cur.sel===k}" ${SS.checked?'disabled':''}><span class="num">${pos+1}</span><span class="t">${esc(ex.o[k])}</span></button>`;}).join('')}</div>`;
+  }else if(ex.t==='i'){
+    const parts=ex.code.split('___');
+    h+=`<pre class="code">${hl(parts[0])}<input class="blank" id="blank" autocomplete="off" autocapitalize="off" spellcheck="false" aria-label="Пропущенное слово" value="${esc(SS.cur.val)}" ${SS.checked?'disabled':''} style="width:${Math.max(5,SS.cur.val.length+2,ex.a[0].length+2)}ch">${hl(parts[1]||'')}</pre>`;
+    h+=`<p class="small muted">Регистр букв важен: Luau различает print и Print.</p>`;
+  }else{
+    h+=`<div class="answer-line" id="line">${SS.cur.line.map((k,pos)=>`<button class="chip" data-line="${pos}" ${SS.checked?'disabled':''}>${esc(SS.cur.bank.find(b=>b.k===k).t)}</button>`).join('')}</div>`;
+    h+=`<div class="bank">${SS.cur.bank.map(b=>`<button class="chip ${SS.cur.line.includes(b.k)?'used':''}" data-bank="${b.k}" ${SS.checked?'disabled':''}>${esc(b.t)}</button>`).join('')}</div>`;
+  }
+  return h;
+}
+function canCheck(){const c=SS.cur;if(!c)return false;const t=c.ex.t;return t==='c'?c.sel!=null:t==='i'?c.val.trim().length>0:c.line.length>0;}
+const norm=s=>s.replace(/\s+/g,'');
+function isRight(){
+  const c=SS.cur,ex=c.ex;
+  if(ex.t==='c')return c.sel===ex.a;
+  if(ex.t==='i')return ex.a.some(a=>norm(a)===norm(c.val));
+  const got=c.line.map(k=>c.bank.find(b=>b.k===k).t);
+  return got.length===ex.p.length&&got.every((t,i)=>t===ex.p[i]);
+}
+function answerText(ex){
+  if(ex.t==='c')return ex.o[ex.a];
+  if(ex.t==='i')return ex.code.replace('___',ex.a[0]);
+  return ex.p.join(' ');
+}
+function check(){
+  if(!canCheck())return;
+  const ok=isRight();SS.checked=true;SS.lastOk=ok;
+  S.answered++;
+  const id=SS.cur.id;
+  if(ok){
+    S.correct++;SS.correct++;SS.solved++;
+    if(SS.kind==='mistakes'||SS.kind==='random'||SS.kind==='lesson'){const ix=S.mistakes.indexOf(id);if(ix>=0&&SS.kind!=='lesson')S.mistakes.splice(ix,1);}
+  }else{
+    SS.wrong++;
+    if(!S.mistakes.includes(id))S.mistakes.push(id);
+    if(requeue())SS.queue.push(id);else SS.solved++;
+    if(usesHearts()){S.hearts=Math.max(0,S.hearts-1);if(S.hearts<MAX_HEARTS&&S.hearts===MAX_HEARTS-1)S.heartTs=Date.now();}
+  }
+  beep(ok);save();renderTop();drawLayer();
+}
+function advance(){
+  if(SS.phase==='theory'){SS.phase='ex';nextEx();drawLayer();return;}
+  if(SS.phase==='done'){SS=null;drawLayer();render();return;}
+  if(usesHearts()&&S.hearts<=0){SS.failed=true;finish();return;}
+  nextEx();if(SS.phase!=='done')drawLayer();
+}
+function finish(){
+  const mins=Math.min((Date.now()-SS.start)/6e4,SS.unique*2.5+6);
+  SS.minutes=Math.max(1,mins);SS.phase='done';SS.xp=0;
+  if(!SS.failed){
+    if(SS.kind==='lesson'){const key=lk(SS.u,SS.l);SS.xp=S.done[key]?5:(SS.wrong===0?15:10);S.done[key]=true;}
+    else if(SS.kind==='test'){SS.score=SS.correct;const was=passed(SS.u);S.tests[SS.u]=Math.max(S.tests[SS.u]||0,SS.correct);SS.pass=SS.correct>=Math.ceil(TEST_N*PASS);
+      if(SS.pass){COURSE[SS.u].lessons.forEach((_,l)=>S.done[lk(SS.u,l)]=true);SS.xp=was?5:25;}else SS.xp=3;}
+    else if(SS.kind==='final'){SS.score=SS.correct;S.final=Math.max(S.final,SS.correct);SS.pass=SS.correct>=Math.ceil(FINAL_N*PASS);SS.xp=SS.pass?100:10;}
+    else{SS.xp=8;if(S.hearts<MAX_HEARTS){S.hearts++;SS.heartBack=true;}}
+  }
+  S.xp+=SS.xp;markActivity(SS.minutes);save();renderTop();drawLayer();
+}
+function resultHtml(){
+  const acc=SS.correct+SS.wrong?Math.round(SS.correct/(SS.correct+SS.wrong)*100):100;
+  let title,sub,color='var(--gold)';
+  if(SS.failed){title='Сердца закончились';sub='Не беда! Повтори ошибки в «Тренировке» — это вернёт сердце, — и попробуй снова.';color='var(--bad)';}
+  else if(SS.kind==='lesson'){title=SS.wrong===0?'Идеально!':'Урок пройден!';sub=SS.wrong===0?'Ни одной ошибки — бонус +5 XP.':'Ошибки попали в «Тренировку», повтори их позже.';}
+  else if(SS.kind==='test'){title=SS.pass?'Тест сдан!':'Пока не сдан';sub=SS.pass?`Раздел «${COURSE[SS.u].title}» пройден. Следующий открыт.`:`Нужно ${Math.ceil(TEST_N*PASS)} из ${TEST_N}. Загляни в справку раздела и попробуй снова.`;color=SS.pass?'var(--good)':'var(--bad)';}
+  else if(SS.kind==='final'){title=SS.pass?'Экзамен сдан!':'Почти получилось';sub=SS.pass?'Ты прошёл весь курс Luau. Время делать свою игру!':`Нужно ${Math.ceil(FINAL_N*PASS)} из ${FINAL_N}. Повтори слабые разделы.`;color=SS.pass?'var(--good)':'var(--bad)';}
+  else {title='Тренировка завершена';sub=SS.heartBack?'+1 сердце восстановлено.':'Отличная работа над ошибками.';}
+  const scoreTile=(SS.kind==='test'||SS.kind==='final')?`<div class="tile g"><span class="k">Результат</span><span class="v">${SS.score}/${SS.unique}</span></div>`:`<div class="tile g"><span class="k">Точность</span><span class="v">${acc}%</span></div>`;
+  return `<div class="result"><svg class="medal" viewBox="0 0 120 120"><circle cx="60" cy="60" r="52" fill="${color}"/><circle cx="60" cy="60" r="40" fill="none" stroke="var(--surface)" stroke-width="4" opacity=".55"/><path d="${SS.failed||SS.pass===false?'M44 44l32 32M76 44L44 76':'M40 62l14 14 28-30'}" fill="none" stroke="var(--surface)" stroke-width="10" stroke-linecap="round" stroke-linejoin="round"/></svg>
+  <h2>${title}</h2><p class="lead">${sub}</p>
+  <div class="tiles"><div class="tile"><span class="k">Опыт</span><span class="v">+${SS.xp}</span></div>${scoreTile}<div class="tile b"><span class="k">Время</span><span class="v">${Math.round(SS.minutes)} мин</span></div></div></div>`;
+}
+function bindLayer(){
+  const root=$('#layer-root');
+  root.querySelector('#quit').onclick=()=>{
+    if(SS.phase==='done'){advance();return;}
+    sheet(`<h2>Выйти из ${SS.kind==='lesson'?'урока':'задания'}?</h2><p class="muted">Прогресс этой попытки не сохранится.</p><div class="row"><button class="btn ghost" id="q-yes">Выйти</button><button class="btn" data-close>Продолжить</button></div>`,el=>{el.querySelector('#q-yes').onclick=()=>{closeSheet();SS=null;drawLayer();render();};});
+  };
+  const act=root.querySelector('#act');
+  if(act)act.onclick=()=>{if(SS.phase==='ex'&&!SS.checked)check();else advance();};
+  root.querySelectorAll('[data-opt]').forEach(b=>b.onclick=()=>{SS.cur.sel=+b.dataset.opt;drawLayer();});
+  const bl=root.querySelector('#blank');
+  if(bl){bl.oninput=()=>{SS.cur.val=bl.value;bl.style.width=Math.max(5,bl.value.length+2,SS.cur.ex.a[0].length+2)+'ch';const a=root.querySelector('#act');if(a)a.disabled=!canCheck();};if(!SS.checked)setTimeout(()=>bl.focus(),30);}
+  root.querySelectorAll('[data-bank]').forEach(b=>b.onclick=()=>{const k=+b.dataset.bank;if(!SS.cur.line.includes(k)){SS.cur.line.push(k);drawLayer();}});
+  root.querySelectorAll('[data-line]').forEach(b=>b.onclick=()=>{SS.cur.line.splice(+b.dataset.line,1);drawLayer();});
+  if(act&&(SS.checked||SS.phase!=='ex'))act.focus();
+}
+document.addEventListener('keydown',e=>{
+  if(!SS||$('#sheet-root').innerHTML)return;
+  if(e.key==='Enter'){const a=$('#act');if(a&&!a.disabled){e.preventDefault();a.click();}}
+  else if(SS.phase==='ex'&&!SS.checked&&SS.cur&&SS.cur.ex.t==='c'&&/^[1-4]$/.test(e.key)&&document.activeElement.tagName!=='INPUT'){const k=SS.cur.order[+e.key-1];if(k!=null){SS.cur.sel=k;drawLayer();}}
+  else if(e.key==='Escape'){$('#quit').click();}
+});
+document.addEventListener('keydown',e=>{if(e.key==='Escape'&&$('#sheet-root').innerHTML){e.stopPropagation();closeSheet();}},true);
+
+/* старт */
+try{const th=localStorage.getItem(KEY+'-theme');if(th)document.documentElement.dataset.theme=th;}catch(e){}
+setInterval(()=>{if(!SS)renderTop();},60000);
+render();
+</script>
+</body></html>
