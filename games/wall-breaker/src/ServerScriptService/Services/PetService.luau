@@ -122,6 +122,10 @@ function PetService.OpenEgg(player: Player, eggId: string)
 			end
 		end
 		if id == 0 then
+			-- В Studio яйцо без Id товара открывается бесплатно — для проверки
+			if game:GetService("RunService"):IsStudio() then
+				return { ok = true, pet = hatch(player, data, egg) }
+			end
 			return { ok = false, msg = "Покупка ещё не настроена (товар " .. egg.RobuxProduct .. " в ShopConfig)" }
 		end
 		MarketplaceService:PromptProductPurchase(player, id)

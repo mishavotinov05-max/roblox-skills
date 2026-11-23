@@ -5,6 +5,7 @@
 local Players = game:GetService("Players")
 local MarketplaceService = game:GetService("MarketplaceService")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local RunService = game:GetService("RunService")
 
 local ShopConfig = require(ReplicatedStorage:WaitForChild("Config"):WaitForChild("ShopConfig"))
 local DataService = require(script.Parent:WaitForChild("DataService"))
@@ -148,6 +149,15 @@ function MonetizationService.Init()
 		for _, product in ipairs(ShopConfig.Products) do
 			if product.Key == key then
 				if product.Id == 0 then
+					-- В Studio товар без Id выдаётся бесплатно — чтобы проверить анимацию и награду.
+					-- В опубликованной игре без Id покупка не работает.
+					local handler = productHandlers[product.Key]
+					local data = DataService.Get(player)
+					if RunService:IsStudio() and handler and data then
+						handler(player, data, product)
+						DataService.MarkDirty(player)
+						return { ok = true, msg = "Тест в Studio: выдано бесплатно (Id товара = 0)" }
+					end
 					return { ok = false, msg = "Покупка ещё не настроена (Id = 0 в ShopConfig)" }
 				end
 				MarketplaceService:PromptProductPurchase(player, product.Id)
